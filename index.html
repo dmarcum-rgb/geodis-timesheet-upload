@@ -6,451 +6,684 @@
 <title>MLAM Driver App</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#003366;--blue:#0055aa;--light-blue:#e8f0fb;--green:#1a7a4a;--red:#c0392b;--orange:#e67e22;--gray:#f0f2f5;--text:#1a1a2e;--muted:#6b7280}
+:root{--navy:#003366;--blue:#0055aa;--light-blue:#e8f0fb;--green:#1a7a4a;--red:#c0392b;--orange:#e67e22;--gray:#f0f2f5;--text:#1a1a2e;--muted:#6b7280;--geodis:#e30613}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--gray);min-height:100vh;color:var(--text)}
-/* SCREENS */
 .screen{display:none;min-height:100vh;flex-direction:column}
 .screen.active{display:flex}
-/* LOGIN */
+
+/* ── LOGIN ── */
 #loginScreen{background:var(--navy);align-items:center;justify-content:center;padding:30px 20px}
-.login-card{background:white;border-radius:20px;padding:32px 24px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
-.login-logo{text-align:center;margin-bottom:28px}
-.login-logo h1{font-size:22px;font-weight:800;color:var(--navy);margin-top:10px}
+.login-card{background:white;border-radius:20px;padding:32px 24px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-logo h1{font-size:20px;font-weight:800;color:var(--navy);margin-top:10px}
 .login-logo p{font-size:12px;color:var(--muted);margin-top:4px}
-.logo-badge{background:var(--navy);color:white;border-radius:12px;padding:14px 20px;display:inline-block;font-size:24px;font-weight:900;letter-spacing:2px}
-.form-group{margin-bottom:18px}
-.form-group label{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.form-group select,.form-group input{width:100%;padding:14px;border:2px solid #e5e7eb;border-radius:10px;font-size:15px;background:white;appearance:none;-webkit-appearance:none;transition:border .2s}
+.logo-badge{background:var(--navy);color:white;border-radius:12px;padding:12px 18px;display:inline-block;font-size:22px;font-weight:900;letter-spacing:2px}
+.logo-badge.geodis-badge{background:var(--geodis)}
+.role-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.role-btn{padding:12px;border:2px solid #e5e7eb;border-radius:10px;background:white;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;color:var(--muted)}
+.role-btn.active{border-color:var(--navy);background:var(--light-blue);color:var(--navy)}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.form-group select,.form-group input{width:100%;padding:13px;border:2px solid #e5e7eb;border-radius:10px;font-size:15px;background:white;appearance:none;-webkit-appearance:none;transition:border .2s}
 .form-group select:focus,.form-group input:focus{border-color:var(--navy);outline:none}
-.btn-primary{background:var(--navy);color:white;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;width:100%;cursor:pointer;transition:background .2s;margin-top:8px}
-.btn-primary:hover{background:var(--blue)}
+.pw-hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4}
+.btn-primary{background:var(--navy);color:white;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:700;width:100%;cursor:pointer;transition:background .2s;margin-top:6px}
+.btn-primary.geodis-btn{background:var(--geodis)}
+.btn-primary:hover{opacity:.9}
 .btn-primary:active{transform:scale(.98)}
-.btn-primary:disabled{background:#aaa;cursor:not-allowed}
-/* APP HEADER */
-.app-header{background:var(--navy);color:white;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.app-header h2{font-size:16px;font-weight:700}
-.app-header .sub{font-size:11px;opacity:.7;margin-top:2px}
-.header-driver{flex:1;min-width:0}
-.btn-logout{background:rgba(255,255,255,.15);border:none;color:white;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
-/* TABS */
-.tab-bar{display:flex;background:white;border-bottom:2px solid #e5e7eb;position:sticky;top:56px;z-index:99}
-.tab-btn{flex:1;padding:12px 4px;border:none;background:none;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.2s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.login-err{background:#fee2e2;color:#991b1b;border-radius:8px;padding:10px;font-size:13px;font-weight:600;margin-top:10px;display:none;text-align:center}
+.login-err.show{display:block}
+
+/* ── APP HEADER ── */
+.app-header{background:var(--navy);color:white;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.app-header.geodis-header{background:var(--geodis)}
+.header-left{flex:1;min-width:0}
+.header-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-sub{font-size:11px;opacity:.75;margin-top:2px}
+.btn-logout{background:rgba(255,255,255,.18);border:none;color:white;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* ── TABS ── */
+.tab-bar{display:flex;background:white;border-bottom:2px solid #e5e7eb;position:sticky;top:52px;z-index:99}
+.tab-btn{flex:1;padding:11px 4px;border:none;background:none;font-size:10px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.2s;display:flex;flex-direction:column;align-items:center;gap:3px}
 .tab-btn.active{color:var(--navy);border-bottom-color:var(--navy)}
-.tab-icon{font-size:18px}
-.tab-content{padding:16px;flex:1}
-/* CLOCK */
-.clock-section{background:white;border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center}
-.clock-display{font-size:48px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;letter-spacing:-1px;margin:12px 0}
-.clock-date{font-size:14px;color:var(--muted);margin-bottom:16px}
-.clock-status{display:inline-block;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:20px}
-.clock-status.out{background:#fef3c7;color:#92400e}
-.clock-status.in{background:#d1fae5;color:#065f46}
-.btn-clock-in{background:var(--green);color:white;border:none;border-radius:16px;padding:22px;font-size:20px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 15px rgba(26,122,74,.4);transition:.2s}
-.btn-clock-in:active{transform:scale(.97)}
-.btn-clock-out{background:var(--red);color:white;border:none;border-radius:16px;padding:22px;font-size:20px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 15px rgba(192,57,43,.4);transition:.2s}
-.btn-clock-out:active{transform:scale(.97)}
-.clock-times{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.clock-time-box{background:var(--light-blue);border-radius:10px;padding:12px;text-align:center}
-.clock-time-box .label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase}
-.clock-time-box .val{font-size:16px;font-weight:700;color:var(--navy);margin-top:4px}
-/* STOPS / GPS */
-.stops-section{background:white;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tab-btn.active.geodis-tab{color:var(--geodis);border-bottom-color:var(--geodis)}
+.tab-icon{font-size:17px}
+.tab-content{padding:14px;flex:1}
+
+/* ── CARDS ── */
+.card{background:white;border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .section-hdr h3{font-size:15px;font-weight:700;color:var(--navy)}
-.btn-add-stop{background:var(--blue);color:white;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer}
-.stop-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f3f4f6}
+
+/* ── CLOCK ── */
+.clock-display{font-size:44px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;letter-spacing:-1px;margin:10px 0;text-align:center}
+.clock-date{font-size:13px;color:var(--muted);margin-bottom:12px;text-align:center}
+.clock-status{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700}
+.clock-status.out{background:#fef3c7;color:#92400e}
+.clock-status.in{background:#d1fae5;color:#065f46}
+.clock-wrap{text-align:center;margin-bottom:18px}
+.btn-clock-in{background:var(--green);color:white;border:none;border-radius:14px;padding:20px;font-size:19px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 15px rgba(26,122,74,.35);transition:.2s}
+.btn-clock-out{background:var(--red);color:white;border:none;border-radius:14px;padding:20px;font-size:19px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 15px rgba(192,57,43,.35);transition:.2s}
+.clock-times{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.clock-time-box{background:var(--light-blue);border-radius:10px;padding:10px;text-align:center}
+.clock-time-box .label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase}
+.clock-time-box .val{font-size:15px;font-weight:700;color:var(--navy);margin-top:3px}
+.gps-banner{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;text-align:center}
+.gps-badge{background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block}
+.gps-badge.off{background:#fee2e2;color:#991b1b}
+
+/* ── STOPS ── */
+.btn-add-stop{background:var(--blue);color:white;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.stop-item{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid #f3f4f6}
 .stop-item:last-child{border-bottom:none}
-.stop-num{background:var(--navy);color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+.stop-num{background:var(--navy);color:white;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
 .stop-info{flex:1;min-width:0}
 .stop-info .stop-time{font-size:12px;font-weight:700;color:var(--navy)}
-.stop-info .stop-addr{font-size:12px;color:var(--muted);margin-top:2px;word-break:break-word}
-.stop-del{background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;padding:2px 6px}
+.stop-info .stop-addr{font-size:11px;color:var(--muted);margin-top:2px;word-break:break-word}
+.stop-del{background:none;border:none;color:#ccc;font-size:16px;cursor:pointer;padding:2px 5px}
 .stop-del:hover{color:var(--red)}
-.gps-badge{background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block;margin-left:6px}
-.gps-badge.off{background:#fee2e2;color:#991b1b}
-/* EXPENSES */
-.expense-section{background:white;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+
+/* ── EXPENSES ── */
 .exp-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.exp-field label{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.exp-field label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
 .exp-input-wrap{position:relative}
-.exp-input-wrap span{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:700;color:#555;font-size:14px}
-.exp-input-wrap input{width:100%;padding:12px 12px 12px 26px;border:2px solid #e5e7eb;border-radius:10px;font-size:16px;font-weight:700;transition:border .2s}
+.exp-input-wrap span{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-weight:700;color:#555;font-size:14px}
+.exp-input-wrap input{width:100%;padding:11px 11px 11px 24px;border:2px solid #e5e7eb;border-radius:10px;font-size:16px;font-weight:700;transition:border .2s}
 .exp-input-wrap input:focus{border-color:var(--navy);outline:none}
-/* RECEIPT SCAN */
-.receipt-upload{border:2px dashed #d1d5db;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.2s;margin-top:8px;background:#fafafa}
+.receipt-upload{border:2px dashed #d1d5db;border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:.2s;background:#fafafa}
 .receipt-upload:hover{border-color:var(--blue);background:var(--light-blue)}
 .receipt-upload input{display:none}
-.receipt-icon{font-size:28px;margin-bottom:6px}
+.receipt-icon{font-size:26px;margin-bottom:5px}
 .receipt-upload p{font-size:12px;color:var(--muted);font-weight:600}
-.receipt-upload .hint{font-size:11px;color:#9ca3af;margin-top:4px}
-.scanning-indicator{display:none;align-items:center;gap:8px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px;margin-top:8px;font-size:13px;font-weight:600;color:#92400e}
+.receipt-upload .hint{font-size:11px;color:#9ca3af;margin-top:3px}
+.scanning-indicator{display:none;align-items:center;gap:8px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:9px;margin-top:8px;font-size:13px;font-weight:600;color:#92400e}
 .scanning-indicator.visible{display:flex}
-.spinner{width:16px;height:16px;border:2px solid #fde68a;border-top-color:#92400e;border-radius:50%;animation:spin .6s linear infinite}
+.spinner{width:15px;height:15px;border:2px solid #fde68a;border-top-color:#92400e;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
-.receipt-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:10px}
+.receipt-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:7px;margin-top:10px}
 .receipt-thumb{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:3/4;background:#f3f4f6}
 .receipt-thumb img{width:100%;height:100%;object-fit:cover}
-.receipt-thumb .remove-thumb{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.receipt-result{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px;margin-top:8px;font-size:13px;color:#166534;font-weight:600;display:none}
+.receipt-thumb .remove-thumb{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.6);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.receipt-result{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:9px;margin-top:8px;font-size:13px;color:#166534;font-weight:600;display:none}
 .receipt-result.visible{display:block}
-/* HOURS */
-.hours-section{background:white;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.day-row{display:grid;grid-template-columns:80px 1fr 1fr;gap:10px;align-items:center;margin-bottom:10px}
+.exp-totals{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exp-total-box{background:var(--light-blue);border-radius:10px;padding:13px;text-align:center}
+.exp-total-box .etl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase}
+.exp-total-box .etv{font-size:21px;font-weight:800;color:var(--navy)}
+
+/* ── HOURS ── */
+.day-row{display:grid;grid-template-columns:72px 1fr 1fr;gap:8px;align-items:center;margin-bottom:9px}
 .day-row .dlabel{font-size:13px;font-weight:700;color:var(--text)}
-.day-row select{padding:10px 8px;border:2px solid #e5e7eb;border-radius:8px;font-size:13px;background:white;appearance:none;-webkit-appearance:none}
+.day-row select{padding:9px 7px;border:2px solid #e5e7eb;border-radius:8px;font-size:13px;background:white;appearance:none;-webkit-appearance:none}
 .day-row select:focus{border-color:var(--navy);outline:none}
-.day-row .ftime label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:4px;display:block}
-/* SIGNATURE */
-.sig-section{background:white;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.sig-canvas-wrap{border:2px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#fafafa;margin-top:10px;position:relative}
+.day-row .ftime label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:3px;display:block}
+.total-badge{background:var(--light-blue);border-radius:10px;padding:10px 14px;text-align:center;margin-bottom:14px}
+.total-badge .tbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase}
+.total-badge .tbv{font-size:24px;font-weight:800;color:var(--navy)}
+.total-badge .tbp{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ── SIGNATURE ── */
+.sig-canvas-wrap{border:2px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#fafafa;margin-top:8px;position:relative}
 #sigCanvas{display:block;width:100%;touch-action:none}
 .sig-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:#d1d5db;pointer-events:none;font-weight:500;white-space:nowrap}
-.sig-controls{display:flex;gap:8px;margin-top:10px}
-.btn-clear-sig{background:#f3f4f6;color:#374151;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;flex:1}
-.btn-clear-sig:hover{background:#e5e7eb}
-/* NOTES */
-.notes-section{background:white;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.notes-section textarea{width:100%;border:2px solid #e5e7eb;border-radius:10px;padding:12px;font-size:14px;resize:vertical;min-height:80px;font-family:inherit}
-.notes-section textarea:focus{border-color:var(--navy);outline:none}
-/* SUBMIT AREA */
-.submit-section{padding:0 0 30px}
-.btn-submit{background:var(--navy);color:white;border:none;border-radius:16px;padding:20px;font-size:18px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 15px rgba(0,51,102,.3);transition:.2s}
+.btn-clear-sig{background:#f3f4f6;color:#374151;border:none;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-top:9px}
+
+/* ── NOTES + SUBMIT ── */
+.notes-ta{width:100%;border:2px solid #e5e7eb;border-radius:10px;padding:11px;font-size:14px;resize:vertical;min-height:75px;font-family:inherit}
+.notes-ta:focus{border-color:var(--navy);outline:none}
+.btn-submit{background:var(--navy);color:white;border:none;border-radius:14px;padding:19px;font-size:17px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 15px rgba(0,51,102,.25);transition:.2s}
 .btn-submit:hover:not(:disabled){background:var(--blue)}
 .btn-submit:disabled{background:#aaa;cursor:not-allowed}
-.msg{padding:14px;border-radius:10px;font-size:14px;font-weight:600;margin-top:12px;display:none;text-align:center}
+.msg{padding:13px;border-radius:10px;font-size:14px;font-weight:600;margin-top:11px;display:none;text-align:center}
 .msg.success{background:#d1fae5;color:#065f46;display:block}
 .msg.error{background:#fee2e2;color:#991b1b;display:block}
-.total-hours-badge{background:var(--light-blue);border-radius:10px;padding:10px 16px;text-align:center;margin-bottom:16px}
-.total-hours-badge .th-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase}
-.total-hours-badge .th-val{font-size:26px;font-weight:800;color:var(--navy)}
-.total-hours-badge .th-pay{font-size:13px;color:var(--muted);margin-top:2px}
-/* RESPONSIVE DESKTOP */
+
+/* ── DASHBOARD ── */
+#dashScreen{background:var(--gray)}
+.dash-header{background:var(--navy);color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.dash-header.geodis-dash{background:var(--geodis)}
+.dash-header h1{font-size:17px;font-weight:800}
+.dash-header .dsub{font-size:11px;opacity:.75;margin-top:2px}
+.dash-content{padding:14px}
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-box{background:white;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.stat-box .sv{font-size:22px;font-weight:800;color:var(--navy)}
+.stat-box .sl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:3px}
+.dash-section-title{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px;border-bottom:2px solid var(--navy);padding-bottom:4px}
+.driver-card{background:white;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.driver-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.driver-name{font-size:14px;font-weight:700;color:var(--text)}
+.driver-truck{font-size:11px;color:var(--muted)}
+.status-pill{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.status-pill.clocked-in{background:#d1fae5;color:#065f46}
+.status-pill.clocked-out{background:#fee2e2;color:#991b1b}
+.status-pill.idle{background:#f3f4f6;color:#6b7280}
+.driver-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.ds-item{text-align:center;background:#f9fafb;border-radius:8px;padding:8px 4px}
+.ds-item .dsv{font-size:14px;font-weight:700;color:var(--navy)}
+.ds-item .dsl{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px}
+.last-stop{background:#f9fafb;border-radius:8px;padding:9px;font-size:11px;color:var(--muted)}
+.last-stop strong{color:var(--text);font-size:12px}
+.map-container{background:#e8f0fb;border-radius:12px;overflow:hidden;margin-bottom:14px;position:relative}
+#dashMap{width:100%;height:280px}
+.map-placeholder{width:100%;height:280px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e8f0fb,#c7d9f5);flex-direction:column;gap:8px}
+.map-placeholder .mp-icon{font-size:36px}
+.map-placeholder p{font-size:13px;color:var(--navy);font-weight:600}
+.refresh-btn{background:white;border:2px solid var(--navy);color:var(--navy);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:12px}
+.refresh-btn:hover{background:var(--light-blue)}
+.last-updated{font-size:11px;color:var(--muted);margin-bottom:10px}
+
+/* ── RESPONSIVE ── */
 @media(min-width:600px){
   body{padding:20px}
   .screen{max-width:480px;margin:0 auto;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-  #loginScreen{border-radius:20px}
+  #loginScreen,#dashScreen{border-radius:20px;min-height:auto}
+  #dashScreen{max-width:700px}
 }
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- ═══════════════════════════════════════════════
+     LOGIN SCREEN
+═══════════════════════════════════════════════ -->
 <div id="loginScreen" class="screen active">
   <div class="login-card">
     <div class="login-logo">
-      <div class="logo-badge">MLAM</div>
-      <h1>Shuttle Driver App</h1>
+      <div class="logo-badge" id="logoBadge">MLAM</div>
+      <h1 id="loginTitle">Shuttle Driver App</h1>
       <p>Meiborg Inc. / Logisnext / Geodis</p>
     </div>
-    <div class="form-group">
-      <label>Select Your Name</label>
-      <select id="loginDriver">
-        <option value="">-- Choose Driver --</option>
-        <option value="Brandon Hernandez|678">Brandon Hernandez - Truck #678</option>
-        <option value="Royce Russey|673">Royce Russey - Truck #673</option>
-        <option value="Jaime Cuevas|596">Jaime Cuevas - Truck #596</option>
-        <option value="Chris Thomas|598">Chris Thomas - Truck #598</option>
-        <option value="Chris Nelson|607">Chris Nelson - Truck #607</option>
-        <option value="Antonio Cadena|609">Antonio Cadena - Truck #609</option>
-        <option value="Armando Luna|597">Armando Luna - Truck #597</option>
-        <option value="Shamia Cottrell|661">Shamia Cottrell - Truck #661</option>
-        <option value="Clint Greenhouse|594">Clint Greenhouse - Truck #594</option>
-        <option value="Rigio Albarran|635">Rigio Albarran - Truck #635</option>
-        <option value="Christopher Gober|592">Christopher Gober - Truck #592</option>
-        <option value="Steve Lawrence|574">Steve Lawrence - Truck #574</option>
-        <option value="OTHER|">Other / Not Listed</option>
-      </select>
+
+    <!-- Role Toggle -->
+    <div class="role-toggle">
+      <button class="role-btn active" id="roleDriverBtn" onclick="setRole('driver')">&#128665; Driver</button>
+      <button class="role-btn" id="roleOfficeBtn" onclick="setRole('office')">&#128188; Office</button>
     </div>
-    <div id="otherNameWrap" class="form-group" style="display:none">
-      <label>Enter Your Name</label>
-      <input type="text" id="otherName" placeholder="First Last"/>
+
+    <!-- Driver fields -->
+    <div id="driverFields">
+      <div class="form-group">
+        <label>Select Your Name</label>
+        <select id="loginDriver">
+          <option value="">-- Choose Driver --</option>
+          <option value="Brandon Hernandez|678">Brandon Hernandez - Truck #678</option>
+          <option value="Royce Russey|673">Royce Russey - Truck #673</option>
+          <option value="Jaime Cuevas|596">Jaime Cuevas - Truck #596</option>
+          <option value="Chris Thomas|598">Chris Thomas - Truck #598</option>
+          <option value="Chris Nelson|607">Chris Nelson - Truck #607</option>
+          <option value="Antonio Cadena|609">Antonio Cadena - Truck #609</option>
+          <option value="Armando Luna|597">Armando Luna - Truck #597</option>
+          <option value="Shamia Cottrell|661">Shamia Cottrell - Truck #661</option>
+          <option value="Clint Greenhouse|594">Clint Greenhouse - Truck #594</option>
+          <option value="Rigio Albarran|635">Rigio Albarran - Truck #635</option>
+          <option value="Christopher Gober|592">Christopher Gober - Truck #592</option>
+          <option value="Steve Lawrence|574">Steve Lawrence - Truck #574</option>
+          <option value="OTHER|">Other / Not Listed</option>
+        </select>
+      </div>
+      <div class="form-group" id="otherNameWrap" style="display:none">
+        <label>Enter Your Name</label>
+        <input type="text" id="otherName" placeholder="First Last"/>
+      </div>
+      <div class="form-group">
+        <label>Week Ending (Saturday)</label>
+        <input type="date" id="loginWeekEnding"/>
+      </div>
     </div>
-    <div class="form-group">
-      <label>Week Ending (Saturday)</label>
-      <input type="date" id="loginWeekEnding"/>
+
+    <!-- Office fields -->
+    <div id="officeFields" style="display:none">
+      <div class="form-group">
+        <label>Select Your Name</label>
+        <select id="loginOffice">
+          <option value="">-- Choose --</option>
+          <option value="Sharon Ruter|meiborg">Sharon Ruter (Meiborg)</option>
+          <option value="Mike Houston|meiborg">Mike Houston (Meiborg)</option>
+          <option value="Melissa Kiely|meiborg">Melissa Kiely (Meiborg)</option>
+          <option value="Kim Rote|geodis">Kim Rote (Geodis)</option>
+        </select>
+      </div>
     </div>
-    <button class="btn-primary" id="loginBtn" onclick="doLogin()">Start My Shift</button>
+
+    <!-- Password -->
+    <div class="form-group" id="pwGroup">
+      <label id="pwLabel">Password</label>
+      <input type="password" id="pwInput" placeholder="Enter password" autocomplete="current-password"/>
+      <p class="pw-hint" id="pwHint" style="display:none">&#9432; First time? This becomes your password.</p>
+    </div>
+    <div class="form-group" id="pwConfirmGroup" style="display:none">
+      <label>Confirm Password</label>
+      <input type="password" id="pwConfirm" placeholder="Re-enter password"/>
+    </div>
+
+    <div class="login-err" id="loginErr"></div>
+    <button class="btn-primary" id="loginBtn" onclick="doLogin()">&#9654; Start My Shift</button>
   </div>
 </div>
 
-<!-- MAIN APP SCREEN -->
+<!-- ═══════════════════════════════════════════════
+     DRIVER APP SCREEN
+═══════════════════════════════════════════════ -->
 <div id="appScreen" class="screen">
-  <div class="app-header">
-    <div class="header-driver">
-      <div class="app-header h2" id="headerName" style="font-size:15px;font-weight:700"></div>
-      <div class="sub" id="headerTruck"></div>
+  <div class="app-header" id="appHeader">
+    <div class="header-left">
+      <div class="header-name" id="headerName"></div>
+      <div class="header-sub" id="headerTruck"></div>
     </div>
     <button class="btn-logout" onclick="doLogout()">&#10006; Log Out</button>
   </div>
-
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('clock')" id="tab-clock">
-      <span class="tab-icon">&#9200;</span><span>Clock</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('stops')" id="tab-stops">
-      <span class="tab-icon">&#128205;</span><span>Stops</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('expenses')" id="tab-expenses">
-      <span class="tab-icon">&#128444;</span><span>Receipts</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('hours')" id="tab-hours">
-      <span class="tab-icon">&#128197;</span><span>Hours</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('submit')" id="tab-submit">
-      <span class="tab-icon">&#10004;</span><span>Submit</span>
-    </button>
+  <div class="tab-bar" id="driverTabBar">
+    <button class="tab-btn active" onclick="switchTab('clock')" id="tab-clock"><span class="tab-icon">&#9200;</span><span>Clock</span></button>
+    <button class="tab-btn" onclick="switchTab('stops')" id="tab-stops"><span class="tab-icon">&#128205;</span><span>Stops</span></button>
+    <button class="tab-btn" onclick="switchTab('expenses')" id="tab-expenses"><span class="tab-icon">&#128444;</span><span>Receipts</span></button>
+    <button class="tab-btn" onclick="switchTab('hours')" id="tab-hours"><span class="tab-icon">&#128197;</span><span>Hours</span></button>
+    <button class="tab-btn" onclick="switchTab('submit')" id="tab-submit"><span class="tab-icon">&#10004;</span><span>Submit</span></button>
   </div>
 
   <!-- CLOCK TAB -->
   <div class="tab-content" id="panel-clock">
-    <div class="clock-section">
+    <div class="card">
       <div class="clock-date" id="clockDate"></div>
       <div class="clock-display" id="clockDisplay">--:--:--</div>
-      <div class="clock-status out" id="clockStatus">NOT CLOCKED IN</div>
+      <div class="clock-wrap"><span class="clock-status out" id="clockStatus">NOT CLOCKED IN</span></div>
       <button class="btn-clock-in" id="clockBtn" onclick="toggleClock()">&#9654; CLOCK IN</button>
       <div class="clock-times" id="clockTimes" style="display:none">
-        <div class="clock-time-box">
-          <div class="label">Clocked In</div>
-          <div class="val" id="clockInDisplay">--</div>
-        </div>
-        <div class="clock-time-box">
-          <div class="label">Clocked Out</div>
-          <div class="val" id="clockOutDisplay">--</div>
-        </div>
+        <div class="clock-time-box"><div class="label">Clocked In</div><div class="val" id="clockInDisplay">--</div></div>
+        <div class="clock-time-box"><div class="label">Clocked Out</div><div class="val" id="clockOutDisplay">--</div></div>
       </div>
     </div>
-    <div class="stops-section" style="background:#fffbeb;border:1px solid #fde68a">
-      <div style="text-align:center;padding:8px 0">
-        <div style="font-size:12px;font-weight:700;color:#92400e">GPS TRACKING</div>
-        <div style="font-size:12px;color:#78350f;margin-top:4px" id="gpsStatusText">Tap Clock In to begin stop tracking</div>
-        <span class="gps-badge off" id="gpsBadge">OFF</span>
-      </div>
+    <div class="gps-banner">
+      <div style="font-size:12px;font-weight:700;color:#92400e">GPS TRACKING</div>
+      <div style="font-size:12px;color:#78350f;margin-top:3px" id="gpsStatusText">Tap Clock In to begin</div>
+      <span class="gps-badge off" id="gpsBadge">OFF</span>
     </div>
   </div>
 
   <!-- STOPS TAB -->
   <div class="tab-content" id="panel-stops" style="display:none">
-    <div class="stops-section">
+    <div class="card">
       <div class="section-hdr">
-        <h3>&#128205; Stop Log <span class="gps-badge" id="stopGpsBadge">OFF</span></h3>
+        <h3>&#128205; Stop Log <span class="gps-badge off" id="stopGpsBadge">OFF</span></h3>
         <button class="btn-add-stop" onclick="addManualStop()">+ Add Stop</button>
       </div>
-      <div id="stopsList"><p style="text-align:center;color:var(--muted);font-size:13px;padding:20px 0">No stops logged yet.<br>Clock in to start GPS tracking.</p></div>
+      <div id="stopsList"><p style="text-align:center;color:var(--muted);font-size:13px;padding:18px 0">No stops yet. Clock in to start GPS.</p></div>
     </div>
   </div>
 
   <!-- EXPENSES TAB -->
   <div class="tab-content" id="panel-expenses" style="display:none">
-    <div class="expense-section">
-      <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px">&#9981; Fuel Receipt</h3>
+    <div class="card">
+      <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px">&#9981; Fuel &amp; Toll Receipts</h3>
       <div class="exp-row">
-        <div class="exp-field">
-          <label>Fuel Total ($)</label>
-          <div class="exp-input-wrap"><span>$</span><input type="number" id="fuelAmt" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()"/></div>
-        </div>
-        <div class="exp-field">
-          <label>Tolls Total ($)</label>
-          <div class="exp-input-wrap"><span>$</span><input type="number" id="tollsAmt" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()"/></div>
-        </div>
+        <div class="exp-field"><label>Fuel Total ($)</label><div class="exp-input-wrap"><span>$</span><input type="number" id="fuelAmt" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()"/></div></div>
+        <div class="exp-field"><label>Tolls Total ($)</label><div class="exp-input-wrap"><span>$</span><input type="number" id="tollsAmt" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()"/></div></div>
       </div>
-      <label class="receipt-upload" for="receiptInput" id="receiptUploadArea">
+      <label class="receipt-upload" for="receiptInput">
         <input type="file" id="receiptInput" accept="image/*" capture="environment" multiple onchange="handleReceiptUpload(this.files)"/>
         <div class="receipt-icon">&#128247;</div>
         <p><strong>Take Photo or Upload Receipt</strong></p>
-        <p class="hint">Fuel &amp; toll receipts &#183; Auto-reads total</p>
+        <p class="hint">Auto-reads the total from the receipt</p>
       </label>
-      <div class="scanning-indicator" id="scanIndicator">
-        <div class="spinner"></div>
-        <span id="scanText">Reading receipt...</span>
-      </div>
+      <div class="scanning-indicator" id="scanIndicator"><div class="spinner"></div><span id="scanText">Reading receipt...</span></div>
       <div class="receipt-result" id="receiptResult"></div>
       <div class="receipt-preview" id="receiptPreview"></div>
     </div>
-    <div class="expense-section">
-      <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Total Expenses</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div style="background:var(--light-blue);border-radius:10px;padding:14px;text-align:center">
-          <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Fuel</div>
-          <div style="font-size:22px;font-weight:800;color:var(--navy)" id="fuelDisplay">$0.00</div>
-        </div>
-        <div style="background:var(--light-blue);border-radius:10px;padding:14px;text-align:center">
-          <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Tolls</div>
-          <div style="font-size:22px;font-weight:800;color:var(--navy)" id="tollsDisplay">$0.00</div>
-        </div>
+    <div class="card">
+      <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px">Total Expenses</h3>
+      <div class="exp-totals">
+        <div class="exp-total-box"><div class="etl">Fuel</div><div class="etv" id="fuelDisplay">$0.00</div></div>
+        <div class="exp-total-box"><div class="etl">Tolls</div><div class="etv" id="tollsDisplay">$0.00</div></div>
       </div>
     </div>
   </div>
 
   <!-- HOURS TAB -->
   <div class="tab-content" id="panel-hours" style="display:none">
-    <div class="hours-section">
+    <div class="card">
       <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px">Daily Hours (Sun - Thu)</h3>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Adjust if needed</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Adjust if needed</p>
       <div id="hoursGrid"></div>
     </div>
-    <div class="total-hours-badge">
-      <div class="th-label">Total Hours This Week</div>
-      <div class="th-val" id="totalHoursDisplay">0.00 hrs</div>
-      <div class="th-pay" id="totalPayDisplay"></div>
+    <div class="total-badge">
+      <div class="tbl">Total Hours This Week</div>
+      <div class="tbv" id="totalHoursDisplay">0.00 hrs</div>
+      <div class="tbp" id="totalPayDisplay"></div>
     </div>
   </div>
 
   <!-- SUBMIT TAB -->
   <div class="tab-content" id="panel-submit" style="display:none">
-    <div class="sig-section">
-      <div class="section-hdr">
-        <h3>&#9998; Driver Signature</h3>
-      </div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:8px">Sign with your finger to certify hours are correct</p>
-      <div class="sig-canvas-wrap">
-        <canvas id="sigCanvas" height="160"></canvas>
-        <div class="sig-hint" id="sigHint">Sign here</div>
-      </div>
-      <div class="sig-controls">
-        <button class="btn-clear-sig" onclick="clearSig()">&#10005; Clear Signature</button>
-      </div>
+    <div class="card">
+      <div class="section-hdr"><h3>&#9998; Driver Signature</h3></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:6px">Sign to certify your hours are correct</p>
+      <div class="sig-canvas-wrap"><canvas id="sigCanvas" height="150"></canvas><div class="sig-hint" id="sigHint">Sign here</div></div>
+      <button class="btn-clear-sig" onclick="clearSig()">&#10005; Clear Signature</button>
     </div>
-    <div class="notes-section">
+    <div class="card">
       <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px">&#128221; Notes</h3>
-      <textarea id="notesField" rows="3" placeholder="Any corrections, issues, or extra info..."></textarea>
+      <textarea class="notes-ta" id="notesField" rows="3" placeholder="Any corrections, issues, or extra info..."></textarea>
     </div>
-    <div class="submit-section">
+    <div style="padding:0 0 28px">
       <button class="btn-submit" id="submitBtn" onclick="submitTimesheet()">&#10003; Submit Timesheet</button>
       <div class="msg" id="submitMsg"></div>
-      <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px">Submits directly to the Geodis billing sheet</p>
+      <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:9px">Submits to the Geodis billing sheet</p>
     </div>
   </div>
 </div>
-<script>
-const WEBHOOK = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-timesheet';
-const RATE = 76.50;
-const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday'];
-const DAY_KEYS = ['sun','mon','tue','wed','thu'];
 
-let state = {
-  driver: '', truck: '', weekEnding: '',
-  clockedIn: false, clockInTime: null, clockOutTime: null,
-  stops: [],
-  fuelAmt: 0, tollsAmt: 0,
-  receiptImages: [],
-  gpsWatchId: null, gpsActive: false
+<!-- ═══════════════════════════════════════════════
+     OFFICE DASHBOARD SCREEN
+═══════════════════════════════════════════════ -->
+<div id="dashScreen" class="screen">
+  <div class="dash-header" id="dashHeader">
+    <div>
+      <div class="dsub" id="dashOrgLabel"></div>
+      <h1 id="dashUserName"></h1>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">&#10006; Log Out</button>
+  </div>
+  <div class="dash-content">
+    <button class="refresh-btn" onclick="refreshDashboard()">&#8635; Refresh</button>
+    <div class="last-updated" id="lastUpdated">Loading...</div>
+
+    <!-- Summary stats -->
+    <div class="dash-stats">
+      <div class="stat-box"><div class="sv" id="statActive">--</div><div class="sl">Active Now</div></div>
+      <div class="stat-box"><div class="sv" id="statTotal">--</div><div class="sl">Drivers Today</div></div>
+      <div class="stat-box"><div class="sv" id="statHours">--</div><div class="sl">Total Hrs</div></div>
+    </div>
+
+    <!-- Live Map -->
+    <div class="dash-section-title">&#127758; Live Driver Locations</div>
+    <div class="map-container">
+      <div id="dashMap">
+        <div class="map-placeholder" id="mapPlaceholder">
+          <div class="mp-icon">&#128205;</div>
+          <p>Loading map...</p>
+          <p style="font-size:11px;color:var(--muted)">GPS positions update when drivers clock in</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Driver cards -->
+    <div class="dash-section-title">&#128665; Driver Status</div>
+    <div id="driverCards"><p style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Loading driver data...</p></div>
+  </div>
+</div>
+<script>
+// ════════════════════════════════════════════════════════
+//  CONSTANTS & CONFIG
+// ════════════════════════════════════════════════════════
+const WEBHOOK      = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-timesheet';
+const STATUS_HOOK  = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-driver-status';   // new n8n endpoint for status pings
+const POLL_HOOK    = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-dashboard-data';  // new n8n endpoint for dashboard pull
+const RATE         = 76.50;
+const DAYS         = ['Sunday','Monday','Tuesday','Wednesday','Thursday'];
+const DAY_KEYS     = ['sun','mon','tue','wed','thu'];
+
+const OFFICE_USERS = {
+  'Sharon Ruter':  { org:'meiborg', role:'office' },
+  'Mike Houston':  { org:'meiborg', role:'office' },
+  'Melissa Kiely': { org:'meiborg', role:'office' },
+  'Kim Rote':      { org:'geodis',  role:'office' }
 };
 
-// ── LIVE CLOCK ──────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  APP STATE
+// ════════════════════════════════════════════════════════
+let state = {
+  role:'driver', driver:'', truck:'', org:'meiborg', weekEnding:'',
+  clockedIn:false, clockInTime:null, clockOutTime:null,
+  stops:[], fuelAmt:0, tollsAmt:0, receiptImages:[],
+  gpsWatchId:null, gpsActive:false, statusInterval:null,
+  currentLat:null, currentLng:null
+};
+
+let currentRole = 'driver'; // 'driver' or 'office'
+
+// ════════════════════════════════════════════════════════
+//  LIVE CLOCK
+// ════════════════════════════════════════════════════════
 setInterval(() => {
-  const now = new Date();
   const d = document.getElementById('clockDisplay');
-  if (d) {
-    let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    h = h % 12 || 12;
-    d.textContent = pad(h) + ':' + pad(m) + ':' + pad(s) + ' ' + ampm;
-  }
+  if (!d) return;
+  const now = new Date();
+  let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  d.textContent = pad(h)+':'+pad(m)+':'+pad(s)+' '+ampm;
   const cd = document.getElementById('clockDate');
   if (cd) cd.textContent = now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
 }, 1000);
 
 function pad(n){ return n < 10 ? '0'+n : ''+n; }
 
-// ── LOGIN ────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  ROLE TOGGLE
+// ════════════════════════════════════════════════════════
+function setRole(r) {
+  currentRole = r;
+  document.getElementById('driverFields').style.display  = r === 'driver' ? 'block' : 'none';
+  document.getElementById('officeFields').style.display  = r === 'office' ? 'block' : 'none';
+  document.getElementById('roleDriverBtn').classList.toggle('active', r === 'driver');
+  document.getElementById('roleOfficeBtn').classList.toggle('active', r === 'office');
+  document.getElementById('logoBadge').className = r === 'office' ? 'logo-badge' : 'logo-badge';
+  document.getElementById('loginBtn').textContent = r === 'driver' ? '▶ Start My Shift' : '▶ Open Dashboard';
+  checkFirstTime();
+}
+
+// ════════════════════════════════════════════════════════
+//  PASSWORD HELPERS
+// ════════════════════════════════════════════════════════
+function pwKey(name) { return 'mlam_pw_' + name.toLowerCase().replace(/\s+/g,'_'); }
+
+function hasPassword(name) { return !!localStorage.getItem(pwKey(name)); }
+
+function checkFirstTime() {
+  const name = selectedName();
+  if (!name) { document.getElementById('pwHint').style.display='none'; document.getElementById('pwConfirmGroup').style.display='none'; return; }
+  const first = !hasPassword(name);
+  document.getElementById('pwHint').style.display = first ? 'block' : 'none';
+  document.getElementById('pwConfirmGroup').style.display = first ? 'block' : 'none';
+  document.getElementById('pwLabel').textContent = first ? 'Create Password' : 'Password';
+}
+
+function selectedName() {
+  if (currentRole === 'driver') {
+    const sel = document.getElementById('loginDriver');
+    if (!sel.value) return '';
+    const parts = sel.value.split('|');
+    return parts[0] === 'OTHER' ? document.getElementById('otherName').value.trim() : parts[0];
+  } else {
+    const sel = document.getElementById('loginOffice');
+    if (!sel.value) return '';
+    return sel.value.split('|')[0];
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  LOGIN
+// ════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  const sel = document.getElementById('loginDriver');
-  sel.addEventListener('change', () => {
-    document.getElementById('otherNameWrap').style.display = sel.value === 'OTHER|' ? 'block' : 'none';
+  // Wire up change listeners
+  document.getElementById('loginDriver').addEventListener('change', () => {
+    const v = document.getElementById('loginDriver').value;
+    document.getElementById('otherNameWrap').style.display = v === 'OTHER|' ? 'block' : 'none';
+    checkFirstTime();
   });
-  // Default week ending to next Saturday
-  const dt = new Date();
-  const dy = dt.getDay();
+  document.getElementById('loginOffice').addEventListener('change', () => {
+    const sel = document.getElementById('loginOffice');
+    const org = sel.value.split('|')[1] || 'meiborg';
+    document.getElementById('logoBadge').className = org === 'geodis' ? 'logo-badge geodis-badge' : 'logo-badge';
+    checkFirstTime();
+  });
+  document.getElementById('otherName').addEventListener('input', checkFirstTime);
+
+  // Default week ending
+  const dt = new Date(), dy = dt.getDay();
   const diff = (6 - dy + 7) % 7 || 7;
   dt.setDate(dt.getDate() + diff);
   document.getElementById('loginWeekEnding').value = dt.toISOString().slice(0,10);
+
   buildHoursGrid();
   initSigCanvas();
 });
 
 function doLogin() {
-  const sel = document.getElementById('loginDriver');
-  if (!sel.value) { alert('Please select your name.'); return; }
+  const errEl = document.getElementById('loginErr');
+  errEl.classList.remove('show');
+
+  const name = selectedName();
+  if (!name) { showErr('Please select your name.'); return; }
+
+  const pw    = document.getElementById('pwInput').value;
+  const pwc   = document.getElementById('pwConfirm').value;
+  if (!pw)    { showErr('Please enter a password.'); return; }
+
+  const key   = pwKey(name);
+  const stored = localStorage.getItem(key);
+
+  if (!stored) {
+    // First time — set password
+    if (pw.length < 4) { showErr('Password must be at least 4 characters.'); return; }
+    if (pw !== pwc)    { showErr('Passwords do not match.'); return; }
+    localStorage.setItem(key, btoa(pw));
+  } else {
+    if (btoa(pw) !== stored) { showErr('Incorrect password.'); return; }
+  }
+
+  // Successful login
+  document.getElementById('pwInput').value   = '';
+  document.getElementById('pwConfirm').value = '';
+
+  if (currentRole === 'office') {
+    launchDashboard(name);
+  } else {
+    launchDriverApp(name);
+  }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('loginErr');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+// ════════════════════════════════════════════════════════
+//  LAUNCH DRIVER APP
+// ════════════════════════════════════════════════════════
+function launchDriverApp(name) {
+  const sel   = document.getElementById('loginDriver');
   const parts = sel.value.split('|');
-  state.driver = parts[0] === 'OTHER' ? document.getElementById('otherName').value.trim() : parts[0];
-  state.truck = parts[1] || '';
+  state.driver = name;
+  state.truck  = parts[0] === 'OTHER' ? '' : (parts[1] || '');
   state.weekEnding = document.getElementById('loginWeekEnding').value;
-  if (!state.driver) { alert('Please enter your name.'); return; }
+  state.org = 'meiborg';
+
+  document.getElementById('headerName').textContent  = name;
+  document.getElementById('headerTruck').textContent = state.truck ? 'Truck #' + state.truck : '';
   document.getElementById('loginScreen').classList.remove('active');
   document.getElementById('appScreen').classList.add('active');
-  document.getElementById('headerName').textContent = state.driver;
-  document.getElementById('headerTruck').textContent = state.truck ? 'Truck #' + state.truck : '';
   switchTab('clock');
 }
 
+// ════════════════════════════════════════════════════════
+//  LAUNCH DASHBOARD
+// ════════════════════════════════════════════════════════
+function launchDashboard(name) {
+  const sel = document.getElementById('loginOffice');
+  const org = sel.value.split('|')[1] || 'meiborg';
+  const isGeodis = org === 'geodis';
+
+  document.getElementById('dashHeader').className = 'dash-header' + (isGeodis ? ' geodis-dash' : '');
+  document.getElementById('dashUserName').textContent = name;
+  document.getElementById('dashOrgLabel').textContent = isGeodis ? 'Geodis Logistics Dashboard' : 'Meiborg Operations Dashboard';
+
+  document.getElementById('loginScreen').classList.remove('active');
+  document.getElementById('dashScreen').classList.add('active');
+  refreshDashboard();
+}
+
 function doLogout() {
-  if (state.clockedIn) {
-    if (!confirm('You are still clocked in. Log out anyway?')) return;
-    stopGPS();
-  }
-  state = { driver:'', truck:'', weekEnding:'', clockedIn:false, clockInTime:null, clockOutTime:null, stops:[], fuelAmt:0, tollsAmt:0, receiptImages:[], gpsWatchId:null, gpsActive:false };
+  if (state.clockedIn && !confirm('You are still clocked in. Log out anyway?')) return;
+  stopGPS();
+  if (state.statusInterval) { clearInterval(state.statusInterval); state.statusInterval = null; }
+  state = { role:'driver', driver:'', truck:'', org:'meiborg', weekEnding:'',
+    clockedIn:false, clockInTime:null, clockOutTime:null,
+    stops:[], fuelAmt:0, tollsAmt:0, receiptImages:[],
+    gpsWatchId:null, gpsActive:false, statusInterval:null,
+    currentLat:null, currentLng:null };
   document.getElementById('appScreen').classList.remove('active');
+  document.getElementById('dashScreen').classList.remove('active');
   document.getElementById('loginScreen').classList.add('active');
   document.getElementById('loginDriver').value = '';
+  document.getElementById('loginOffice').value = '';
   document.getElementById('clockBtn').className = 'btn-clock-in';
   document.getElementById('clockBtn').innerHTML = '&#9654; CLOCK IN';
   document.getElementById('clockStatus').className = 'clock-status out';
   document.getElementById('clockStatus').textContent = 'NOT CLOCKED IN';
   document.getElementById('clockTimes').style.display = 'none';
-  document.getElementById('stopsList').innerHTML = '<p style="text-align:center;color:var(--muted);font-size:13px;padding:20px 0">No stops logged yet.<br>Clock in to start GPS tracking.</p>';
+  document.getElementById('stopsList').innerHTML = '<p style="text-align:center;color:var(--muted);font-size:13px;padding:18px 0">No stops yet. Clock in to start GPS.</p>';
+  document.getElementById('loginErr').classList.remove('show');
   clearSig();
 }
 
-// ── TABS ─────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  DRIVER TABS
+// ════════════════════════════════════════════════════════
 function switchTab(name) {
   ['clock','stops','expenses','hours','submit'].forEach(t => {
     document.getElementById('panel-'+t).style.display = t === name ? 'block' : 'none';
     document.getElementById('tab-'+t).classList.toggle('active', t === name);
   });
-  if (name === 'hours') calcTotalHours();
-  if (name === 'submit') setTimeout(resizeSigCanvas, 100);
+  if (name === 'hours')  calcTotalHours();
+  if (name === 'submit') setTimeout(resizeSigCanvas, 80);
 }
 
-// ── CLOCK IN / OUT ───────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  CLOCK IN / OUT
+// ════════════════════════════════════════════════════════
 function toggleClock() {
   if (!state.clockedIn) {
-    state.clockedIn = true;
+    state.clockedIn   = true;
     state.clockInTime = new Date();
-    const display = fmtTime12(state.clockInTime);
-    document.getElementById('clockInDisplay').textContent = display;
+    document.getElementById('clockInDisplay').textContent  = fmtTime12(state.clockInTime);
     document.getElementById('clockOutDisplay').textContent = '--';
-    document.getElementById('clockTimes').style.display = 'grid';
-    document.getElementById('clockStatus').className = 'clock-status in';
-    document.getElementById('clockStatus').textContent = 'CLOCKED IN';
-    document.getElementById('clockBtn').className = 'btn-clock-out';
-    document.getElementById('clockBtn').innerHTML = '&#9646;&#9646; CLOCK OUT';
-    // Auto-set today's start time in hours grid
+    document.getElementById('clockTimes').style.display    = 'grid';
+    document.getElementById('clockStatus').className       = 'clock-status in';
+    document.getElementById('clockStatus').textContent     = 'CLOCKED IN';
+    document.getElementById('clockBtn').className          = 'btn-clock-out';
+    document.getElementById('clockBtn').innerHTML          = '&#9646;&#9646; CLOCK OUT';
     const dayIdx = new Date().getDay();
-    const key = DAY_KEYS[dayIdx < 5 ? dayIdx : 0];
-    const sel = document.querySelector('[name="' + key + 'Start"]');
-    if (sel) { const v = timeToVal(state.clockInTime); setSelectClosest(sel, v); }
+    const key    = DAY_KEYS[dayIdx <= 4 ? dayIdx : 0];
+    const sel    = document.querySelector('[name="'+key+'Start"]');
+    if (sel) setSelectClosest(sel, timeToVal(state.clockInTime));
     startGPS();
     document.getElementById('gpsStatusText').textContent = 'Tracking your stops...';
     document.getElementById('gpsBadge').className = 'gps-badge';
     document.getElementById('gpsBadge').textContent = 'ON';
+    // Periodic status ping every 3 min
+    state.statusInterval = setInterval(pushStatusPing, 180000);
+    pushStatusPing();
   } else {
-    state.clockedIn = false;
+    state.clockedIn    = false;
     state.clockOutTime = new Date();
-    const display = fmtTime12(state.clockOutTime);
-    document.getElementById('clockOutDisplay').textContent = display;
-    document.getElementById('clockStatus').className = 'clock-status out';
-    document.getElementById('clockStatus').textContent = 'CLOCKED OUT';
-    document.getElementById('clockBtn').className = 'btn-clock-in';
-    document.getElementById('clockBtn').innerHTML = '&#9654; CLOCK IN AGAIN';
-    // Auto-set today's end time
+    document.getElementById('clockOutDisplay').textContent = fmtTime12(state.clockOutTime);
+    document.getElementById('clockStatus').className       = 'clock-status out';
+    document.getElementById('clockStatus').textContent     = 'CLOCKED OUT';
+    document.getElementById('clockBtn').className          = 'btn-clock-in';
+    document.getElementById('clockBtn').innerHTML          = '&#9654; CLOCK IN AGAIN';
     const dayIdx = new Date().getDay();
-    const key = DAY_KEYS[dayIdx < 5 ? dayIdx : 0];
-    const sel = document.querySelector('[name="' + key + 'End"]');
-    if (sel) { const v = timeToVal(state.clockOutTime); setSelectClosest(sel, v); }
+    const key    = DAY_KEYS[dayIdx <= 4 ? dayIdx : 0];
+    const sel    = document.querySelector('[name="'+key+'End"]');
+    if (sel) setSelectClosest(sel, timeToVal(state.clockOutTime));
     stopGPS();
-    document.getElementById('gpsStatusText').textContent = 'GPS stopped. ' + state.stops.length + ' stop(s) recorded.';
+    document.getElementById('gpsStatusText').textContent = 'GPS stopped. ' + state.stops.length + ' stop(s) logged.';
     document.getElementById('gpsBadge').className = 'gps-badge off';
     document.getElementById('gpsBadge').textContent = 'OFF';
+    if (state.statusInterval) { clearInterval(state.statusInterval); state.statusInterval = null; }
+    pushStatusPing();
   }
 }
 
@@ -461,15 +694,17 @@ function fmtTime12(d) {
 }
 
 function timeToVal(d) {
-  return pad(d.getHours()) + ':' + pad(Math.round(d.getMinutes()/15)*15 === 60 ? pad(d.getHours()+1) + ':00' : pad(Math.round(d.getMinutes()/15)*15));
+  const mins = Math.round(d.getMinutes() / 15) * 15;
+  const h = mins === 60 ? d.getHours() + 1 : d.getHours();
+  const m = mins === 60 ? 0 : mins;
+  return pad(h) + ':' + pad(m);
 }
 
 function setSelectClosest(sel, val) {
-  const opts = Array.from(sel.options);
-  let best = null, bestDiff = Infinity;
   const [th, tm] = val.split(':').map(Number);
   const target = th * 60 + tm;
-  opts.forEach(o => {
+  let best = null, bestDiff = Infinity;
+  Array.from(sel.options).forEach(o => {
     if (!o.value) return;
     const [oh, om] = o.value.split(':').map(Number);
     const diff = Math.abs((oh * 60 + om) - target);
@@ -478,181 +713,160 @@ function setSelectClosest(sel, val) {
   if (best) sel.value = best;
 }
 
-// ── GPS / STOPS ──────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  STATUS PING  (sends current position to n8n for dashboard)
+// ════════════════════════════════════════════════════════
+function pushStatusPing() {
+  const hours = calcWeekHours();
+  const payload = {
+    type: 'status_ping',
+    driverName: state.driver,
+    truckNumber: state.truck,
+    clockedIn: state.clockedIn,
+    clockInTime: state.clockInTime ? state.clockInTime.toISOString() : null,
+    clockOutTime: state.clockOutTime ? state.clockOutTime.toISOString() : null,
+    weekHours: hours,
+    fuel: state.fuelAmt,
+    tolls: state.tollsAmt,
+    stopCount: state.stops.length,
+    lastStop: state.stops.length ? state.stops[state.stops.length-1] : null,
+    lat: state.currentLat,
+    lng: state.currentLng,
+    weekEnding: state.weekEnding,
+    ts: new Date().toISOString()
+  };
+  fetch(STATUS_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).catch(()=>{});
+}
+
+function calcWeekHours() {
+  let total = 0;
+  DAY_KEYS.forEach(k => {
+    const s = document.querySelector('[name="'+k+'Start"]');
+    const e = document.querySelector('[name="'+k+'End"]');
+    if (!s||!e||!s.value||!e.value) return;
+    const [sh,sm] = s.value.split(':').map(Number);
+    const [eh,em] = e.value.split(':').map(Number);
+    const h = ((eh*60+em)-(sh*60+sm))/60;
+    if (h > 0) total += h;
+  });
+  return parseFloat(total.toFixed(2));
+}
+
+// ════════════════════════════════════════════════════════
+//  GPS / STOPS
+// ════════════════════════════════════════════════════════
 function startGPS() {
-  if (!navigator.geolocation) {
-    document.getElementById('gpsStatusText').textContent = 'GPS not available on this device';
-    return;
-  }
+  if (!navigator.geolocation) { document.getElementById('gpsStatusText').textContent = 'GPS unavailable'; return; }
   state.gpsActive = true;
   document.getElementById('stopGpsBadge').className = 'gps-badge';
   document.getElementById('stopGpsBadge').textContent = 'LIVE';
-  // Log first stop (clock-in location)
   navigator.geolocation.getCurrentPosition(pos => {
+    state.currentLat = pos.coords.latitude;
+    state.currentLng = pos.coords.longitude;
     addStop(pos.coords.latitude, pos.coords.longitude, 'Clock-In Location');
   }, () => addStop(null, null, 'Clock-In (GPS unavailable)'));
 
-  // Watch position - log a stop when driver stays put > 3 min or moves significantly
-  let lastLat = null, lastLng = null, lastMoveTime = Date.now();
-  const MIN_DIST = 0.0005; // ~50 meters
-  const DWELL_MS = 180000; // 3 minutes dwell = new stop
-
+  let lastLat=null, lastLng=null, lastMoveTime=Date.now();
+  const MIN_DIST=0.0005, DWELL_MS=180000;
   state.gpsWatchId = navigator.geolocation.watchPosition(pos => {
-    const lat = pos.coords.latitude, lng = pos.coords.longitude;
-    if (lastLat === null) { lastLat = lat; lastLng = lng; return; }
-    const dist = Math.sqrt(Math.pow(lat - lastLat, 2) + Math.pow(lng - lastLng, 2));
-    if (dist > MIN_DIST) { lastLat = lat; lastLng = lng; lastMoveTime = Date.now(); }
-    else if (Date.now() - lastMoveTime > DWELL_MS) {
+    const lat=pos.coords.latitude, lng=pos.coords.longitude;
+    state.currentLat = lat; state.currentLng = lng;
+    if (lastLat===null) { lastLat=lat; lastLng=lng; return; }
+    const dist = Math.sqrt(Math.pow(lat-lastLat,2)+Math.pow(lng-lastLng,2));
+    if (dist > MIN_DIST) { lastLat=lat; lastLng=lng; lastMoveTime=Date.now(); }
+    else if (Date.now()-lastMoveTime > DWELL_MS) {
       addStop(lat, lng, null);
-      lastLat = lat; lastLng = lng; lastMoveTime = Date.now();
+      lastLat=lat; lastLng=lng; lastMoveTime=Date.now();
     }
-  }, null, { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 });
+  }, null, {enableHighAccuracy:true, maximumAge:10000, timeout:15000});
 }
 
 function stopGPS() {
   state.gpsActive = false;
-  if (state.gpsWatchId !== null) {
-    navigator.geolocation.clearWatch(state.gpsWatchId);
-    state.gpsWatchId = null;
-  }
-  // Log clock-out location
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      addStop(pos.coords.latitude, pos.coords.longitude, 'Clock-Out Location');
-    }, () => {});
-  }
+  if (state.gpsWatchId!==null) { navigator.geolocation.clearWatch(state.gpsWatchId); state.gpsWatchId=null; }
+  if (navigator.geolocation) navigator.geolocation.getCurrentPosition(pos => addStop(pos.coords.latitude, pos.coords.longitude, 'Clock-Out Location'), ()=>{});
   document.getElementById('stopGpsBadge').className = 'gps-badge off';
   document.getElementById('stopGpsBadge').textContent = 'OFF';
 }
 
 function addStop(lat, lng, label) {
   const now = new Date();
-  const stop = {
-    id: Date.now(),
-    time: fmtTime12(now),
-    timestamp: now.toISOString(),
-    lat: lat, lng: lng,
-    label: label || null,
-    address: lat ? 'Fetching address...' : 'Location unavailable'
-  };
+  const stop = { id:Date.now(), time:fmtTime12(now), timestamp:now.toISOString(), lat, lng, label:label||null, address: lat ? 'Fetching address...' : 'Location unavailable' };
   state.stops.push(stop);
   renderStops();
-  // Reverse geocode
   if (lat) {
-    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng)
-      .then(r => r.json())
+    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat='+lat+'&lon='+lng)
+      .then(r=>r.json())
       .then(d => {
-        const idx = state.stops.findIndex(s => s.id === stop.id);
-        if (idx >= 0) {
-          state.stops[idx].address = d.display_name ? d.display_name.split(',').slice(0,3).join(', ') : lat.toFixed(5)+','+lng.toFixed(5);
-          renderStops();
-        }
-      })
-      .catch(() => {
-        const idx = state.stops.findIndex(s => s.id === stop.id);
-        if (idx >= 0) { state.stops[idx].address = lat.toFixed(5)+', '+lng.toFixed(5); renderStops(); }
+        const idx = state.stops.findIndex(s=>s.id===stop.id);
+        if (idx>=0) { state.stops[idx].address = d.display_name ? d.display_name.split(',').slice(0,3).join(', ') : lat.toFixed(5)+','+lng.toFixed(5); renderStops(); }
+      }).catch(()=>{
+        const idx=state.stops.findIndex(s=>s.id===stop.id);
+        if(idx>=0){ state.stops[idx].address=lat.toFixed(5)+', '+lng.toFixed(5); renderStops(); }
       });
   }
 }
 
 function addManualStop() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      addStop(pos.coords.latitude, pos.coords.longitude, 'Manual Stop');
-    }, () => addStop(null, null, 'Manual Stop (no GPS)'));
-  } else {
-    addStop(null, null, 'Manual Stop');
-  }
+  if (navigator.geolocation) navigator.geolocation.getCurrentPosition(pos=>addStop(pos.coords.latitude,pos.coords.longitude,'Manual Stop'),()=>addStop(null,null,'Manual Stop'));
+  else addStop(null,null,'Manual Stop');
 }
 
-function deleteStop(id) {
-  state.stops = state.stops.filter(s => s.id !== id);
-  renderStops();
-}
+function deleteStop(id) { state.stops=state.stops.filter(s=>s.id!==id); renderStops(); }
 
 function renderStops() {
   const el = document.getElementById('stopsList');
-  if (!state.stops.length) {
-    el.innerHTML = '<p style="text-align:center;color:var(--muted);font-size:13px;padding:20px 0">No stops logged yet.</p>';
-    return;
-  }
-  el.innerHTML = state.stops.map((s, i) => `
-    <div class="stop-item">
-      <div class="stop-num">${i+1}</div>
-      <div class="stop-info">
-        <div class="stop-time">${s.time}${s.label ? ' &mdash; <em>' + s.label + '</em>' : ''}</div>
-        <div class="stop-addr">${s.address || ''}</div>
-      </div>
-      <button class="stop-del" onclick="deleteStop(${s.id})">&#10005;</button>
-    </div>`).join('');
+  if (!state.stops.length) { el.innerHTML='<p style="text-align:center;color:var(--muted);font-size:13px;padding:18px 0">No stops yet.</p>'; return; }
+  el.innerHTML = state.stops.map((s,i) => `<div class="stop-item">
+    <div class="stop-num">${i+1}</div>
+    <div class="stop-info">
+      <div class="stop-time">${s.time}${s.label?' &mdash; <em>'+s.label+'</em>':''}</div>
+      <div class="stop-addr">${s.address||''}</div>
+    </div>
+    <button class="stop-del" onclick="deleteStop(${s.id})">&#10005;</button>
+  </div>`).join('');
 }
 
-// ── RECEIPT SCAN (OCR) ───────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  RECEIPT OCR
+// ════════════════════════════════════════════════════════
 const receiptFiles = [];
 
 function handleReceiptUpload(files) {
   if (!files.length) return;
-  const ind = document.getElementById('scanIndicator');
-  const res = document.getElementById('receiptResult');
-  ind.classList.add('visible');
-  res.classList.remove('visible');
-
-  let pending = files.length;
-  let totalDetected = 0;
-  let type = 'fuel'; // default; user can type override
+  const ind=document.getElementById('scanIndicator'), res=document.getElementById('receiptResult');
+  ind.classList.add('visible'); res.classList.remove('visible');
+  let pending=files.length;
 
   Array.from(files).forEach(file => {
-    const reader = new FileReader();
+    const reader=new FileReader();
     reader.onload = e => {
-      // Show thumbnail
-      const img = document.createElement('img');
-      const wrap = document.createElement('div');
-      const btn = document.createElement('button');
-      wrap.className = 'receipt-thumb';
-      img.src = e.target.result;
-      btn.className = 'remove-thumb';
-      btn.innerHTML = '&#10005;';
-      const idx = receiptFiles.push({ src: e.target.result, file }) - 1;
-      btn.onclick = () => { receiptFiles.splice(idx,1); wrap.remove(); };
-      wrap.appendChild(img);
-      wrap.appendChild(btn);
+      const wrap=document.createElement('div'), img=document.createElement('img'), btn=document.createElement('button');
+      wrap.className='receipt-thumb'; img.src=e.target.result;
+      btn.className='remove-thumb'; btn.innerHTML='&#10005;';
+      const idx=receiptFiles.push({src:e.target.result,file})-1;
+      btn.onclick=()=>{ receiptFiles.splice(idx,1); wrap.remove(); };
+      wrap.appendChild(img); wrap.appendChild(btn);
       document.getElementById('receiptPreview').appendChild(wrap);
       state.receiptImages.push(e.target.result);
 
-      // OCR via Tesseract CDN
       if (window.Tesseract) {
-        document.getElementById('scanText').textContent = 'Reading receipt ' + (receiptFiles.length) + '...';
-        Tesseract.recognize(e.target.result, 'eng', { logger: () => {} })
-          .then(({ data: { text } }) => {
-            const amt = extractTotal(text);
-            if (amt > 0) {
-              totalDetected += amt;
-              const isToll = /toll|plaza|e-zpass|turnpike|i-pass/i.test(text);
-              if (isToll) {
-                state.tollsAmt = parseFloat((state.tollsAmt + amt).toFixed(2));
-                document.getElementById('tollsAmt').value = state.tollsAmt;
-              } else {
-                state.fuelAmt = parseFloat((state.fuelAmt + amt).toFixed(2));
-                document.getElementById('fuelAmt').value = state.fuelAmt;
-              }
+        document.getElementById('scanText').textContent='Reading receipt '+(receiptFiles.length)+'...';
+        Tesseract.recognize(e.target.result,'eng',{logger:()=>{}})
+          .then(({data:{text}}) => {
+            const amt=extractTotal(text);
+            if (amt>0) {
+              const isToll=/toll|plaza|e-zpass|turnpike|i-pass/i.test(text);
+              if (isToll) { state.tollsAmt=parseFloat((state.tollsAmt+amt).toFixed(2)); document.getElementById('tollsAmt').value=state.tollsAmt; }
+              else        { state.fuelAmt =parseFloat((state.fuelAmt +amt).toFixed(2)); document.getElementById('fuelAmt').value =state.fuelAmt; }
               calcTotal();
-              res.className = 'receipt-result visible';
-              res.textContent = '&#10003; Detected ' + (isToll ? 'toll' : 'fuel') + ' amount: $' + amt.toFixed(2) + '. Totals updated!';
+              res.className='receipt-result visible';
+              res.textContent='✓ Detected '+(isToll?'toll':'fuel')+' amount: $'+amt.toFixed(2)+'. Total updated!';
             }
-            pending--;
-            if (pending <= 0) ind.classList.remove('visible');
-          })
-          .catch(() => { pending--; if (pending <= 0) ind.classList.remove('visible'); });
+            pending--; if(pending<=0) ind.classList.remove('visible');
+          }).catch(()=>{ pending--; if(pending<=0) ind.classList.remove('visible'); });
       } else {
-        pending--;
-        if (pending <= 0) {
-          ind.classList.remove('visible');
-          res.className = 'receipt-result visible';
-          res.style.background = '#fef3c7';
-          res.style.borderColor = '#fde68a';
-          res.style.color = '#92400e';
-          res.textContent = 'Receipt saved. Enter amount manually above (OCR loading...).';
-        }
+        pending--; if(pending<=0){ ind.classList.remove('visible'); res.className='receipt-result visible'; res.style.background='#fef3c7'; res.style.borderColor='#fde68a'; res.style.color='#92400e'; res.textContent='Receipt saved. Please enter the amount above.'; }
       }
     };
     reader.readAsDataURL(file);
@@ -660,188 +874,244 @@ function handleReceiptUpload(files) {
 }
 
 function extractTotal(text) {
-  // Look for dollar amounts with keywords like Total, Amount, Sale
-  const lines = text.split('\n');
-  let best = 0;
-  const patterns = [
-    /total[^\d]*(\d+\.\d{2})/i,
-    /amount[^\d]*(\d+\.\d{2})/i,
-    /sale[^\d]*(\d+\.\d{2})/i,
-    /\$(\d+\.\d{2})/,
-    /(\d+\.\d{2})/
-  ];
+  const lines=text.split('\n'); let best=0;
+  const patterns=[/total[^\d]*(\d+\.\d{2})/i,/amount[^\d]*(\d+\.\d{2})/i,/sale[^\d]*(\d+\.\d{2})/i,/\$(\d+\.\d{2})/,/(\d+\.\d{2})/];
   for (const line of lines) {
     for (const pat of patterns) {
-      const m = line.match(pat);
-      if (m) {
-        const val = parseFloat(m[1]);
-        if (val > best && val < 2000) best = val;
-        break;
-      }
+      const m=line.match(pat); if(m){ const v=parseFloat(m[1]); if(v>best&&v<2000){best=v;break;} }
     }
   }
   return best;
 }
 
 function calcTotal() {
-  const f = parseFloat(document.getElementById('fuelAmt').value) || 0;
-  const t = parseFloat(document.getElementById('tollsAmt').value) || 0;
-  state.fuelAmt = f; state.tollsAmt = t;
-  document.getElementById('fuelDisplay').textContent = '$' + f.toFixed(2);
-  document.getElementById('tollsDisplay').textContent = '$' + t.toFixed(2);
+  const f=parseFloat(document.getElementById('fuelAmt').value)||0;
+  const t=parseFloat(document.getElementById('tollsAmt').value)||0;
+  state.fuelAmt=f; state.tollsAmt=t;
+  document.getElementById('fuelDisplay').textContent='$'+f.toFixed(2);
+  document.getElementById('tollsDisplay').textContent='$'+t.toFixed(2);
 }
 
-// ── HOURS GRID ───────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  HOURS GRID
+// ════════════════════════════════════════════════════════
 function buildTimeOptions(sel) {
-  let o = '<option value="">No work</option>';
-  for (let h = 4; h <= 23; h++) {
-    for (let m = 0; m < 60; m += 15) {
-      const hh = h % 12 || 12, ampm = h < 12 ? 'AM' : 'PM';
-      const val = pad(h) + ':' + pad(m);
-      const lbl = hh + ':' + pad(m) + ' ' + ampm;
-      o += '<option value="' + val + '"' + (val === sel ? ' selected' : '') + '>' + lbl + '</option>';
-    }
+  let o='<option value="">No work</option>';
+  for(let h=4;h<=23;h++) for(let m=0;m<60;m+=15){
+    const hh=h%12||12,ampm=h<12?'AM':'PM',val=pad(h)+':'+pad(m),lbl=hh+':'+pad(m)+' '+ampm;
+    o+='<option value="'+val+'"'+(val===sel?' selected':'')+'>'+lbl+'</option>';
   }
   return o;
 }
 
 function buildHoursGrid() {
-  const grid = document.getElementById('hoursGrid');
-  if (!grid) return;
-  grid.innerHTML = DAYS.map((day, i) => {
-    const key = DAY_KEYS[i];
-    return `<div class="day-row">
-      <span class="dlabel">${day.substring(0,3)}</span>
-      <div class="ftime"><label>Start</label><select name="${key}Start">${buildTimeOptions('06:00')}</select></div>
-      <div class="ftime"><label>End</label><select name="${key}End">${buildTimeOptions('14:00')}</select></div>
-    </div>`;
-  }).join('');
-  // Attach change listeners
-  grid.querySelectorAll('select').forEach(s => s.addEventListener('change', calcTotalHours));
+  const grid=document.getElementById('hoursGrid'); if(!grid) return;
+  grid.innerHTML=DAYS.map((day,i)=>`<div class="day-row">
+    <span class="dlabel">${day.substring(0,3)}</span>
+    <div class="ftime"><label>Start</label><select name="${DAY_KEYS[i]}Start">${buildTimeOptions('06:00')}</select></div>
+    <div class="ftime"><label>End</label><select name="${DAY_KEYS[i]}End">${buildTimeOptions('14:00')}</select></div>
+  </div>`).join('');
+  grid.querySelectorAll('select').forEach(s=>s.addEventListener('change',calcTotalHours));
 }
 
 function calcTotalHours() {
-  let total = 0;
-  DAY_KEYS.forEach(k => {
-    const s = document.querySelector('[name="' + k + 'Start"]');
-    const e = document.querySelector('[name="' + k + 'End"]');
-    if (!s || !e || !s.value || !e.value) return;
-    const [sh, sm] = s.value.split(':').map(Number);
-    const [eh, em] = e.value.split(':').map(Number);
-    const hrs = ((eh * 60 + em) - (sh * 60 + sm)) / 60;
-    if (hrs > 0) total += hrs;
+  let total=0;
+  DAY_KEYS.forEach(k=>{
+    const s=document.querySelector('[name="'+k+'Start"]'),e=document.querySelector('[name="'+k+'End"]');
+    if(!s||!e||!s.value||!e.value) return;
+    const [sh,sm]=s.value.split(':').map(Number),[eh,em]=e.value.split(':').map(Number);
+    const h=((eh*60+em)-(sh*60+sm))/60; if(h>0) total+=h;
   });
-  document.getElementById('totalHoursDisplay').textContent = total.toFixed(2) + ' hrs';
-  document.getElementById('totalPayDisplay').textContent = '@ $' + RATE.toFixed(2) + '/hr = $' + (total * RATE).toFixed(2);
+  document.getElementById('totalHoursDisplay').textContent=total.toFixed(2)+' hrs';
+  document.getElementById('totalPayDisplay').textContent='@ $'+RATE.toFixed(2)+'/hr = $'+(total*RATE).toFixed(2);
 }
 
-// ── SIGNATURE CANVAS ─────────────────────────────────────────
-let sigCtx, sigDrawing = false, sigHasMark = false;
+// ════════════════════════════════════════════════════════
+//  SIGNATURE
+// ════════════════════════════════════════════════════════
+let sigCtx,sigDrawing=false,sigHasMark=false;
 
 function initSigCanvas() {
-  const canvas = document.getElementById('sigCanvas');
-  if (!canvas) return;
+  const canvas=document.getElementById('sigCanvas'); if(!canvas) return;
   resizeSigCanvas();
-  sigCtx = canvas.getContext('2d');
-  sigCtx.strokeStyle = '#003366';
-  sigCtx.lineWidth = 2.5;
-  sigCtx.lineCap = 'round';
-  sigCtx.lineJoin = 'round';
+  sigCtx=canvas.getContext('2d');
+  sigCtx.strokeStyle='#003366'; sigCtx.lineWidth=2.5; sigCtx.lineCap='round'; sigCtx.lineJoin='round';
 
-  function getPos(e) {
-    const r = canvas.getBoundingClientRect();
-    const src = e.touches ? e.touches[0] : e;
-    return { x: (src.clientX - r.left) * (canvas.width / r.width), y: (src.clientY - r.top) * (canvas.height / r.height) };
-  }
+  function getPos(e){ const r=canvas.getBoundingClientRect(),src=e.touches?e.touches[0]:e; return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)}; }
 
-  canvas.addEventListener('mousedown', e => { sigDrawing = true; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x, p.y); });
-  canvas.addEventListener('mousemove', e => { if (!sigDrawing) return; const p = getPos(e); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); sigHasMark = true; document.getElementById('sigHint').style.display = 'none'; });
-  canvas.addEventListener('mouseup', () => sigDrawing = false);
-  canvas.addEventListener('touchstart', e => { e.preventDefault(); sigDrawing = true; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x, p.y); }, { passive: false });
-  canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!sigDrawing) return; const p = getPos(e); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); sigHasMark = true; document.getElementById('sigHint').style.display = 'none'; }, { passive: false });
-  canvas.addEventListener('touchend', () => sigDrawing = false);
+  canvas.addEventListener('mousedown',e=>{sigDrawing=true;const p=getPos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);});
+  canvas.addEventListener('mousemove',e=>{if(!sigDrawing)return;const p=getPos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHasMark=true;document.getElementById('sigHint').style.display='none';});
+  canvas.addEventListener('mouseup',()=>sigDrawing=false);
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();sigDrawing=true;const p=getPos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!sigDrawing)return;const p=getPos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHasMark=true;document.getElementById('sigHint').style.display='none';},{passive:false});
+  canvas.addEventListener('touchend',()=>sigDrawing=false);
 }
 
 function resizeSigCanvas() {
-  const canvas = document.getElementById('sigCanvas');
-  if (!canvas) return;
-  const w = canvas.parentElement.clientWidth;
-  canvas.width = w;
-  canvas.height = 160;
-  if (sigCtx) { sigCtx.strokeStyle = '#003366'; sigCtx.lineWidth = 2.5; sigCtx.lineCap = 'round'; sigCtx.lineJoin = 'round'; }
+  const canvas=document.getElementById('sigCanvas'); if(!canvas) return;
+  canvas.width=canvas.parentElement.clientWidth; canvas.height=150;
+  if(sigCtx){sigCtx.strokeStyle='#003366';sigCtx.lineWidth=2.5;sigCtx.lineCap='round';sigCtx.lineJoin='round';}
 }
 
 function clearSig() {
-  const canvas = document.getElementById('sigCanvas');
-  if (canvas && sigCtx) { sigCtx.clearRect(0, 0, canvas.width, canvas.height); }
-  sigHasMark = false;
-  document.getElementById('sigHint').style.display = 'block';
+  const canvas=document.getElementById('sigCanvas');
+  if(canvas&&sigCtx) sigCtx.clearRect(0,0,canvas.width,canvas.height);
+  sigHasMark=false;
+  const h=document.getElementById('sigHint'); if(h) h.style.display='block';
 }
 
-// ── SUBMIT ───────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════
+//  SUBMIT TIMESHEET
+// ════════════════════════════════════════════════════════
 async function submitTimesheet() {
-  const btn = document.getElementById('submitBtn');
-  const msg = document.getElementById('submitMsg');
-  msg.className = 'msg'; msg.textContent = '';
+  const btn=document.getElementById('submitBtn'),msg=document.getElementById('submitMsg');
+  msg.className='msg'; msg.textContent='';
+  if(!sigHasMark){ alert('Please sign the timesheet before submitting.'); switchTab('submit'); return; }
+  btn.disabled=true; btn.textContent='Submitting...';
 
-  if (!sigHasMark) { alert('Please sign the timesheet before submitting.'); switchTab('submit'); return; }
-
-  btn.disabled = true; btn.textContent = 'Submitting...';
-
-  // Collect hours
-  const hours = {};
-  DAY_KEYS.forEach(k => {
-    const s = document.querySelector('[name="' + k + 'Start"]');
-    const e = document.querySelector('[name="' + k + 'End"]');
-    hours[k + 'Start'] = s ? s.value : '';
-    hours[k + 'End'] = e ? e.value : '';
+  const hours={};
+  DAY_KEYS.forEach(k=>{
+    const s=document.querySelector('[name="'+k+'Start"]'),e=document.querySelector('[name="'+k+'End"]');
+    hours[k+'Start']=s?s.value:''; hours[k+'End']=e?e.value:'';
   });
 
-  // Signature
-  const canvas = document.getElementById('sigCanvas');
-  const sigData = canvas ? canvas.toDataURL('image/png') : '';
-
-  const payload = {
-    driverName: state.driver,
-    truckNumber: state.truck,
-    weekEnding: state.weekEnding,
-    clockIn: state.clockInTime ? state.clockInTime.toISOString() : '',
-    clockOut: state.clockOutTime ? state.clockOutTime.toISOString() : '',
-    fuel: state.fuelAmt,
-    tolls: state.tollsAmt,
-    stops: state.stops.map(s => ({ time: s.time, address: s.address, lat: s.lat, lng: s.lng, label: s.label })),
-    stopCount: state.stops.length,
-    notes: document.getElementById('notesField').value,
-    signature: sigData,
-    receiptCount: state.receiptImages.length,
-    submittedAt: new Date().toISOString(),
-    rate: RATE,
-    ...hours
+  const canvas=document.getElementById('sigCanvas');
+  const payload={
+    driverName:state.driver, truckNumber:state.truck, weekEnding:state.weekEnding,
+    clockIn:state.clockInTime?state.clockInTime.toISOString():'',
+    clockOut:state.clockOutTime?state.clockOutTime.toISOString():'',
+    fuel:state.fuelAmt, tolls:state.tollsAmt,
+    stops:state.stops.map(s=>({time:s.time,address:s.address,lat:s.lat,lng:s.lng,label:s.label})),
+    stopCount:state.stops.length,
+    notes:document.getElementById('notesField').value,
+    signature:canvas?canvas.toDataURL('image/png'):'',
+    receiptCount:state.receiptImages.length,
+    submittedAt:new Date().toISOString(), rate:RATE, ...hours
   };
 
   try {
-    const res = await fetch(WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-    if (res.ok) {
-      msg.className = 'msg success';
-      msg.textContent = '\u2713 Submitted! Thank you, ' + state.driver + '. Have a safe shift.';
-      btn.textContent = '\u2713 Submitted';
-    } else {
-      throw new Error('Server error ' + res.status);
-    }
+    const res=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(res.ok){ msg.className='msg success'; msg.textContent='✓ Submitted! Thank you, '+state.driver+'.'; btn.textContent='✓ Submitted'; }
+    else throw new Error('Server error '+res.status);
   } catch(err) {
-    msg.className = 'msg error';
-    msg.textContent = 'Submission failed: ' + err.message + '. Please try again.';
-    btn.disabled = false;
-    btn.textContent = '\u2713 Submit Timesheet';
+    msg.className='msg error'; msg.textContent='Submission failed: '+err.message;
+    btn.disabled=false; btn.textContent='✓ Submit Timesheet';
   }
 }
 
-// Load Tesseract OCR in background
-(function loadTesseract() {
-  const s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
-  s.onload = () => console.log('Tesseract OCR ready');
-  document.head.appendChild(s);
+// ════════════════════════════════════════════════════════
+//  DASHBOARD — fetch & render
+// ════════════════════════════════════════════════════════
+let dashMap=null, dashMarkers=[];
+
+async function refreshDashboard() {
+  document.getElementById('lastUpdated').textContent='Refreshing...';
+  try {
+    const res = await fetch(POLL_HOOK, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'dashboard_request',ts:new Date().toISOString()})});
+    const drivers = res.ok ? await res.json() : [];
+    renderDashboard(Array.isArray(drivers) ? drivers : (drivers.drivers || []));
+  } catch(e) {
+    // Offline / n8n not set up yet — show placeholder data
+    renderDashboard([]);
+  }
+  document.getElementById('lastUpdated').textContent='Last updated: '+new Date().toLocaleTimeString();
+}
+
+function renderDashboard(drivers) {
+  const active   = drivers.filter(d=>d.clockedIn).length;
+  const totalHrs = drivers.reduce((a,d)=>a+(parseFloat(d.weekHours)||0),0);
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statTotal').textContent  = drivers.length || '--';
+  document.getElementById('statHours').textContent  = totalHrs ? totalHrs.toFixed(1) : '--';
+
+  // Driver cards
+  const container = document.getElementById('driverCards');
+  if (!drivers.length) {
+    container.innerHTML = `<div style="background:white;border-radius:14px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07)">
+      <div style="font-size:32px;margin-bottom:10px">&#128665;</div>
+      <div style="font-weight:700;color:var(--navy);margin-bottom:6px">No live data yet</div>
+      <div style="font-size:12px;color:var(--muted)">Driver data will appear here once drivers clock in.<br>Make sure the n8n <strong>meiborg-driver-status</strong> and <strong>meiborg-dashboard-data</strong> webhooks are active.</div>
+    </div>`;
+  } else {
+    container.innerHTML = drivers.map(d => {
+      const statusClass = d.clockedIn ? 'clocked-in' : 'clocked-out';
+      const statusText  = d.clockedIn ? 'Clocked In' : 'Clocked Out';
+      const lastStop    = d.lastStop ? d.lastStop.address || (d.lastStop.lat ? d.lastStop.lat.toFixed(4)+', '+d.lastStop.lng.toFixed(4) : 'Unknown') : 'No stops yet';
+      const lastStopTime = d.lastStop ? d.lastStop.time || '' : '';
+      const hrs = parseFloat(d.weekHours||0).toFixed(1);
+      const pay = (parseFloat(d.weekHours||0)*RATE).toFixed(2);
+      const fuel = parseFloat(d.fuel||0).toFixed(2);
+      const tolls = parseFloat(d.tolls||0).toFixed(2);
+      return `<div class="driver-card">
+        <div class="driver-card-header">
+          <div><div class="driver-name">${d.driverName||'Unknown'}</div><div class="driver-truck">Truck #${d.truckNumber||'--'}</div></div>
+          <span class="status-pill ${statusClass}">${statusText}</span>
+        </div>
+        <div class="driver-stats">
+          <div class="ds-item"><div class="dsv">${hrs}</div><div class="dsl">Wk Hrs</div></div>
+          <div class="ds-item"><div class="dsv">$${fuel}</div><div class="dsl">Fuel</div></div>
+          <div class="ds-item"><div class="dsv">$${tolls}</div><div class="dsl">Tolls</div></div>
+        </div>
+        <div class="last-stop">&#128205; <strong>Last Stop${lastStopTime?' @ '+lastStopTime:''}</strong><br>${lastStop}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Map
+  renderMap(drivers);
+}
+
+function renderMap(drivers) {
+  const mapEl = document.getElementById('dashMap');
+  const withLoc = drivers.filter(d=>d.lat&&d.lng);
+
+  if (!withLoc.length) {
+    mapEl.innerHTML=`<div class="map-placeholder"><div class="mp-icon">&#128205;</div><p>Map will show live positions</p><p style="font-size:11px;color:var(--muted)">GPS positions appear when drivers clock in</p></div>`;
+    return;
+  }
+
+  // Use Leaflet if available, otherwise embed static link
+  if (window.L) {
+    if (!dashMap) {
+      mapEl.innerHTML=''; mapEl.style.height='280px';
+      dashMap = L.map('dashMap').setView([withLoc[0].lat, withLoc[0].lng], 11);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(dashMap);
+    }
+    dashMarkers.forEach(m=>dashMap.removeLayer(m)); dashMarkers=[];
+    withLoc.forEach(d=>{
+      const marker = L.marker([d.lat,d.lng]).addTo(dashMap).bindPopup(`<b>${d.driverName}</b><br>Truck #${d.truckNumber}<br>${d.clockedIn?'&#x1F7E2; Clocked In':'&#x1F534; Clocked Out'}<br>${d.weekHours||0} hrs this week`);
+      dashMarkers.push(marker);
+    });
+    const bounds = L.latLngBounds(withLoc.map(d=>[d.lat,d.lng]));
+    dashMap.fitBounds(bounds,{padding:[20,20]});
+  } else {
+    // Fallback: show coordinates as map links
+    mapEl.innerHTML=`<div class="map-placeholder" style="flex-direction:column;align-items:flex-start;padding:14px;height:auto;min-height:120px">${withLoc.map(d=>`
+      <div style="margin-bottom:8px;font-size:13px">
+        <strong style="color:var(--navy)">${d.driverName}</strong> — Truck #${d.truckNumber}<br>
+        <a href="https://maps.google.com/?q=${d.lat},${d.lng}" target="_blank" style="color:var(--blue);font-size:12px">&#128205; View on Map (${d.lat.toFixed(4)}, ${d.lng.toFixed(4)})</a>
+      </div>`).join('')}`+`</div>`;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  INIT LIBS
+// ════════════════════════════════════════════════════════
+(function loadLibs(){
+  // Tesseract OCR
+  const t=document.createElement('script');
+  t.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+  t.onload=()=>console.log('Tesseract ready');
+  document.head.appendChild(t);
+
+  // Leaflet map
+  const lCss=document.createElement('link');
+  lCss.rel='stylesheet'; lCss.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  document.head.appendChild(lCss);
+  const lJs=document.createElement('script');
+  lJs.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  lJs.onload=()=>console.log('Leaflet ready');
+  document.head.appendChild(lJs);
 })();
 
 </script>
