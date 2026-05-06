@@ -180,6 +180,72 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   #loginScreen,#dashScreen{border-radius:20px;min-height:auto}
   #dashScreen{max-width:700px}
 }
+
+/* ── SIDEBAR LAYOUT ── */
+#dashScreen{display:none;min-height:100vh;flex-direction:row}
+#dashScreen.active{display:flex}
+.dash-sidebar{width:220px;min-width:220px;background:var(--navy);color:white;display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;height:100vh;overflow-y:auto}
+.dash-sidebar.geodis-sidebar{background:#a00010}
+.sidebar-logo{padding:16px;border-bottom:1px solid rgba(255,255,255,.15);text-align:center}
+.sidebar-logo .sb-badge{background:rgba(255,255,255,.15);border-radius:8px;padding:8px 14px;font-size:18px;font-weight:900;letter-spacing:2px;display:inline-block}
+.sidebar-logo .sb-user{font-size:12px;margin-top:6px;opacity:.8;word-break:break-word}
+.sidebar-section{padding:8px 0}
+.sidebar-section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:6px 16px;opacity:.5}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;border-left:3px solid transparent;color:rgba(255,255,255,.85)}
+.sidebar-item:hover{background:rgba(255,255,255,.1);color:white}
+.sidebar-item.active{background:rgba(255,255,255,.18);color:white;border-left-color:white}
+.sidebar-item .si-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.sidebar-divider{border:none;border-top:1px solid rgba(255,255,255,.1);margin:4px 0}
+.sb-logout{margin-top:auto;padding:12px 16px;border-top:1px solid rgba(255,255,255,.1)}
+.sb-logout button{background:rgba(255,255,255,.15);border:none;color:white;padding:9px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;width:100%}
+.dash-main{flex:1;overflow-y:auto;background:var(--gray)}
+.dash-main-header{background:white;padding:14px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between}
+.dash-main-header h2{font-size:17px;font-weight:700;color:var(--navy)}
+.dash-main-header .dh-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.dash-panel{padding:16px;display:none}
+.dash-panel.active{display:block}
+
+/* ── REPORT STYLES ── */
+.report-toolbar{background:white;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.report-toolbar label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:3px;display:block}
+.report-toolbar select,.report-toolbar input{padding:9px 12px;border:2px solid #e5e7eb;border-radius:8px;font-size:13px;background:white}
+.report-toolbar select:focus,.report-toolbar input:focus{border-color:var(--navy);outline:none}
+.btn-run-report{background:var(--navy);color:white;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;margin-top:18px}
+.btn-run-report:hover{background:var(--blue)}
+.btn-print{background:white;color:var(--navy);border:2px solid var(--navy);border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;margin-top:18px}
+.btn-print:hover{background:var(--light-blue)}
+.report-table-wrap{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.report-table{width:100%;border-collapse:collapse;font-size:12px}
+.report-table th{background:var(--navy);color:white;padding:10px 12px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+.report-table td{padding:9px 12px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+.report-table tr:last-child td{border-bottom:none}
+.report-table tr:hover td{background:#f9fafb}
+.report-table .total-row td{background:var(--light-blue);font-weight:700;color:var(--navy)}
+.report-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.rs-box{background:white;border-radius:10px;padding:14px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.rs-box .rsv{font-size:20px;font-weight:800;color:var(--navy)}
+.rs-box .rsl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:3px}
+.no-data{background:white;border-radius:12px;padding:30px;text-align:center;color:var(--muted);font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.badge-in{background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.badge-out{background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+
+/* ── PRINT ── */
+@media print{
+  .dash-sidebar,.report-toolbar,.btn-print,.btn-run-report,.refresh-btn{display:none!important}
+  .dash-main{overflow:visible}
+  .report-table-wrap{box-shadow:none;border:1px solid #ccc}
+  .print-header{display:block!important}
+  body{background:white}
+}
+.print-header{display:none;text-align:center;margin-bottom:16px}
+.print-header h2{font-size:18px;font-weight:800;color:#000}
+.print-header p{font-size:12px;color:#555}
+
+@media(max-width:600px){
+  .dash-sidebar{width:60px;min-width:60px}
+  .sidebar-item span:last-child,.sidebar-section-title,.sb-logout button span,.sidebar-logo .sb-user,.sidebar-logo .sb-badge-text{display:none}
+  .sidebar-logo .sb-badge{font-size:12px;padding:6px}
+}
 </style>
 </head>
 <body>
@@ -372,45 +438,186 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     OFFICE DASHBOARD SCREEN
-═══════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════
+     OFFICE DASHBOARD with SIDEBAR
+════════════════════════════════════════ -->
 <div id="dashScreen" class="screen">
-  <div class="dash-header" id="dashHeader">
-    <div>
-      <div class="dsub" id="dashOrgLabel"></div>
-      <h1 id="dashUserName"></h1>
-    </div>
-    <button class="btn-logout" onclick="doLogout()">&#10006; Log Out</button>
-  </div>
-  <div class="dash-content">
-    <button class="refresh-btn" onclick="refreshDashboard()">&#8635; Refresh</button>
-    <div class="last-updated" id="lastUpdated">Loading...</div>
-
-    <!-- Summary stats -->
-    <div class="dash-stats">
-      <div class="stat-box"><div class="sv" id="statActive">--</div><div class="sl">Active Now</div></div>
-      <div class="stat-box"><div class="sv" id="statTotal">--</div><div class="sl">Drivers Today</div></div>
-      <div class="stat-box"><div class="sv" id="statHours">--</div><div class="sl">Total Hrs</div></div>
+  <!-- SIDEBAR -->
+  <div class="dash-sidebar" id="dashSidebar">
+    <div class="sidebar-logo">
+      <div class="sb-badge" id="sbBadge">MLAM</div>
+      <div class="sb-user" id="sbUser"></div>
     </div>
 
-    <!-- Live Map -->
-    <div class="dash-section-title">&#127758; Live Driver Locations</div>
-    <div class="map-container">
-      <div id="dashMap">
-        <div class="map-placeholder" id="mapPlaceholder">
-          <div class="mp-icon">&#128205;</div>
-          <p>Loading map...</p>
-          <p style="font-size:11px;color:var(--muted)">GPS positions update when drivers clock in</p>
-        </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Live Operations</div>
+      <div class="sidebar-item active" onclick="showDashPanel('overview')" id="si-overview">
+        <span class="si-icon">&#128202;</span><span>Overview</span>
+      </div>
+      <div class="sidebar-item" onclick="showDashPanel('map')" id="si-map">
+        <span class="si-icon">&#127758;</span><span>Live Map</span>
+      </div>
+      <div class="sidebar-item" onclick="showDashPanel('drivers')" id="si-drivers">
+        <span class="si-icon">&#128665;</span><span>Driver Status</span>
       </div>
     </div>
 
-    <!-- Driver cards -->
-    <div class="dash-section-title">&#128665; Driver Status</div>
-    <div id="driverCards"><p style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Loading driver data...</p></div>
+    <hr class="sidebar-divider"/>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Reports</div>
+      <div class="sidebar-item" onclick="showDashPanel('rpt-weekly')" id="si-rpt-weekly">
+        <span class="si-icon">&#128197;</span><span>Weekly Hours</span>
+      </div>
+      <div class="sidebar-item" onclick="showDashPanel('rpt-expenses')" id="si-rpt-expenses">
+        <span class="si-icon">&#9981;</span><span>Expenses</span>
+      </div>
+      <div class="sidebar-item" onclick="showDashPanel('rpt-stops')" id="si-rpt-stops">
+        <span class="si-icon">&#128205;</span><span>Stop Log</span>
+      </div>
+      <div class="sidebar-item" onclick="showDashPanel('rpt-summary')" id="si-rpt-summary">
+        <span class="si-icon">&#128104;&#8205;&#128187;</span><span>Driver Summary</span>
+      </div>
+    </div>
+
+    <div class="sb-logout">
+      <button onclick="doLogout()">&#10006; Log Out</button>
+    </div>
   </div>
-</div>
+
+  <!-- MAIN CONTENT -->
+  <div class="dash-main">
+    <div class="dash-main-header">
+      <div>
+        <div class="dash-main-header h2" id="dashPanelTitle" style="font-size:17px;font-weight:700;color:var(--navy)">Overview</div>
+        <div class="dh-sub" id="dashPanelSub"></div>
+      </div>
+      <button class="refresh-btn" onclick="refreshDashboard()" style="margin-bottom:0">&#8635; Refresh</button>
+    </div>
+
+    <!-- OVERVIEW PANEL -->
+    <div class="dash-panel active" id="panel-overview">
+      <div style="padding-top:4px">
+        <div class="last-updated" id="lastUpdated" style="padding:8px 0">Loading...</div>
+        <div class="dash-stats">
+          <div class="stat-box"><div class="sv" id="statActive">--</div><div class="sl">Active Now</div></div>
+          <div class="stat-box"><div class="sv" id="statTotal">--</div><div class="sl">Drivers Today</div></div>
+          <div class="stat-box"><div class="sv" id="statHours">--</div><div class="sl">Total Hrs</div></div>
+        </div>
+        <div class="dash-section-title">&#128665; Quick Status</div>
+        <div id="driverCards"><p class="no-data">Loading driver data...</p></div>
+      </div>
+    </div>
+
+    <!-- MAP PANEL -->
+    <div class="dash-panel" id="panel-map">
+      <div style="padding-top:8px">
+        <div class="map-container"><div id="dashMap" style="height:400px"><div class="map-placeholder" id="mapPlaceholder"><div class="mp-icon">&#128205;</div><p>Loading map...</p></div></div></div>
+      </div>
+    </div>
+
+    <!-- DRIVERS PANEL -->
+    <div class="dash-panel" id="panel-drivers">
+      <div style="padding-top:8px" id="driverCardsDetail"><p class="no-data">Loading...</p></div>
+    </div>
+
+    <!-- REPORT: WEEKLY HOURS -->
+    <div class="dash-panel" id="panel-rpt-weekly">
+      <div class="print-header"><h2>MLAM Weekly Hours Report</h2><p id="phWeekly"></p></div>
+      <div class="report-toolbar">
+        <div><label>Week Ending</label><input type="date" id="rptWeekFilter" onchange="runWeeklyReport()"/></div>
+        <div><label>Driver</label>
+          <select id="rptDriverFilter" onchange="runWeeklyReport()">
+            <option value="">All Drivers</option>
+            <option>Brandon Hernandez</option><option>Royce Russey</option><option>Jaime Cuevas</option>
+            <option>Chris Thomas</option><option>Chris Nelson</option><option>Antonio Cadena</option>
+            <option>Armando Luna</option><option>Shamia Cottrell</option><option>Clint Greenhouse</option>
+            <option>Rigio Albarran</option><option>Christopher Gober</option><option>Steve Lawrence</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <button class="btn-run-report" onclick="runWeeklyReport()">&#9654; Run</button>
+          <button class="btn-print" onclick="window.print()">&#128438; Print / PDF</button>
+        </div>
+      </div>
+      <div id="weeklyReportSummary" class="report-summary"></div>
+      <div class="report-table-wrap"><table class="report-table" id="weeklyReportTable">
+        <thead><tr><th>Driver</th><th>Truck</th><th>Week Ending</th><th>Clock In</th><th>Clock Out</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Total Hrs</th><th>Gross Pay</th><th>Fuel</th><th>Tolls</th><th>Signature</th></tr></thead>
+        <tbody id="weeklyReportBody"><tr><td colspan="15" style="text-align:center;padding:20px;color:var(--muted)">Select a week and click Run</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- REPORT: EXPENSES -->
+    <div class="dash-panel" id="panel-rpt-expenses">
+      <div class="print-header"><h2>MLAM Expense Report</h2><p id="phExpenses"></p></div>
+      <div class="report-toolbar">
+        <div><label>From</label><input type="date" id="rptExpFrom"/></div>
+        <div><label>To</label><input type="date" id="rptExpTo"/></div>
+        <div><label>Driver</label>
+          <select id="rptExpDriver">
+            <option value="">All Drivers</option>
+            <option>Brandon Hernandez</option><option>Royce Russey</option><option>Jaime Cuevas</option>
+            <option>Chris Thomas</option><option>Chris Nelson</option><option>Antonio Cadena</option>
+            <option>Armando Luna</option><option>Shamia Cottrell</option><option>Clint Greenhouse</option>
+            <option>Rigio Albarran</option><option>Christopher Gober</option><option>Steve Lawrence</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <button class="btn-run-report" onclick="runExpenseReport()">&#9654; Run</button>
+          <button class="btn-print" onclick="window.print()">&#128438; Print</button>
+        </div>
+      </div>
+      <div id="expReportSummary" class="report-summary"></div>
+      <div class="report-table-wrap"><table class="report-table">
+        <thead><tr><th>Date</th><th>Driver</th><th>Truck</th><th>Fuel</th><th>Tolls</th><th>Total</th></tr></thead>
+        <tbody id="expReportBody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">Select range and click Run</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- REPORT: STOP LOG -->
+    <div class="dash-panel" id="panel-rpt-stops">
+      <div class="report-toolbar">
+        <div><label>Driver</label>
+          <select id="rptStopsDriver">
+            <option value="">All Drivers</option>
+            <option>Brandon Hernandez</option><option>Royce Russey</option><option>Jaime Cuevas</option>
+            <option>Chris Thomas</option><option>Chris Nelson</option><option>Antonio Cadena</option>
+            <option>Armando Luna</option><option>Shamia Cottrell</option><option>Clint Greenhouse</option>
+            <option>Rigio Albarran</option><option>Christopher Gober</option><option>Steve Lawrence</option>
+          </select>
+        </div>
+        <div><label>Date</label><input type="date" id="rptStopsDate"/></div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <button class="btn-run-report" onclick="runStopReport()">&#9654; Run</button>
+        </div>
+      </div>
+      <div class="report-table-wrap"><table class="report-table">
+        <thead><tr><th>Driver</th><th>Week Ending</th><th>Stop #</th><th>Time</th><th>Address</th><th>Lat</th><th>Lng</th><th>Label</th></tr></thead>
+        <tbody id="stopReportBody"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Select filters and click Run</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- REPORT: DRIVER SUMMARY -->
+    <div class="dash-panel" id="panel-rpt-summary">
+      <div class="print-header"><h2>MLAM Driver Summary Report</h2></div>
+      <div class="report-toolbar">
+        <div><label>Search</label><input type="text" id="rptSummarySearch" placeholder="Driver name..." oninput="runSummaryReport()"/></div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <button class="btn-run-report" onclick="runSummaryReport()">&#9654; Run</button>
+          <button class="btn-print" onclick="window.print()">&#128438; Print</button>
+        </div>
+      </div>
+      <div id="summaryReportSummary" class="report-summary"></div>
+      <div class="report-table-wrap"><table class="report-table">
+        <thead><tr><th>Driver</th><th>Truck</th><th>Total Submissions</th><th>Total Hours</th><th>Total Gross Pay</th><th>Total Fuel</th><th>Total Tolls</th><th>Avg Hrs/Week</th><th>Last Submission</th></tr></thead>
+        <tbody id="summaryReportBody"><tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Click Run to load</td></tr></tbody>
+      </table></div>
+    </div>
+
+  </div><!-- end dash-main -->
+</div><!-- end dashScreen -->
+
 <script>
 // ════════════════════════════════════════════════════════
 //  CONSTANTS & CONFIG
@@ -592,13 +799,15 @@ function launchDriverApp(name) {
 //  LAUNCH DASHBOARD
 // ════════════════════════════════════════════════════════
 function launchDashboard(name) {
+  setTimeout(loadTimesheetHistory, 500);
   const sel = document.getElementById('loginOffice');
   const org = sel.value.split('|')[1] || 'meiborg';
   const isGeodis = org === 'geodis';
 
-  document.getElementById('dashHeader').className = 'dash-header' + (isGeodis ? ' geodis-dash' : '');
-  document.getElementById('dashUserName').textContent = name;
-  document.getElementById('dashOrgLabel').textContent = isGeodis ? 'Geodis Logistics Dashboard' : 'Meiborg Operations Dashboard';
+  document.getElementById('dashSidebar').className = 'dash-sidebar' + (isGeodis ? ' geodis-sidebar' : '');
+    document.getElementById('sbBadge').textContent = isGeodis ? 'GEODIS' : 'MLAM';
+  document.getElementById('sbUser').textContent = name;
+  document.getElementById('dashPanelSub').textContent = isGeodis ? 'Geodis Logistics Dashboard' : 'Meiborg Operations Dashboard';
 
   document.getElementById('loginScreen').classList.remove('active');
   document.getElementById('dashScreen').classList.add('active');
@@ -1026,6 +1235,7 @@ function renderDashboard(drivers) {
 
   // Driver cards
   const container = document.getElementById('driverCards');
+  const detail = document.getElementById('driverCardsDetail');
   if (!drivers.length) {
     container.innerHTML = `<div style="background:white;border-radius:14px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07)">
       <div style="font-size:32px;margin-bottom:10px">&#128665;</div>
@@ -1033,7 +1243,7 @@ function renderDashboard(drivers) {
       <div style="font-size:12px;color:var(--muted)">Driver data will appear here once drivers clock in.<br>Make sure the n8n <strong>meiborg-driver-status</strong> and <strong>meiborg-dashboard-data</strong> webhooks are active.</div>
     </div>`;
   } else {
-    container.innerHTML = drivers.map(d => {
+    const cardsHtml = drivers.map(d => {
       const statusClass = d.clockedIn ? 'clocked-in' : 'clocked-out';
       const statusText  = d.clockedIn ? 'Clocked In' : 'Clocked Out';
       const lastStop    = d.lastStop ? d.lastStop.address || (d.lastStop.lat ? d.lastStop.lat.toFixed(4)+', '+d.lastStop.lng.toFixed(4) : 'Unknown') : 'No stops yet';
@@ -1055,6 +1265,8 @@ function renderDashboard(drivers) {
         <div class="last-stop">&#128205; <strong>Last Stop${lastStopTime?' @ '+lastStopTime:''}</strong><br>${lastStop}</div>
       </div>`;
     }).join('');
+    container.innerHTML = cardsHtml;
+    if(detail) detail.innerHTML = cardsHtml;
   }
 
   // Map
@@ -1114,6 +1326,240 @@ function renderMap(drivers) {
   document.head.appendChild(lJs);
 })();
 
+
+
+// ════════════════════════════════════════════════════════
+//  DASHBOARD PANEL NAVIGATION
+// ════════════════════════════════════════════════════════
+let currentDashPanel = 'overview';
+let allTimesheetData = [];
+
+function showDashPanel(name) {
+  currentDashPanel = name;
+  // Update sidebar
+  document.querySelectorAll('.sidebar-item').forEach(el => {
+    el.classList.toggle('active', el.id === 'si-' + name);
+  });
+  // Show correct panel
+  document.querySelectorAll('.dash-panel').forEach(el => {
+    el.classList.toggle('active', el.id === 'panel-' + name);
+  });
+  // Update header title
+  const titles = {
+    'overview': 'Overview', 'map': 'Live Driver Locations', 'drivers': 'Driver Status',
+    'rpt-weekly': 'Weekly Hours Report', 'rpt-expenses': 'Expense Report',
+    'rpt-stops': 'Stop Log Report', 'rpt-summary': 'Driver Summary'
+  };
+  document.getElementById('dashPanelTitle').textContent = titles[name] || name;
+
+  // Auto-load data for report panels
+  if (name.startsWith('rpt-') && allTimesheetData.length === 0) loadTimesheetHistory();
+  if (name === 'map' || name === 'overview' || name === 'drivers') refreshDashboard();
+  if (name === 'rpt-weekly') {
+    // Default to last Saturday
+    const dt = new Date(), dy = dt.getDay();
+    const diff = dy === 6 ? 0 : (dy + 1);
+    const sat = new Date(dt); sat.setDate(dt.getDate() - diff);
+    document.getElementById('rptWeekFilter').value = sat.toISOString().slice(0,10);
+    document.getElementById('phWeekly').textContent = 'Week Ending: ' + sat.toLocaleDateString();
+    runWeeklyReport();
+  }
+  if (name === 'rpt-expenses') {
+    const now = new Date();
+    const first = new Date(now.getFullYear(), now.getMonth(), 1);
+    document.getElementById('rptExpFrom').value = first.toISOString().slice(0,10);
+    document.getElementById('rptExpTo').value = now.toISOString().slice(0,10);
+    runExpenseReport();
+  }
+  if (name === 'rpt-summary') runSummaryReport();
+  if (name === 'rpt-stops') runStopReport();
+}
+
+// ════════════════════════════════════════════════════════
+//  LOAD TIMESHEET HISTORY FROM n8n / SHEET
+// ════════════════════════════════════════════════════════
+async function loadTimesheetHistory() {
+  try {
+    const res = await new Promise((resolve) => {
+      fetch(POLL_HOOK, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({type:'timesheet_history', ts: new Date().toISOString()})
+      }).then(r => r.ok ? r.json() : {timesheets:[]}).then(resolve).catch(() => resolve({timesheets:[]}));
+    });
+    allTimesheetData = res.timesheets || res || [];
+  } catch(e) { allTimesheetData = []; }
+}
+
+function calcDayHours(start, end) {
+  if (!start || !end) return 0;
+  const [sh,sm] = start.split(':').map(Number);
+  const [eh,em] = end.split(':').map(Number);
+  const h = ((eh*60+em)-(sh*60+sm))/60;
+  return h > 0 ? h : 0;
+}
+
+function fmtHours(h) { return parseFloat(h||0).toFixed(2); }
+function fmtMoney(v) { return '$' + parseFloat(v||0).toFixed(2); }
+function fmtTime(t) { if(!t) return '--'; try{ return new Date(t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}); }catch{return t;} }
+
+// ════════════════════════════════════════════════════════
+//  WEEKLY HOURS REPORT
+// ════════════════════════════════════════════════════════
+function runWeeklyReport() {
+  const weekFilter = document.getElementById('rptWeekFilter').value;
+  const driverFilter = document.getElementById('rptDriverFilter').value;
+  document.getElementById('phWeekly').textContent = weekFilter ? 'Week Ending: ' + weekFilter : '';
+
+  const rows = allTimesheetData.filter(r => {
+    if (weekFilter && r.weekEnding !== weekFilter) return false;
+    if (driverFilter && r.driverName !== driverFilter) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('weeklyReportBody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="15" style="text-align:center;padding:20px;color:var(--muted)">No records found for selected filters</td></tr>';
+    document.getElementById('weeklyReportSummary').innerHTML = '';
+    return;
+  }
+
+  let totalHrs = 0, totalPay = 0, totalFuel = 0, totalTolls = 0;
+  tbody.innerHTML = rows.map(r => {
+    const hrs = parseFloat(r.totalHours||0);
+    const pay = parseFloat(r.grossPay||0);
+    const fuel = parseFloat(r.fuel||0);
+    const tolls = parseFloat(r.tolls||0);
+    totalHrs += hrs; totalPay += pay; totalFuel += fuel; totalTolls += tolls;
+    const sun = fmtHours(calcDayHours(r.sunStart,r.sunEnd));
+    const mon = fmtHours(calcDayHours(r.monStart,r.monEnd));
+    const tue = fmtHours(calcDayHours(r.tueStart,r.tueEnd));
+    const wed = fmtHours(calcDayHours(r.wedStart,r.wedEnd));
+    const thu = fmtHours(calcDayHours(r.thuStart,r.thuEnd));
+    const cin = r.clockIn ? fmtTime(r.clockIn) : (r.sunStart||'--');
+    const cout = r.clockOut ? fmtTime(r.clockOut) : (r.thuEnd||'--');
+    return `<tr>
+      <td><strong>${r.driverName||'--'}</strong></td>
+      <td>${r.truckNumber||'--'}</td>
+      <td>${r.weekEnding||'--'}</td>
+      <td>${cin}</td><td>${cout}</td>
+      <td>${sun}</td><td>${mon}</td><td>${tue}</td><td>${wed}</td><td>${thu}</td>
+      <td><strong>${fmtHours(hrs)}</strong></td>
+      <td><strong>${fmtMoney(pay)}</strong></td>
+      <td>${fmtMoney(fuel)}</td><td>${fmtMoney(tolls)}</td>
+      <td>${r.hasSignature==='YES'?'<span class="badge-in">&#10003; YES</span>':'<span class="badge-out">NO</span>'}</td>
+    </tr>`;
+  }).join('') + `<tr class="total-row">
+    <td colspan="10" style="text-align:right">TOTALS:</td>
+    <td>${fmtHours(totalHrs)}</td><td>${fmtMoney(totalPay)}</td>
+    <td>${fmtMoney(totalFuel)}</td><td>${fmtMoney(totalTolls)}</td><td></td>
+  </tr>`;
+
+  document.getElementById('weeklyReportSummary').innerHTML = `
+    <div class="rs-box"><div class="rsv">${rows.length}</div><div class="rsl">Submissions</div></div>
+    <div class="rs-box"><div class="rsv">${fmtHours(totalHrs)}</div><div class="rsl">Total Hours</div></div>
+    <div class="rs-box"><div class="rsv">${fmtMoney(totalPay)}</div><div class="rsl">Gross Pay</div></div>
+    <div class="rs-box"><div class="rsv">${fmtMoney(totalFuel)}</div><div class="rsl">Fuel</div></div>
+    <div class="rs-box"><div class="rsv">${fmtMoney(totalTolls)}</div><div class="rsl">Tolls</div></div>`;
+}
+
+// ════════════════════════════════════════════════════════
+//  EXPENSE REPORT
+// ════════════════════════════════════════════════════════
+function runExpenseReport() {
+  const from = document.getElementById('rptExpFrom').value;
+  const to = document.getElementById('rptExpTo').value;
+  const driver = document.getElementById('rptExpDriver').value;
+  document.getElementById('phExpenses').textContent = from && to ? from + ' to ' + to : '';
+
+  const rows = allTimesheetData.filter(r => {
+    if (driver && r.driverName !== driver) return false;
+    const d = r.weekEnding || r.submittedAt?.slice(0,10);
+    if (from && d < from) return false;
+    if (to && d > to) return false;
+    return (parseFloat(r.fuel)||0) > 0 || (parseFloat(r.tolls)||0) > 0;
+  });
+
+  const tbody = document.getElementById('expReportBody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">No expense records found</td></tr>'; document.getElementById('expReportSummary').innerHTML=''; return; }
+
+  let totalFuel=0, totalTolls=0;
+  tbody.innerHTML = rows.map(r => {
+    const f = parseFloat(r.fuel||0), t = parseFloat(r.tolls||0);
+    totalFuel+=f; totalTolls+=t;
+    return `<tr><td>${r.weekEnding||r.submittedAt?.slice(0,10)||'--'}</td><td>${r.driverName||'--'}</td><td>${r.truckNumber||'--'}</td><td>${fmtMoney(f)}</td><td>${fmtMoney(t)}</td><td><strong>${fmtMoney(f+t)}</strong></td></tr>`;
+  }).join('') + `<tr class="total-row"><td colspan="3">TOTALS</td><td>${fmtMoney(totalFuel)}</td><td>${fmtMoney(totalTolls)}</td><td>${fmtMoney(totalFuel+totalTolls)}</td></tr>`;
+
+  document.getElementById('expReportSummary').innerHTML = `
+    <div class="rs-box"><div class="rsv">${rows.length}</div><div class="rsl">Records</div></div>
+    <div class="rs-box"><div class="rsv">${fmtMoney(totalFuel)}</div><div class="rsl">Total Fuel</div></div>
+    <div class="rs-box"><div class="rsv">${fmtMoney(totalTolls)}</div><div class="rsl">Total Tolls</div></div>
+    <div class="rs-box"><div class="rsv">${fmtMoney(totalFuel+totalTolls)}</div><div class="rsl">Grand Total</div></div>`;
+}
+
+// ════════════════════════════════════════════════════════
+//  STOP LOG REPORT
+// ════════════════════════════════════════════════════════
+function runStopReport() {
+  const driver = document.getElementById('rptStopsDriver').value;
+  const date = document.getElementById('rptStopsDate').value;
+
+  const filtered = allTimesheetData.filter(r => {
+    if (driver && r.driverName !== driver) return false;
+    if (date && r.weekEnding !== date && r.submittedAt?.slice(0,10) !== date) return false;
+    return r.stopLog && r.stopLog !== '[]';
+  });
+
+  const tbody = document.getElementById('stopReportBody');
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">No stop data found</td></tr>'; return; }
+
+  const rows = [];
+  filtered.forEach(r => {
+    try {
+      const stops = JSON.parse(r.stopLog||'[]');
+      stops.forEach((s,i) => rows.push(`<tr><td>${r.driverName}</td><td>${r.weekEnding||'--'}</td><td>${i+1}</td><td>${s.time||'--'}</td><td>${s.address||'--'}</td><td>${s.lat?parseFloat(s.lat).toFixed(4):'--'}</td><td>${s.lng?parseFloat(s.lng).toFixed(4):'--'}</td><td>${s.label||''}</td></tr>`));
+    } catch(e) {}
+  });
+  tbody.innerHTML = rows.join('') || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">No stops in records</td></tr>';
+}
+
+// ════════════════════════════════════════════════════════
+//  DRIVER SUMMARY REPORT
+// ════════════════════════════════════════════════════════
+function runSummaryReport() {
+  const search = (document.getElementById('rptSummarySearch').value||'').toLowerCase();
+  const grouped = {};
+  allTimesheetData.forEach(r => {
+    const name = r.driverName||'Unknown';
+    if (search && !name.toLowerCase().includes(search)) return;
+    if (!grouped[name]) grouped[name] = {name, truck:r.truckNumber||'', count:0, hours:0, pay:0, fuel:0, tolls:0, lastSub:''};
+    const g = grouped[name];
+    g.count++;
+    g.hours += parseFloat(r.totalHours||0);
+    g.pay += parseFloat(r.grossPay||0);
+    g.fuel += parseFloat(r.fuel||0);
+    g.tolls += parseFloat(r.tolls||0);
+    if (!g.lastSub || r.submittedAt > g.lastSub) g.lastSub = r.submittedAt;
+    if (r.truckNumber) g.truck = r.truckNumber;
+  });
+
+  const drivers = Object.values(grouped).sort((a,b) => b.hours - a.hours);
+  const tbody = document.getElementById('summaryReportBody');
+  if (!drivers.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">No data found</td></tr>'; document.getElementById('summaryReportSummary').innerHTML=''; return; }
+
+  let totHours=0, totPay=0, totFuel=0, totTolls=0;
+  tbody.innerHTML = drivers.map(d => {
+    totHours+=d.hours; totPay+=d.pay; totFuel+=d.fuel; totTolls+=d.tolls;
+    const avgHrs = d.count > 0 ? (d.hours/d.count).toFixed(2) : '0.00';
+    const lastSub = d.lastSub ? new Date(d.lastSub).toLocaleDateString() : '--';
+    return `<tr><td><strong>${d.name}</strong></td><td>${d.truck||'--'}</td><td>${d.count}</td><td>${fmtHours(d.hours)}</td><td>${fmtMoney(d.pay)}</td><td>${fmtMoney(d.fuel)}</td><td>${fmtMoney(d.tolls)}</td><td>${avgHrs}</td><td>${lastSub}</td></tr>`;
+  }).join('') + `<tr class="total-row"><td colspan="3">TOTALS (${drivers.length} drivers)</td><td>${fmtHours(totHours)}</td><td>${fmtMoney(totPay)}</td><td>${fmtMoney(totFuel)}</td><td>${fmtMoney(totTolls)}</td><td colspan="2"></td></tr>`;
+
+  document.getElementById('summaryReportSummary').innerHTML = `
+    <div class="rs-box"><div class="rsv">${drivers.length}</div><div class="rsl">Drivers</div></div>
+    <div class="rs-box"><div class="rsv">${fmtHours(totHours)}</div><div class="rsl">Total Hours</div></div>
+    <div class="rs-box"><div class="rsv">${fmtMoney(totPay)}</div><div class="rsl">Total Pay</div></div>
+    <div class="rs-box"><div class="rsv">${fmtMoney(totFuel+totTolls)}</div><div class="rsl">Total Expenses</div></div>`;
+}
 </script>
 </body>
 </html>
