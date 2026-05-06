@@ -708,6 +708,22 @@ function setRole(r) {
 // ════════════════════════════════════════════════════════
 function pwKey(name) { return 'mlam_pw_' + name.toLowerCase().replace(/\s+/g,'_'); }
 function hasPassword(name) { return !!localStorage.getItem(pwKey(name)); }
+// ════════════════════════════════════════════════════════
+// SELECTED NAME HELPER
+// ════════════════════════════════════════════════════════
+function selectedName() {
+  if (currentRole === 'driver') {
+    const sel = document.getElementById('loginDriver');
+    if (!sel.value) return '';
+    const parts = sel.value.split('|');
+    return parts[0] === 'OTHER' ? document.getElementById('otherName').value.trim() : parts[0];
+  } else {
+    const sel = document.getElementById('loginOffice');
+    if (!sel.value) return '';
+    return sel.value.split('|')[0];
+  }
+}
+
 function checkFirstTime() {
   document.getElementById('pwHint').style.display = 'none';
   document.getElementById('pwConfirmGroup').style.display = 'none';
