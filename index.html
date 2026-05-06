@@ -745,6 +745,33 @@ document.addEventListener('DOMContentLoaded', () => {
   dt.setDate(dt.getDate() + diff);
   document.getElementById('loginWeekEnding').value = dt.toISOString().slice(0,10);
   buildHoursGrid();
+  // Restore session on page load/refresh
+  const saved = localStorage.getItem('mlam_session');
+  if (saved) {
+    try {
+      const sess = JSON.parse(saved);
+      if (sess && sess.name && sess.role) {
+        currentRole = sess.role;
+        if (sess.role === 'driver') {
+          const dSel = document.getElementById('loginDriver');
+          if (sess.driverValue) {
+            dSel.value = sess.driverValue;
+            if (sess.driverValue === 'OTHER|') {
+              document.getElementById('otherNameWrap').style.display = 'block';
+              document.getElementById('otherName').value = sess.name;
+            }
+          }
+          if (sess.weekEnding) document.getElementById('loginWeekEnding').value = sess.weekEnding;
+          launchDriverApp(sess.name);
+        } else {
+          const oSel = document.getElementById('loginOffice');
+          if (sess.officeValue) oSel.value = sess.officeValue;
+          launchDashboard(sess.name);
+        }
+      }
+    } catch(e) { localStorage.removeItem('mlam_session'); }
+  }
+
   initSigCanvas();
 });
 
@@ -767,6 +794,14 @@ function doLogin() {
   }
   document.getElementById('pwInput').value = '';
   document.getElementById('pwConfirm').value = '';
+    const _sessData = {
+    role: currentRole,
+    name: name,
+    weekEnding: currentRole === 'driver' ? document.getElementById('loginWeekEnding').value : '',
+    driverValue: currentRole === 'driver' ? document.getElementById('loginDriver').value : '',
+    officeValue: currentRole === 'office' ? document.getElementById('loginOffice').value : ''
+  };
+  localStorage.setItem('mlam_session', JSON.stringify(_sessData));
   if (currentRole === 'office') { launchDashboard(name); } else { launchDriverApp(name); }
 }
 function showErr(msg) {
@@ -817,6 +852,7 @@ function doLogout() {
   if (state.clockedIn && !confirm('You are still clocked in. Log out anyway?')) return;
   stopGPS();
   if (state.statusInterval) { clearInterval(state.statusInterval); state.statusInterval = null; }
+    localStorage.removeItem('mlam_session');
   state = { role:'driver', driver:'', truck:'', org:'meiborg', weekEnding:'', clockedIn:false, clockInTime:null, clockOutTime:null, stops:[], fuelAmt:0, tollsAmt:0, receiptImages:[], gpsWatchId:null, gpsActive:false, statusInterval:null, currentLat:null, currentLng:null };
   document.getElementById('appScreen').classList.remove('active');
   document.getElementById('dashScreen').classList.remove('active');
