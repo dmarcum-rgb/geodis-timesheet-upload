@@ -1224,6 +1224,58 @@ function runSummaryReport() {
   tbody.innerHTML = drivers.map(d => { totHours+=d.hours; totPay+=d.pay; totFuel+=d.fuel; totTolls+=d.tolls; const avgHrs=d.count>0?(d.hours/d.count).toFixed(2):'0.00', lastSub=d.lastSub?new Date(d.lastSub).toLocaleDateString():'--'; return `<tr><td><strong>${d.name}</strong></td><td>${d.truck||'--'}</td><td>${d.count}</td><td>${fmtHours(d.hours)}</td><td>${fmtMoney(d.pay)}</td><td>${fmtMoney(d.fuel)}</td><td>${fmtMoney(d.tolls)}</td><td>${avgHrs}</td><td>${lastSub}</td></tr>`; }).join('') + `<tr class="total-row"><td colspan="3">TOTALS (${drivers.length} drivers)</td><td>${fmtHours(totHours)}</td><td>${fmtMoney(totPay)}</td><td>${fmtMoney(totFuel)}</td><td>${fmtMoney(totTolls)}</td><td colspan="2"></td></tr>`;
   document.getElementById('summaryReportSummary').innerHTML = `<div class="rs-box"><div class="rsv">${drivers.length}</div><div class="rsl">Drivers</div></div><div class="rs-box"><div class="rsv">${fmtHours(totHours)}</div><div class="rsl">Total Hours</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totPay)}</div><div class="rsl">Total Pay</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totFuel+totTolls)}</div><div class="rsl">Total Expenses</div></div>`;
 }
+
+// ════════════════════════════════════════════════════════
+// INIT ON PAGE LOAD
+// ════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Set up event listeners
+  document.getElementById('loginDriver').addEventListener('change', () => {
+    const v = document.getElementById('loginDriver').value;
+    document.getElementById('otherNameWrap').style.display = v === 'OTHER|' ? 'block' : 'none';
+    checkFirstTime();
+  });
+  document.getElementById('loginOffice').addEventListener('change', checkFirstTime);
+  document.getElementById('otherName').addEventListener('input', checkFirstTime);
+
+  // Auto-set week ending to next Saturday
+  const dt = new Date(), dy = dt.getDay();
+  const diff = (6 - dy + 7) % 7 || 7;
+  dt.setDate(dt.getDate() + diff);
+  document.getElementById('loginWeekEnding').value = dt.toISOString().slice(0,10);
+
+  // Build hours grid and signature canvas
+  buildHoursGrid();
+  initSigCanvas();
+
+  // Restore session from localStorage if available
+  const saved = localStorage.getItem('mlam_session');
+  if (saved) {
+    try {
+      const sess = JSON.parse(saved);
+      if (sess && sess.name && sess.role) {
+        currentRole = sess.role;
+        if (sess.role === 'driver') {
+          const dSel = document.getElementById('loginDriver');
+          if (sess.driverValue) {
+            dSel.value = sess.driverValue;
+            if (sess.driverValue === 'OTHER|') {
+              document.getElementById('otherNameWrap').style.display = 'block';
+              document.getElementById('otherName').value = sess.name;
+            }
+          }
+          if (sess.weekEnding) document.getElementById('loginWeekEnding').value = sess.weekEnding;
+          launchDriverApp(sess.name);
+        } else {
+          const oSel = document.getElementById('loginOffice');
+          if (sess.officeValue) oSel.value = sess.officeValue;
+          launchDashboard(sess.name);
+        }
+      }
+    } catch(e) { localStorage.removeItem('mlam_session'); }
+  }
+});
+
 </script>
 </body>
 </html>
