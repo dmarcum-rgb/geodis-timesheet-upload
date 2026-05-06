@@ -1,139 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Geodis Timesheet Upload</title>
+  <title>Geodis Driver Timesheet</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      padding: 40px;
-      width: 100%;
-      max-width: 480px;
-      text-align: center;
-    }
-    .logo {
-      background: #003366;
-      color: white;
-      padding: 16px 24px;
-      border-radius: 8px;
-      margin-bottom: 28px;
-    }
-    .logo h1 { font-size: 20px; font-weight: bold; }
-    .logo p { font-size: 13px; opacity: 0.8; margin-top: 4px; }
-    label.drop-zone {
-      display: block;
-      border: 2px dashed #003366;
-      border-radius: 8px;
-      padding: 36px 20px;
-      cursor: pointer;
-      color: #555;
-      transition: background 0.2s;
-      margin-bottom: 20px;
-    }
-    label.drop-zone:hover { background: #f0f4ff; }
-    label.drop-zone .icon { font-size: 40px; margin-bottom: 10px; }
-    label.drop-zone .hint { font-size: 13px; color: #888; margin-top: 6px; }
-    #fileInput { display: none; }
-    #fileName {
-      font-weight: bold;
-      color: #003366;
-      margin-bottom: 20px;
-      min-height: 20px;
-      font-size: 14px;
-    }
-    button {
-      background: #003366;
-      color: white;
-      border: none;
-      padding: 14px 40px;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.2s;
-    }
-    button:hover:not(:disabled) { background: #004d99; }
-    button:disabled { background: #aaa; cursor: not-allowed; }
-    #status {
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      display: none;
-    }
-    #status.success { background: #e6f9ee; color: #1a7a40; border: 1px solid #a3d9b1; }
-    #status.error   { background: #fdecea; color: #c0392b; border: 1px solid #f5b7b1; }
-    #status.loading { background: #e8f0fe; color: #1a56db; border: 1px solid #a4c2f4; }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;background:#f0f2f5;padding:20px;min-height:100vh}
+    .card{background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);padding:30px;max-width:600px;margin:0 auto}
+    .header{background:#003366;color:white;padding:16px 20px;border-radius:8px;margin-bottom:24px;text-align:center}
+    .header h1{font-size:18px;font-weight:bold}
+    .header p{font-size:12px;opacity:.8;margin-top:4px}
+    .section-title{font-size:13px;font-weight:bold;color:#003366;text-transform:uppercase;letter-spacing:.5px;margin:20px 0 10px;border-bottom:2px solid #003366;padding-bottom:4px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .row.three{grid-template-columns:1fr 1fr 1fr}
+    .row.single{grid-template-columns:1fr}
+    .field label{display:block;font-size:12px;font-weight:bold;color:#444;margin-bottom:4px}
+    .field select,.field input{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:6px;font-size:14px;background:white;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    .field input{background-image:none}
+    .day-grid{display:grid;grid-template-columns:80px 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
+    .day-grid .day-label{font-size:13px;font-weight:bold;color:#333}
+    .day-grid label{font-size:11px;color:#666;margin-bottom:2px;display:block}
+    button{background:#003366;color:white;border:none;padding:14px;font-size:16px;font-weight:bold;border-radius:8px;cursor:pointer;width:100%;margin-top:20px;transition:background .2s}
+    button:hover:not(:disabled){background:#004d99}
+    button:disabled{background:#aaa;cursor:not-allowed}
+    #status{margin-top:16px;padding:12px;border-radius:8px;font-size:14px;display:none;text-align:center}
+    #status.success{background:#e6f9ee;color:#1a7a40;border:1px solid #a3d9b1}
+    #status.error{background:#fdecea;color:#c0392b;border:1px solid #f5b7b1}
+    #status.loading{background:#e8f0fe;color:#1a56db;border:1px solid #a4c2f4}
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">
-      <h1>Geodis Timesheet Upload</h1>
-      <p>Meiborg Inc — Shuttle Driver Billing</p>
-    </div>
-    <label class="drop-zone" for="fileInput">
-      <div class="icon">📄</div>
-      <div>Click to select a PDF timesheet</div>
-      <div class="hint">Accepts .pdf files only</div>
-    </label>
-    <input type="file" id="fileInput" accept=".pdf" />
-    <div id="fileName">No file selected</div>
-    <button id="submitBtn" disabled>Upload to Google Sheets</button>
-    <div id="status"></div>
+<div class="card">
+  <div class="header">
+    <h1>Geodis Driver Timesheet</h1>
+    <p>Meiborg Inc — Weekly Shuttle Entry</p>
   </div>
-  <script>
-    const fileInput = document.getElementById('fileInput');
-    const fileNameEl = document.getElementById('fileName');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusEl = document.getElementById('status');
-    const WEBHOOK = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-timesheet';
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files.length > 0) {
-        fileNameEl.textContent = String.fromCodePoint(128206) + ' ' + fileInput.files[0].name;
-        submitBtn.disabled = false;
-        statusEl.style.display = 'none';
-      }
-    });
-    submitBtn.addEventListener('click', async () => {
-      const file = fileInput.files[0];
-      if (!file) return;
-      submitBtn.disabled = true;
-      showStatus('loading', String.fromCodePoint(9203) + ' Uploading and processing your timesheet...');
-      const formData = new FormData();
-      formData.append('data', file);
-      try {
-        const response = await fetch(WEBHOOK, { method: 'POST', body: formData });
-        if (response.ok) {
-          showStatus('success', String.fromCodePoint(9989) + ' Success! Your timesheet has been added to the Google Sheet.');
-          fileInput.value = '';
-          fileNameEl.textContent = 'No file selected';
-        } else {
-          showStatus('error', String.fromCodePoint(10060) + ' Upload failed. Please try again or contact your admin.');
-        }
-      } catch (err) {
-        showStatus('error', String.fromCodePoint(10060) + ' Could not connect. Check your internet and try again.');
-      } finally {
-        submitBtn.disabled = false;
-      }
-    });
-    function showStatus(type, message) {
-      statusEl.className = type;
-      statusEl.textContent = message;
-      statusEl.style.display = 'block';
+
+  <div class="section-title">Driver Info</div>
+  <div class="row">
+    <div class="field">
+      <label>Driver #</label>
+      <select id="driverNumber">
+        <option value="">-- Select --</option>
+        <option>1</option><option>2</option><option>3</option><option>4</option>
+        <option>5</option><option>6</option><option>7</option><option>8</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Truck #</label>
+      <select id="truckNumber">
+        <option value="">-- Select --</option>
+        <option>101</option><option>102</option><option>103</option><option>104</option>
+        <option>105</option><option>106</option><option>107</option><option>108</option>
+        <option>Other</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label>Week Ending</label>
+      <input type="date" id="weekEnding"/>
+    </div>
+    <div class="field">
+      <label>Rate</label>
+      <select id="rate">
+        <option value="">-- Select --</option>
+        <option value="20">$20/hr</option>
+        <option value="22">$22/hr</option>
+        <option value="25">$25/hr</option>
+        <option value="28">$28/hr</option>
+        <option value="30">$30/hr</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section-title">Expenses</div>
+  <div class="row">
+    <div class="field">
+      <label>Fuel ($)</label>
+      <select id="fuel">
+        <option value="0">$0</option>
+        <option value="25">$25</option><option value="50">$50</option>
+        <option value="75">$75</option><option value="100">$100</option>
+        <option value="125">$125</option><option value="150">$150</option>
+        <option value="175">$175</option><option value="200">$200</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Tolls ($)</label>
+      <select id="tolls">
+        <option value="0">$0</option>
+        <option value="5">$5</option><option value="10">$10</option>
+        <option value="15">$15</option><option value="20">$20</option>
+        <option value="25">$25</option><option value="30">$30</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section-title">Hours Worked</div>
+  <div class="day-grid" style="margin-bottom:6px">
+    <div></div><div style="font-size:11px;font-weight:bold;color:#666">START TIME</div>
+    <div style="font-size:11px;font-weight:bold;color:#666">END TIME</div>
+  </div>
+
+  <div class="day-grid">
+    <div class="day-label">Sunday</div>
+    <select id="sunStart"><option value="">Off</option></select>
+    <select id="sunEnd"><option value="">Off</option></select>
+  </div>
+  <div class="day-grid">
+    <div class="day-label">Monday</div>
+    <select id="monStart"><option value="">Off</option></select>
+    <select id="monEnd"><option value="">Off</option></select>
+  </div>
+  <div class="day-grid">
+    <div class="day-label">Tuesday</div>
+    <select id="tueStart"><option value="">Off</option></select>
+    <select id="tueEnd"><option value="">Off</option></select>
+  </div>
+  <div class="day-grid">
+    <div class="day-label">Wednesday</div>
+    <select id="wedStart"><option value="">Off</option></select>
+    <select id="wedEnd"><option value="">Off</option></select>
+  </div>
+  <div class="day-grid">
+    <div class="day-label">Thursday</div>
+    <select id="thuStart"><option value="">Off</option></select>
+    <select id="thuEnd"><option value="">Off</option></select>
+  </div>
+
+  <button id="submitBtn">Submit Timesheet</button>
+  <div id="status"></div>
+</div>
+
+<script>
+  const WEBHOOK = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-timesheet';
+
+  // Build time options 4:00 AM - 11:00 PM in 15-min increments
+  const times = [];
+  for (let h = 4; h <= 23; h++) {
+    for (let m = 0; m < 60; m += 15) {
+      const hour12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const minStr = m === 0 ? '00' : m;
+      const val = (h < 10 ? '0'+h : h) + ':' + (m === 0 ? '00' : m);
+      times.push({ val, label: hour12 + ':' + minStr + ' ' + ampm });
     }
-  </script>
+  }
+
+  ['sunStart','sunEnd','monStart','monEnd','tueStart','tueEnd',
+   'wedStart','wedEnd','thuStart','thuEnd'].forEach(id => {
+    const sel = document.getElementById(id);
+    times.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.val;
+      opt.textContent = t.label;
+      sel.appendChild(opt);
+    });
+    // Default start to 6:00 AM, end to 2:00 PM for convenience
+    if (id.endsWith('Start')) sel.value = '06:00';
+    if (id.endsWith('End'))   sel.value = '14:00';
+  });
+
+  // Set week ending to next Saturday by default
+  const today = new Date();
+  const daysUntilSat = (6 - today.getDay() + 7) % 7 || 7;
+  const nextSat = new Date(today);
+  nextSat.setDate(today.getDate() + daysUntilSat);
+  document.getElementById('weekEnding').value = nextSat.toISOString().split('T')[0];
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('submitBtn');
+    const driverNum = document.getElementById('driverNumber').value;
+    const truckNum = document.getElementById('truckNumber').value;
+    const weekEnding = document.getElementById('weekEnding').value;
+    if (!driverNum || !truckNum || !weekEnding) {
+      showStatus('error', 'Please fill in Driver #, Truck #, and Week Ending.');
+      return;
+    }
+    btn.disabled = true;
+    showStatus('loading', 'Submitting your timesheet...');
+    const payload = {
+      driverNumber: driverNum,
+      truckNumber: truckNum,
+      weekEnding,
+      rate: document.getElementById('rate').value,
+      fuel: document.getElementById('fuel').value,
+      tolls: document.getElementById('tolls').value,
+      sunStart: document.getElementById('sunStart').value,
+      sunEnd: document.getElementById('sunEnd').value,
+      monStart: document.getElementById('monStart').value,
+      monEnd: document.getElementById('monEnd').value,
+      tueStart: document.getElementById('tueStart').value,
+      tueEnd: document.getElementById('tueEnd').value,
+      wedStart: document.getElementById('wedStart').value,
+      wedEnd: document.getElementById('wedEnd').value,
+      thuStart: document.getElementById('thuStart').value,
+      thuEnd: document.getElementById('thuEnd').value,
+    };
+    try {
+      const res = await fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        showStatus('success', 'Timesheet submitted! Thank you, Driver ' + driverNum + '.');
+        document.getElementById('driverNumber').value = '';
+        document.getElementById('truckNumber').value = '';
+      } else {
+        showStatus('error', 'Submission failed. Please try again.');
+      }
+    } catch(e) {
+      showStatus('error', 'Connection error. Check your internet and try again.');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  function showStatus(type, msg) {
+    const s = document.getElementById('status');
+    s.className = type;
+    s.textContent = msg;
+    s.style.display = 'block';
+  }
+</script>
 </body>
 </html>
