@@ -7,227 +7,179 @@
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:Arial,sans-serif;background:#f0f2f5;padding:20px;min-height:100vh}
-    .card{background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);padding:30px;max-width:600px;margin:0 auto}
+    .card{background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);padding:30px;max-width:620px;margin:0 auto}
     .header{background:#003366;color:white;padding:16px 20px;border-radius:8px;margin-bottom:24px;text-align:center}
     .header h1{font-size:18px;font-weight:bold}
     .header p{font-size:12px;opacity:.8;margin-top:4px}
     .section-title{font-size:13px;font-weight:bold;color:#003366;text-transform:uppercase;letter-spacing:.5px;margin:20px 0 10px;border-bottom:2px solid #003366;padding-bottom:4px}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-    .row.three{grid-template-columns:1fr 1fr 1fr}
     .row.single{grid-template-columns:1fr}
     .field label{display:block;font-size:12px;font-weight:bold;color:#444;margin-bottom:4px}
-    .field select,.field input{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:6px;font-size:14px;background:white;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
-    .field input{background-image:none}
-    .day-grid{display:grid;grid-template-columns:80px 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
-    .day-grid .day-label{font-size:13px;font-weight:bold;color:#333}
+    .field select,.field input{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:6px;font-size:14px;background:white;appearance:none;-webkit-appearance:none}
+    .field textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:6px;font-size:13px;resize:vertical}
+    .day-grid{display:grid;grid-template-columns:90px 1fr 1fr;gap:8px;align-items:center;margin-bottom:10px}
+    .day-label{font-size:13px;font-weight:bold;color:#333}
     .day-grid label{font-size:11px;color:#666;margin-bottom:2px;display:block}
-    button{background:#003366;color:white;border:none;padding:14px;font-size:16px;font-weight:bold;border-radius:8px;cursor:pointer;width:100%;margin-top:20px;transition:background .2s}
+    button{background:#003366;color:white;padding:14px 24px;border:none;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;width:100%;margin-top:20px}
     button:hover:not(:disabled){background:#004d99}
     button:disabled{background:#aaa;cursor:not-allowed}
-    #status{margin-top:16px;padding:12px;border-radius:8px;font-size:14px;display:none;text-align:center}
-    #status.success{background:#e6f9ee;color:#1a7a40;border:1px solid #a3d9b1}
-    #status.error{background:#fdecea;color:#c0392b;border:1px solid #f5b7b1}
-    #status.loading{background:#e8f0fe;color:#1a56db;border:1px solid #a4c2f4}
+    .msg{text-align:center;padding:12px;border-radius:6px;margin-top:12px;font-size:14px;font-weight:bold;display:none}
+    .msg.success{background:#d4edda;color:#155724;display:block}
+    .msg.error{background:#f8d7da;color:#721c24;display:block}
+    .note{font-size:11px;color:#888;text-align:center;margin-top:8px}
   </style>
 </head>
 <body>
 <div class="card">
   <div class="header">
-    <h1>Geodis Driver Timesheet</h1>
-    <p>Meiborg Inc — Weekly Shuttle Entry</p>
+    <h1>MLAM Shuttle Driver Timesheet</h1>
+    <p>Meiborg Inc. / Logisnext / Geodis</p>
   </div>
-
-  <div class="section-title">Driver Info</div>
-  <div class="row">
-    <div class="field">
-      <label>Driver #</label>
-      <select id="driverNumber">
-        <option value="">-- Select --</option>
-        <option>1</option><option>2</option><option>3</option><option>4</option>
-        <option>5</option><option>6</option><option>7</option><option>8</option>
-      </select>
+  <form id="tsForm">
+    <div class="section-title">Driver Info</div>
+    <div class="row single">
+      <div class="field">
+        <label>Driver Name &amp; Truck #</label>
+        <select name="driverTruck" required>
+          <option value="">Select Driver</option>
+          <option value="Brandon Hernandez|678">Brandon Hernandez - Truck #678</option>
+          <option value="Royce Russey|673">Royce Russey - Truck #673</option>
+          <option value="Jaime Cuevas|596">Jaime Cuevas - Truck #596</option>
+          <option value="Chris Thomas|598">Chris Thomas - Truck #598</option>
+          <option value="Chris Nelson|607">Chris Nelson - Truck #607</option>
+          <option value="Antonio Cadena|609">Antonio Cadena - Truck #609</option>
+          <option value="Armando Luna|597">Armando Luna - Truck #597</option>
+          <option value="Shamia Cottrell|661">Shamia Cottrell - Truck #661</option>
+          <option value="Clint Greenhouse|594">Clint Greenhouse - Truck #594</option>
+          <option value="Rigio Albarran|635">Rigio Albarran - Truck #635</option>
+          <option value="Christopher Gober|592">Christopher Gober - Truck #592</option>
+          <option value="Steve Lawrence|574">Steve Lawrence - Truck #574</option>
+          <option value="OTHER|">Other / Not Listed</option>
+        </select>
+      </div>
     </div>
-    <div class="field">
-      <label>Truck #</label>
-      <select id="truckNumber">
-        <option value="">-- Select --</option>
-        <option>101</option><option>102</option><option>103</option><option>104</option>
-        <option>105</option><option>106</option><option>107</option><option>108</option>
-        <option>Other</option>
-      </select>
+    <div class="row">
+      <div class="field">
+        <label>Week Ending (Saturday)</label>
+        <input type="date" name="weekEnding" id="weekEnding" required/>
+      </div>
+      <div class="field">
+        <label>Pay Rate</label>
+        <select name="rate" required>
+          <option value="76.50" selected>$76.50 / hr</option>
+        </select>
+      </div>
     </div>
-  </div>
-
-  <div class="row">
-    <div class="field">
-      <label>Week Ending</label>
-      <input type="date" id="weekEnding"/>
+    <div class="section-title">Expenses</div>
+    <div class="row">
+      <div class="field">
+        <label>Fuel ($)</label>
+        <select name="fuel">
+          <option value="0">$0</option>
+          <option value="25">$25</option>
+          <option value="50">$50</option>
+          <option value="75">$75</option>
+          <option value="100">$100</option>
+          <option value="125">$125</option>
+          <option value="150">$150</option>
+          <option value="175">$175</option>
+          <option value="200">$200</option>
+          <option value="250">$250</option>
+          <option value="300">$300</option>
+          <option value="350">$350</option>
+          <option value="400">$400</option>
+          <option value="450">$450</option>
+          <option value="500">$500</option>
+          <option value="600">$600</option>
+          <option value="700">$700</option>
+          <option value="800">$800</option>
+          <option value="850">$850</option>
+          <option value="900">$900</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tolls ($)</label>
+        <select name="tolls">
+          <option value="0">$0</option>
+          <option value="5">$5</option>
+          <option value="10">$10</option>
+          <option value="15">$15</option>
+          <option value="20">$20</option>
+          <option value="25">$25</option>
+          <option value="30">$30</option>
+          <option value="40">$40</option>
+          <option value="50">$50</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
     </div>
-    <div class="field">
-      <label>Rate</label>
-      <select id="rate">
-        <option value="">-- Select --</option>
-        <option value="20">$20/hr</option>
-        <option value="22">$22/hr</option>
-        <option value="25">$25/hr</option>
-        <option value="28">$28/hr</option>
-        <option value="30">$30/hr</option>
-      </select>
+    <div class="section-title">Daily Hours (Sun - Thu)</div>
+    <div id="daysSection"></div>
+    <div class="section-title">Notes (optional)</div>
+    <div class="row single">
+      <div class="field">
+        <textarea name="notes" rows="2" placeholder="Exact fuel/toll amounts, corrections, or anything else..."></textarea>
+      </div>
     </div>
-  </div>
-
-  <div class="section-title">Expenses</div>
-  <div class="row">
-    <div class="field">
-      <label>Fuel ($)</label>
-      <select id="fuel">
-        <option value="0">$0</option>
-        <option value="25">$25</option><option value="50">$50</option>
-        <option value="75">$75</option><option value="100">$100</option>
-        <option value="125">$125</option><option value="150">$150</option>
-        <option value="175">$175</option><option value="200">$200</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Tolls ($)</label>
-      <select id="tolls">
-        <option value="0">$0</option>
-        <option value="5">$5</option><option value="10">$10</option>
-        <option value="15">$15</option><option value="20">$20</option>
-        <option value="25">$25</option><option value="30">$30</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="section-title">Hours Worked</div>
-  <div class="day-grid" style="margin-bottom:6px">
-    <div></div><div style="font-size:11px;font-weight:bold;color:#666">START TIME</div>
-    <div style="font-size:11px;font-weight:bold;color:#666">END TIME</div>
-  </div>
-
-  <div class="day-grid">
-    <div class="day-label">Sunday</div>
-    <select id="sunStart"><option value="">Off</option></select>
-    <select id="sunEnd"><option value="">Off</option></select>
-  </div>
-  <div class="day-grid">
-    <div class="day-label">Monday</div>
-    <select id="monStart"><option value="">Off</option></select>
-    <select id="monEnd"><option value="">Off</option></select>
-  </div>
-  <div class="day-grid">
-    <div class="day-label">Tuesday</div>
-    <select id="tueStart"><option value="">Off</option></select>
-    <select id="tueEnd"><option value="">Off</option></select>
-  </div>
-  <div class="day-grid">
-    <div class="day-label">Wednesday</div>
-    <select id="wedStart"><option value="">Off</option></select>
-    <select id="wedEnd"><option value="">Off</option></select>
-  </div>
-  <div class="day-grid">
-    <div class="day-label">Thursday</div>
-    <select id="thuStart"><option value="">Off</option></select>
-    <select id="thuEnd"><option value="">Off</option></select>
-  </div>
-
-  <button id="submitBtn">Submit Timesheet</button>
-  <div id="status"></div>
+    <button type="submit" id="submitBtn">Submit Timesheet</button>
+    <div class="msg" id="msg"></div>
+    <p class="note">Data submits directly to the Geodis billing sheet.</p>
+  </form>
 </div>
-
 <script>
-  const WEBHOOK = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-timesheet';
-
-  // Build time options 4:00 AM - 11:00 PM in 15-min increments
-  const times = [];
-  for (let h = 4; h <= 23; h++) {
-    for (let m = 0; m < 60; m += 15) {
-      const hour12 = h > 12 ? h - 12 : (h === 0 ? 12 : h);
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      const minStr = m === 0 ? '00' : m;
-      const val = (h < 10 ? '0'+h : h) + ':' + (m === 0 ? '00' : m);
-      times.push({ val, label: hour12 + ':' + minStr + ' ' + ampm });
+function buildTimeOptions(sel){
+  var o='<option value="">No work</option>';
+  for(var h=4;h<=23;h++){
+    for(var m=0;m<60;m+=15){
+      var hh=h%12||12,ampm=h<12?'AM':'PM',mm=m<10?'0'+m:m;
+      var val=(h<10?'0':'')+h+':'+(m<10?'0':'')+m;
+      var lbl=hh+':'+mm+' '+ampm;
+      o+='<option value="'+val+'"'+(val===sel?' selected':'')+'>'+lbl+'</option>';
     }
   }
-
-  ['sunStart','sunEnd','monStart','monEnd','tueStart','tueEnd',
-   'wedStart','wedEnd','thuStart','thuEnd'].forEach(id => {
-    const sel = document.getElementById(id);
-    times.forEach(t => {
-      const opt = document.createElement('option');
-      opt.value = t.val;
-      opt.textContent = t.label;
-      sel.appendChild(opt);
+  return o;
+}
+var days=[['Sunday','sun'],['Monday','mon'],['Tuesday','tue'],['Wednesday','wed'],['Thursday','thu']];
+var sec=document.getElementById('daysSection');
+days.forEach(function(d){
+  var div=document.createElement('div');
+  div.className='day-grid';
+  div.innerHTML='<span class="day-label">'+d[0]+'</span>'+
+    '<div class="field"><label>Start</label><select name="'+d[1]+'Start">'+buildTimeOptions('06:00')+'</select></div>'+
+    '<div class="field"><label>End</label><select name="'+d[1]+'End">'+buildTimeOptions('14:00')+'</select></div>';
+  sec.appendChild(div);
+});
+var dt=new Date(),dy=dt.getDay(),diff=(6-dy+7)%7||7;
+dt.setDate(dt.getDate()+diff);
+document.getElementById('weekEnding').value=dt.toISOString().slice(0,10);
+document.getElementById('tsForm').addEventListener('submit',async function(e){
+  e.preventDefault();
+  var btn=document.getElementById('submitBtn'),msg=document.getElementById('msg');
+  btn.disabled=true;btn.textContent='Submitting...';
+  msg.className='msg';msg.textContent='';
+  var fd=new FormData(e.target),data={};
+  fd.forEach(function(v,k){data[k]=v;});
+  var dt2=(data.driverTruck||'').split('|');
+  data.driverName=dt2[0]||'';data.truckNumber=dt2[1]||'';
+  delete data.driverTruck;
+  data.submittedAt=new Date().toISOString();
+  try{
+    var res=await fetch('https://dmarcum11.app.n8n.cloud/webhook/meiborg-timesheet',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)
     });
-    // Default start to 6:00 AM, end to 2:00 PM for convenience
-    if (id.endsWith('Start')) sel.value = '06:00';
-    if (id.endsWith('End'))   sel.value = '14:00';
-  });
-
-  // Set week ending to next Saturday by default
-  const today = new Date();
-  const daysUntilSat = (6 - today.getDay() + 7) % 7 || 7;
-  const nextSat = new Date(today);
-  nextSat.setDate(today.getDate() + daysUntilSat);
-  document.getElementById('weekEnding').value = nextSat.toISOString().split('T')[0];
-
-  document.getElementById('submitBtn').addEventListener('click', async () => {
-    const btn = document.getElementById('submitBtn');
-    const driverNum = document.getElementById('driverNumber').value;
-    const truckNum = document.getElementById('truckNumber').value;
-    const weekEnding = document.getElementById('weekEnding').value;
-    if (!driverNum || !truckNum || !weekEnding) {
-      showStatus('error', 'Please fill in Driver #, Truck #, and Week Ending.');
-      return;
-    }
-    btn.disabled = true;
-    showStatus('loading', 'Submitting your timesheet...');
-    const payload = {
-      driverNumber: driverNum,
-      truckNumber: truckNum,
-      weekEnding,
-      rate: document.getElementById('rate').value,
-      fuel: document.getElementById('fuel').value,
-      tolls: document.getElementById('tolls').value,
-      sunStart: document.getElementById('sunStart').value,
-      sunEnd: document.getElementById('sunEnd').value,
-      monStart: document.getElementById('monStart').value,
-      monEnd: document.getElementById('monEnd').value,
-      tueStart: document.getElementById('tueStart').value,
-      tueEnd: document.getElementById('tueEnd').value,
-      wedStart: document.getElementById('wedStart').value,
-      wedEnd: document.getElementById('wedEnd').value,
-      thuStart: document.getElementById('thuStart').value,
-      thuEnd: document.getElementById('thuEnd').value,
-    };
-    try {
-      const res = await fetch(WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
-        showStatus('success', 'Timesheet submitted! Thank you, Driver ' + driverNum + '.');
-        document.getElementById('driverNumber').value = '';
-        document.getElementById('truckNumber').value = '';
-      } else {
-        showStatus('error', 'Submission failed. Please try again.');
-      }
-    } catch(e) {
-      showStatus('error', 'Connection error. Check your internet and try again.');
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
-  function showStatus(type, msg) {
-    const s = document.getElementById('status');
-    s.className = type;
-    s.textContent = msg;
-    s.style.display = 'block';
+    if(res.ok){
+      msg.className='msg success';
+      msg.textContent='Timesheet submitted! Thank you, '+data.driverName+'.';
+      e.target.reset();
+    }else throw new Error('Error '+res.status);
+  }catch(err){
+    msg.className='msg error';
+    msg.textContent='Submission failed: '+err.message+'. Please try again.';
   }
+  btn.disabled=false;btn.textContent='Submit Timesheet';
+});
 </script>
 </body>
 </html>
