@@ -5,269 +5,302 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>MLAM Driver App</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#003366;--blue:#0055aa;--light-blue:#e8f0fb;--green:#1a7a4a;--red:#c0392b;--orange:#e67e22;--gray:#f0f2f5;--text:#1a1a2e;--muted:#6b7280;--geodis:#e30613}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--gray);min-height:100vh;color:var(--text)}
+:root{
+  --gold:#F5C518;
+  --gold-dark:#d4a800;
+  --gold-dim:rgba(245,197,24,0.15);
+  --gold-glow:rgba(245,197,24,0.3);
+  --navy:#1a237e;
+  --navy-light:#283593;
+  --blue:#3949ab;
+  --black:#0a0a0f;
+  --dark:#111118;
+  --dark2:#1a1a24;
+  --dark3:#22222e;
+  --dark4:#2c2c3a;
+  --border:rgba(255,255,255,0.08);
+  --border-gold:rgba(245,197,24,0.25);
+  --text:#f0f0f8;
+  --text-dim:#a0a0b8;
+  --text-muted:#666680;
+  --green:#00c853;
+  --green-dim:rgba(0,200,83,0.15);
+  --red:#ff1744;
+  --red-dim:rgba(255,23,68,0.15);
+  --geodis:#cc0010;
+  --geodis-dark:#990008;
+  --gray:#f0f2f5;
+  --muted:#6b7280;
+}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--black);min-height:100vh;color:var(--text)}
 .screen{display:none;min-height:100vh;flex-direction:column}
 .screen.active{display:flex}
 
-/* ── LOGIN ── */
-#loginScreen{background:var(--navy);align-items:center;justify-content:center;padding:30px 20px}
-.login-card{background:white;border-radius:20px;padding:32px 24px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.login-logo{text-align:center;margin-bottom:24px}
-.login-logo h1{font-size:20px;font-weight:800;color:var(--navy);margin-top:10px}
-.login-logo p{font-size:12px;color:var(--muted);margin-top:4px}
-.logo-badge{background:var(--navy);color:white;border-radius:12px;padding:12px 18px;display:inline-block;font-size:22px;font-weight:900;letter-spacing:2px}
-.logo-badge.geodis-badge{background:var(--geodis)}
-.role-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
-.role-btn{padding:12px;border:2px solid #e5e7eb;border-radius:10px;background:white;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;color:var(--muted)}
-.role-btn.active{border-color:var(--navy);background:var(--light-blue);color:var(--navy)}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.form-group select,.form-group input{width:100%;padding:13px;border:2px solid #e5e7eb;border-radius:10px;font-size:15px;background:white;appearance:none;-webkit-appearance:none;transition:border .2s}
-.form-group select:focus,.form-group input:focus{border-color:var(--navy);outline:none}
-.pw-hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4}
-.btn-primary{background:var(--navy);color:white;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:700;width:100%;cursor:pointer;transition:background .2s;margin-top:6px}
-.btn-primary.geodis-btn{background:var(--geodis)}
-.btn-primary:hover{opacity:.9}
+/* ══ LOGIN SCREEN ══ */
+#loginScreen{background:var(--black);align-items:center;justify-content:center;padding:30px 20px;min-height:100vh;
+  background-image:radial-gradient(ellipse at 20% 50%, rgba(26,35,126,0.4) 0%, transparent 60%),
+                   radial-gradient(ellipse at 80% 20%, rgba(245,197,24,0.08) 0%, transparent 50%)}
+.login-card{background:var(--dark);border:1px solid var(--border);border-radius:20px;padding:36px 28px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,0.7),0 0 0 1px var(--border)}
+.login-logo{text-align:center;margin-bottom:28px}
+.meiborg-logo-svg{width:80px;height:80px;margin:0 auto 12px}
+.login-logo h1{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px;margin-top:8px}
+.login-logo p{font-size:12px;color:var(--text-muted);margin-top:4px;letter-spacing:0.3px}
+.logo-badge{background:var(--navy);color:var(--gold);border-radius:10px;padding:10px 16px;display:inline-block;font-size:20px;font-weight:900;letter-spacing:2px;border:1px solid var(--border-gold)}
+.logo-badge.geodis-badge{background:var(--geodis);color:white;border-color:rgba(255,255,255,0.2)}
+.role-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px;background:var(--dark3);border-radius:12px;padding:4px}
+.role-btn{padding:11px;border:none;border-radius:9px;background:transparent;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;color:var(--text-dim)}
+.role-btn.active{background:var(--gold);color:var(--black);box-shadow:0 2px 12px var(--gold-glow)}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.form-group select,.form-group input{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;background:var(--dark3);color:var(--text);appearance:none;-webkit-appearance:none;transition:border .2s;font-family:inherit}
+.form-group select:focus,.form-group input:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px var(--gold-dim)}
+.form-group select option{background:var(--dark3);color:var(--text)}
+.pw-hint{font-size:11px;color:var(--gold);margin-top:6px;line-height:1.4;opacity:0.85}
+.btn-primary{background:var(--gold);color:var(--black);border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;width:100%;cursor:pointer;transition:.2s;margin-top:6px;letter-spacing:0.3px;box-shadow:0 4px 20px var(--gold-glow)}
+.btn-primary:hover{background:var(--gold-dark);box-shadow:0 6px 28px var(--gold-glow)}
 .btn-primary:active{transform:scale(.98)}
-.login-err{background:#fee2e2;color:#991b1b;border-radius:8px;padding:10px;font-size:13px;font-weight:600;margin-top:10px;display:none;text-align:center}
+.btn-primary.geodis-btn{background:var(--geodis);color:white;box-shadow:0 4px 20px rgba(204,0,16,0.35)}
+.login-err{background:var(--red-dim);color:#ff6b81;border:1px solid rgba(255,23,68,0.3);border-radius:10px;padding:11px;font-size:13px;font-weight:600;margin-top:12px;display:none;text-align:center}
 .login-err.show{display:block}
 
-/* ── APP HEADER ── */
-.app-header{background:var(--navy);color:white;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.app-header.geodis-header{background:var(--geodis)}
-.header-left{flex:1;min-width:0}
-.header-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.header-sub{font-size:11px;opacity:.75;margin-top:2px}
-.btn-logout{background:rgba(255,255,255,.18);border:none;color:white;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+/* ══ APP HEADER ══ */
+.app-header{background:var(--dark);color:var(--text);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);box-shadow:0 2px 20px rgba(0,0,0,0.5)}
+.header-left{flex:1;min-width:0;display:flex;align-items:center;gap:10px}
+.header-logo{width:28px;height:28px;flex-shrink:0}
+.header-name{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.btn-logout{background:var(--dark3);border:1px solid var(--border);color:var(--text-dim);padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s}
+.btn-logout:hover{border-color:var(--gold);color:var(--gold)}
 
-/* ── TABS ── */
-.tab-bar{display:flex;background:white;border-bottom:2px solid #e5e7eb;position:sticky;top:52px;z-index:99}
-.tab-btn{flex:1;padding:11px 4px;border:none;background:none;font-size:10px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.2s;display:flex;flex-direction:column;align-items:center;gap:3px}
-.tab-btn.active{color:var(--navy);border-bottom-color:var(--navy)}
-.tab-btn.active.geodis-tab{color:var(--geodis);border-bottom-color:var(--geodis)}
-.tab-icon{font-size:17px}
-.tab-content{padding:14px;flex:1}
+/* ══ TABS ══ */
+.tab-bar{display:flex;background:var(--dark);border-bottom:1px solid var(--border);position:sticky;top:52px;z-index:99}
+.tab-btn{flex:1;padding:12px 4px;border:none;background:none;font-size:10px;font-weight:700;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.2s;display:flex;flex-direction:column;align-items:center;gap:3px;letter-spacing:0.3px}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-icon{font-size:16px}
+.tab-content{padding:14px;flex:1;background:var(--dark2)}
 
-/* ── CARDS ── */
-.card{background:white;border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+/* ══ CARDS ══ */
+.card{background:var(--dark);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
 .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.section-hdr h3{font-size:15px;font-weight:700;color:var(--navy)}
+.section-hdr h3{font-size:15px;font-weight:700;color:var(--text)}
 
-/* ── CLOCK ── */
-.clock-display{font-size:44px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;letter-spacing:-1px;margin:10px 0;text-align:center}
-.clock-date{font-size:13px;color:var(--muted);margin-bottom:12px;text-align:center}
-.clock-status{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700}
-.clock-status.out{background:#fef3c7;color:#92400e}
-.clock-status.in{background:#d1fae5;color:#065f46}
+/* ══ CLOCK ══ */
+.clock-display{font-size:42px;font-weight:800;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:-2px;margin:10px 0;text-align:center;text-shadow:0 0 30px var(--gold-glow)}
+.clock-date{font-size:13px;color:var(--text-muted);margin-bottom:12px;text-align:center}
+.clock-status{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.5px}
+.clock-status.out{background:var(--dark3);color:var(--text-muted);border:1px solid var(--border)}
+.clock-status.in{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,200,83,0.3)}
 .clock-wrap{text-align:center;margin-bottom:18px}
-.btn-clock-in{background:var(--green);color:white;border:none;border-radius:14px;padding:20px;font-size:19px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 15px rgba(26,122,74,.35);transition:.2s}
-.btn-clock-out{background:var(--red);color:white;border:none;border-radius:14px;padding:20px;font-size:19px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 15px rgba(192,57,43,.35);transition:.2s}
+.btn-clock-in{background:linear-gradient(135deg,#00c853,#00a844);color:white;border:none;border-radius:14px;padding:20px;font-size:18px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 24px rgba(0,200,83,0.35);transition:.2s;letter-spacing:0.3px}
+.btn-clock-out{background:linear-gradient(135deg,#ff1744,#d50000);color:white;border:none;border-radius:14px;padding:20px;font-size:18px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 24px rgba(255,23,68,0.35);transition:.2s;letter-spacing:0.3px}
+.btn-clock-in:active,.btn-clock-out:active{transform:scale(.98)}
 .clock-times{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.clock-time-box{background:var(--light-blue);border-radius:10px;padding:10px;text-align:center}
-.clock-time-box .label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase}
-.clock-time-box .val{font-size:15px;font-weight:700;color:var(--navy);margin-top:3px}
-.gps-banner{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;text-align:center}
-.gps-badge{background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block}
-.gps-badge.off{background:#fee2e2;color:#991b1b}
+.clock-time-box{background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.clock-time-box .label{font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.clock-time-box .val{font-size:16px;font-weight:700;color:var(--gold);margin-top:4px}
+.gps-banner{background:var(--dark3);border:1px solid var(--border-gold);border-radius:12px;padding:12px 16px;text-align:center}
+.gps-badge{background:var(--green-dim);color:var(--green);font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;display:inline-block;border:1px solid rgba(0,200,83,0.3)}
+.gps-badge.off{background:var(--dark4);color:var(--text-muted);border-color:var(--border)}
 
-/* ── STOPS ── */
-.btn-add-stop{background:var(--blue);color:white;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer}
-.stop-item{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid #f3f4f6}
+/* ══ STOPS ══ */
+.btn-add-stop{background:var(--gold-dim);color:var(--gold);border:1px solid var(--border-gold);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
+.btn-add-stop:hover{background:var(--gold);color:var(--black)}
+.stop-item{display:flex;align-items:flex-start;gap:9px;padding:10px 0;border-bottom:1px solid var(--border)}
 .stop-item:last-child{border-bottom:none}
-.stop-num{background:var(--navy);color:white;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+.stop-num{background:var(--gold);color:var(--black);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;margin-top:2px}
 .stop-info{flex:1;min-width:0}
-.stop-info .stop-time{font-size:12px;font-weight:700;color:var(--navy)}
-.stop-info .stop-addr{font-size:11px;color:var(--muted);margin-top:2px;word-break:break-word}
-.stop-del{background:none;border:none;color:#ccc;font-size:16px;cursor:pointer;padding:2px 5px}
+.stop-info .stop-time{font-size:12px;font-weight:700;color:var(--text)}
+.stop-info .stop-addr{font-size:11px;color:var(--text-muted);margin-top:2px;word-break:break-word}
+.stop-del{background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:2px 5px;transition:.2s}
 .stop-del:hover{color:var(--red)}
 
-/* ── EXPENSES ── */
+/* ══ EXPENSES ══ */
 .exp-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.exp-field label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
+.exp-field label{display:block;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
 .exp-input-wrap{position:relative}
-.exp-input-wrap span{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-weight:700;color:#555;font-size:14px}
-.exp-input-wrap input{width:100%;padding:11px 11px 11px 24px;border:2px solid #e5e7eb;border-radius:10px;font-size:16px;font-weight:700;transition:border .2s}
-.exp-input-wrap input:focus{border-color:var(--navy);outline:none}
-.receipt-upload{border:2px dashed #d1d5db;border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:.2s;background:#fafafa}
-.receipt-upload:hover{border-color:var(--blue);background:var(--light-blue)}
+.exp-input-wrap span{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--gold);font-size:14px}
+.exp-input-wrap input{width:100%;padding:11px 11px 11px 24px;border:1.5px solid var(--border);border-radius:10px;font-size:16px;font-weight:700;background:var(--dark3);color:var(--text);transition:border .2s;font-family:inherit}
+.exp-input-wrap input:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px var(--gold-dim)}
+.receipt-upload{border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.2s;background:var(--dark3)}
+.receipt-upload:hover{border-color:var(--gold);background:var(--gold-dim)}
 .receipt-upload input{display:none}
-.receipt-icon{font-size:26px;margin-bottom:5px}
-.receipt-upload p{font-size:12px;color:var(--muted);font-weight:600}
-.receipt-upload .hint{font-size:11px;color:#9ca3af;margin-top:3px}
-.scanning-indicator{display:none;align-items:center;gap:8px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:9px;margin-top:8px;font-size:13px;font-weight:600;color:#92400e}
+.receipt-icon{font-size:28px;margin-bottom:6px}
+.receipt-upload p{font-size:12px;color:var(--text-dim);font-weight:600}
+.receipt-upload .hint{font-size:11px;color:var(--text-muted);margin-top:3px}
+.scanning-indicator{display:none;align-items:center;gap:8px;background:var(--dark3);border:1px solid var(--border-gold);border-radius:8px;padding:9px;margin-top:8px;font-size:13px;font-weight:600;color:var(--gold)}
 .scanning-indicator.visible{display:flex}
-.spinner{width:15px;height:15px;border:2px solid #fde68a;border-top-color:#92400e;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+.spinner{width:15px;height:15px;border:2px solid var(--border-gold);border-top-color:var(--gold);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .receipt-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:7px;margin-top:10px}
-.receipt-thumb{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:3/4;background:#f3f4f6}
+.receipt-thumb{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:3/4;background:var(--dark3)}
 .receipt-thumb img{width:100%;height:100%;object-fit:cover}
-.receipt-thumb .remove-thumb{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.6);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.receipt-result{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:9px;margin-top:8px;font-size:13px;color:#166534;font-weight:600;display:none}
+.receipt-thumb .remove-thumb{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.receipt-result{background:var(--green-dim);border:1px solid rgba(0,200,83,0.3);border-radius:8px;padding:9px;margin-top:8px;font-size:13px;color:var(--green);font-weight:600;display:none}
 .receipt-result.visible{display:block}
 .exp-totals{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.exp-total-box{background:var(--light-blue);border-radius:10px;padding:13px;text-align:center}
-.exp-total-box .etl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase}
-.exp-total-box .etv{font-size:21px;font-weight:800;color:var(--navy)}
+.exp-total-box{background:var(--dark3);border:1px solid var(--border-gold);border-radius:10px;padding:14px;text-align:center}
+.exp-total-box .etl{font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.exp-total-box .etv{font-size:22px;font-weight:800;color:var(--gold)}
 
-/* ── HOURS ── */
-.day-row{display:grid;grid-template-columns:72px 1fr 1fr;gap:8px;align-items:center;margin-bottom:9px}
+/* ══ HOURS ══ */
+.day-row{display:grid;grid-template-columns:72px 1fr 1fr;gap:8px;align-items:center;margin-bottom:10px}
 .day-row .dlabel{font-size:13px;font-weight:700;color:var(--text)}
-.day-row select{padding:9px 7px;border:2px solid #e5e7eb;border-radius:8px;font-size:13px;background:white;appearance:none;-webkit-appearance:none}
-.day-row select:focus{border-color:var(--navy);outline:none}
-.day-row .ftime label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:3px;display:block}
-.total-badge{background:var(--light-blue);border-radius:10px;padding:10px 14px;text-align:center;margin-bottom:14px}
-.total-badge .tbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase}
-.total-badge .tbv{font-size:24px;font-weight:800;color:var(--navy)}
-.total-badge .tbp{font-size:12px;color:var(--muted);margin-top:2px}
+.day-row select{padding:9px 7px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--dark3);color:var(--text);appearance:none;-webkit-appearance:none;font-family:inherit}
+.day-row select:focus{border-color:var(--gold);outline:none}
+.day-row .ftime label{font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:3px;display:block}
+.total-badge{background:var(--dark3);border:1px solid var(--border-gold);border-radius:12px;padding:16px 14px;text-align:center;margin-bottom:14px}
+.total-badge .tbl{font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.total-badge .tbv{font-size:28px;font-weight:800;color:var(--gold);letter-spacing:-1px}
+.total-badge .tbp{font-size:12px;color:var(--text-muted);margin-top:4px}
 
-/* ── SIGNATURE ── */
-.sig-canvas-wrap{border:2px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#fafafa;margin-top:8px;position:relative}
+/* ══ SIGNATURE ══ */
+.sig-canvas-wrap{border:1.5px solid var(--border);border-radius:12px;overflow:hidden;background:#fafafa;margin-top:8px;position:relative}
 #sigCanvas{display:block;width:100%;touch-action:none}
-.sig-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:#d1d5db;pointer-events:none;font-weight:500;white-space:nowrap}
-.btn-clear-sig{background:#f3f4f6;color:#374151;border:none;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-top:9px}
+.sig-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:#bbb;pointer-events:none;font-weight:500;white-space:nowrap}
+.btn-clear-sig{background:var(--dark3);color:var(--text-dim);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-top:9px;transition:.2s;font-family:inherit}
+.btn-clear-sig:hover{border-color:var(--gold);color:var(--gold)}
 
-/* ── NOTES + SUBMIT ── */
-.notes-ta{width:100%;border:2px solid #e5e7eb;border-radius:10px;padding:11px;font-size:14px;resize:vertical;min-height:75px;font-family:inherit}
-.notes-ta:focus{border-color:var(--navy);outline:none}
-.btn-submit{background:var(--navy);color:white;border:none;border-radius:14px;padding:19px;font-size:17px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 15px rgba(0,51,102,.25);transition:.2s}
-.btn-submit:hover:not(:disabled){background:var(--blue)}
-.btn-submit:disabled{background:#aaa;cursor:not-allowed}
+/* ══ NOTES + SUBMIT ══ */
+.notes-ta{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:11px;font-size:14px;resize:vertical;min-height:75px;font-family:inherit;background:var(--dark3);color:var(--text)}
+.notes-ta:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px var(--gold-dim)}
+.btn-submit{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--black);border:none;border-radius:14px;padding:19px;font-size:17px;font-weight:800;width:100%;cursor:pointer;box-shadow:0 4px 24px var(--gold-glow);transition:.2s;letter-spacing:0.3px}
+.btn-submit:hover:not(:disabled){background:linear-gradient(135deg,var(--gold-dark),#b8900a)}
+.btn-submit:disabled{background:var(--dark3);color:var(--text-muted);cursor:not-allowed;box-shadow:none}
 .msg{padding:13px;border-radius:10px;font-size:14px;font-weight:600;margin-top:11px;display:none;text-align:center}
-.msg.success{background:#d1fae5;color:#065f46;display:block}
-.msg.error{background:#fee2e2;color:#991b1b;display:block}
+.msg.success{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,200,83,0.3);display:block}
+.msg.error{background:var(--red-dim);color:#ff6b81;border:1px solid rgba(255,23,68,0.3);display:block}
 
-/* ── DASHBOARD ── */
-#dashScreen{background:var(--gray)}
-.dash-header{background:var(--navy);color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
-.dash-header.geodis-dash{background:var(--geodis)}
-.dash-header h1{font-size:17px;font-weight:800}
-.dash-header .dsub{font-size:11px;opacity:.75;margin-top:2px}
+/* ══ DASHBOARD ══ */
+#dashScreen{background:var(--black)}
 .dash-content{padding:14px}
 .dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.stat-box{background:white;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.stat-box .sv{font-size:22px;font-weight:800;color:var(--navy)}
-.stat-box .sl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:3px}
-.dash-section-title{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px;border-bottom:2px solid var(--navy);padding-bottom:4px}
-.driver-card{background:white;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.stat-box{background:var(--dark);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+.stat-box .sv{font-size:24px;font-weight:800;color:var(--gold)}
+.stat-box .sl{font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-top:3px;letter-spacing:0.3px}
+.driver-card{background:var(--dark);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;transition:.2s}
+.driver-card:hover{border-color:var(--border-gold)}
 .driver-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .driver-name{font-size:14px;font-weight:700;color:var(--text)}
-.driver-truck{font-size:11px;color:var(--muted)}
-.status-pill{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700}
-.status-pill.clocked-in{background:#d1fae5;color:#065f46}
-.status-pill.clocked-out{background:#fee2e2;color:#991b1b}
-.status-pill.idle{background:#f3f4f6;color:#6b7280}
+.driver-truck{font-size:11px;color:var(--text-muted)}
+.status-pill{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:0.3px}
+.status-pill.clocked-in{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,200,83,0.3)}
+.status-pill.clocked-out{background:var(--red-dim);color:#ff6b81;border:1px solid rgba(255,23,68,0.3)}
+.status-pill.idle{background:var(--dark3);color:var(--text-muted);border:1px solid var(--border)}
 .driver-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
-.ds-item{text-align:center;background:#f9fafb;border-radius:8px;padding:8px 4px}
-.ds-item .dsv{font-size:14px;font-weight:700;color:var(--navy)}
-.ds-item .dsl{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px}
-.last-stop{background:#f9fafb;border-radius:8px;padding:9px;font-size:11px;color:var(--muted)}
+.ds-item{text-align:center;background:var(--dark3);border-radius:8px;padding:8px 4px}
+.ds-item .dsv{font-size:14px;font-weight:700;color:var(--gold)}
+.ds-item .dsl{font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-top:2px}
+.last-stop{background:var(--dark3);border-radius:8px;padding:9px;font-size:11px;color:var(--text-muted)}
 .last-stop strong{color:var(--text);font-size:12px}
-.map-container{background:#e8f0fb;border-radius:12px;overflow:hidden;margin-bottom:14px;position:relative}
+.map-container{background:var(--dark3);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px;position:relative}
 #dashMap{width:100%;height:280px}
-.map-placeholder{width:100%;height:280px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e8f0fb,#c7d9f5);flex-direction:column;gap:8px}
-.map-placeholder .mp-icon{font-size:36px}
-.map-placeholder p{font-size:13px;color:var(--navy);font-weight:600}
-.refresh-btn{background:white;border:2px solid var(--navy);color:var(--navy);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:12px}
-.refresh-btn:hover{background:var(--light-blue)}
-.last-updated{font-size:11px;color:var(--muted);margin-bottom:10px}
+.map-placeholder{width:100%;height:280px;display:flex;align-items:center;justify-content:center;background:var(--dark3);flex-direction:column;gap:8px}
+.map-placeholder .mp-icon{font-size:36px;opacity:0.5}
+.map-placeholder p{font-size:13px;color:var(--text-muted);font-weight:600}
+.refresh-btn{background:var(--dark3);border:1px solid var(--border);color:var(--text-dim);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
+.refresh-btn:hover{border-color:var(--gold);color:var(--gold)}
+.last-updated{font-size:11px;color:var(--text-muted);margin-bottom:10px}
 
-/* ── RESPONSIVE ── */
-@media(min-width:600px){
-  body{padding:20px}
-  .screen{max-width:480px;margin:0 auto;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-  #loginScreen,#dashScreen{border-radius:20px;min-height:auto}
-  #dashScreen{max-width:700px}
-}
-
-/* ── SIDEBAR LAYOUT ── */
+/* ══ SIDEBAR LAYOUT ══ */
 #dashScreen{display:none;min-height:100vh;flex-direction:row}
 #dashScreen.active{display:flex}
-.dash-sidebar{width:220px;min-width:220px;background:var(--navy);color:white;display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;height:100vh;overflow-y:auto}
-.dash-sidebar.geodis-sidebar{background:#a00010}
-.sidebar-logo{padding:16px;border-bottom:1px solid rgba(255,255,255,.15);text-align:center}
-.sidebar-logo .sb-badge{background:rgba(255,255,255,.15);border-radius:8px;padding:8px 14px;font-size:18px;font-weight:900;letter-spacing:2px;display:inline-block}
-.sidebar-logo .sb-user{font-size:12px;margin-top:6px;opacity:.8;word-break:break-word}
-.sidebar-section{padding:8px 0}
-.sidebar-section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:6px 16px;opacity:.5}
-.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;border-left:3px solid transparent;color:rgba(255,255,255,.85)}
-.sidebar-item:hover{background:rgba(255,255,255,.1);color:white}
-.sidebar-item.active{background:rgba(255,255,255,.18);color:white;border-left-color:white}
+.dash-sidebar{width:230px;min-width:230px;background:var(--dark);color:var(--text);display:flex;flex-direction:column;min-height:100vh;position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--border)}
+.dash-sidebar.geodis-sidebar{background:#0f0005;border-right-color:rgba(204,0,16,0.25)}
+.sidebar-logo{padding:20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.sidebar-logo-img{width:40px;height:40px;flex-shrink:0}
+.sidebar-logo-text{flex:1;min-width:0}
+.sidebar-logo-text .sb-org{font-size:13px;font-weight:800;color:var(--gold);letter-spacing:1px}
+.sidebar-logo-text .sb-user{font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.sidebar-logo-text .sb-badge{display:none}
+.sidebar-section{padding:10px 0 4px}
+.sidebar-section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:6px 16px;color:var(--text-muted);opacity:0.7}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;border-left:3px solid transparent;color:var(--text-dim)}
+.sidebar-item:hover{background:rgba(245,197,24,0.07);color:var(--text)}
+.sidebar-item.active{background:var(--gold-dim);color:var(--gold);border-left-color:var(--gold)}
 .sidebar-item .si-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
-.sidebar-divider{border:none;border-top:1px solid rgba(255,255,255,.1);margin:4px 0}
-.sb-logout{margin-top:auto;padding:12px 16px;border-top:1px solid rgba(255,255,255,.1)}
-.sb-logout button{background:rgba(255,255,255,.15);border:none;color:white;padding:9px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;width:100%}
-.dash-main{flex:1;overflow-y:auto;background:var(--gray)}
-.dash-main-header{background:white;padding:14px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between}
-.dash-main-header h2{font-size:17px;font-weight:700;color:var(--navy)}
-.dash-main-header .dh-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sidebar-divider{border:none;border-top:1px solid var(--border);margin:4px 0}
+.sb-logout{margin-top:auto;padding:12px 16px;border-top:1px solid var(--border)}
+.sb-logout button{background:var(--dark3);border:1px solid var(--border);color:var(--text-dim);padding:9px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;width:100%;transition:.2s;font-family:inherit}
+.sb-logout button:hover{border-color:var(--red);color:#ff6b81}
+.dash-main{flex:1;overflow-y:auto;background:var(--dark2)}
+.dash-main-header{background:var(--dark);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.dash-main-header-title{font-size:18px;font-weight:700;color:var(--text)}
+.dash-main-header .dh-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
 .dash-panel{padding:16px;display:none}
 .dash-panel.active{display:block}
 
-/* ── REPORT STYLES ── */
-.report-toolbar{background:white;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.report-toolbar label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:3px;display:block}
-.report-toolbar select,.report-toolbar input{padding:9px 12px;border:2px solid #e5e7eb;border-radius:8px;font-size:13px;background:white}
-.report-toolbar select:focus,.report-toolbar input:focus{border-color:var(--navy);outline:none}
-.btn-run-report{background:var(--navy);color:white;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;margin-top:18px}
-.btn-run-report:hover{background:var(--blue)}
-.btn-print{background:white;color:var(--navy);border:2px solid var(--navy);border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;margin-top:18px}
-.btn-print:hover{background:var(--light-blue)}
-.report-table-wrap{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+/* ══ REPORT STYLES ══ */
+.report-toolbar{background:var(--dark);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.report-toolbar label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;display:block}
+.report-toolbar select,.report-toolbar input{padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--dark3);color:var(--text);font-family:inherit}
+.report-toolbar select:focus,.report-toolbar input:focus{border-color:var(--gold);outline:none}
+.btn-run-report{background:var(--gold);color:var(--black);border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;margin-top:18px;transition:.2s;font-family:inherit}
+.btn-run-report:hover{background:var(--gold-dark)}
+.btn-print{background:var(--dark3);color:var(--text-dim);border:1.5px solid var(--border);border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;margin-top:18px;transition:.2s;font-family:inherit}
+.btn-print:hover{border-color:var(--gold);color:var(--gold)}
+.report-table-wrap{background:var(--dark);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
 .report-table{width:100%;border-collapse:collapse;font-size:12px}
-.report-table th{background:var(--navy);color:white;padding:10px 12px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
-.report-table td{padding:9px 12px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+.report-table th{background:var(--dark3);color:var(--text-muted);padding:10px 12px;text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;border-bottom:1px solid var(--border)}
+.report-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text)}
 .report-table tr:last-child td{border-bottom:none}
-.report-table tr:hover td{background:#f9fafb}
-.report-table .total-row td{background:var(--light-blue);font-weight:700;color:var(--navy)}
+.report-table tr:hover td{background:rgba(245,197,24,0.04)}
+.report-table .total-row td{background:var(--gold-dim);color:var(--gold);font-weight:700;border-color:var(--border-gold)}
 .report-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px}
-.rs-box{background:white;border-radius:10px;padding:14px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.rs-box .rsv{font-size:20px;font-weight:800;color:var(--navy)}
-.rs-box .rsl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:3px}
-.no-data{background:white;border-radius:12px;padding:30px;text-align:center;color:var(--muted);font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.badge-in{background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
-.badge-out{background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.rs-box{background:var(--dark);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.rs-box .rsv{font-size:22px;font-weight:800;color:var(--gold)}
+.rs-box .rsl{font-size:10px;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-top:3px;letter-spacing:0.3px}
+.no-data{background:var(--dark);border:1px solid var(--border);border-radius:12px;padding:40px;text-align:center;color:var(--text-muted);font-size:13px}
+.badge-in{background:var(--green-dim);color:var(--green);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;border:1px solid rgba(0,200,83,0.3)}
+.badge-out{background:var(--red-dim);color:#ff6b81;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;border:1px solid rgba(255,23,68,0.3)}
+.dash-section-title{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.8px;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border-gold)}
 
-/* ── PRINT ── */
+/* ══ PRINT ══ */
 @media print{
   .dash-sidebar,.report-toolbar,.btn-print,.btn-run-report,.refresh-btn{display:none!important}
   .dash-main{overflow:visible}
   .report-table-wrap{box-shadow:none;border:1px solid #ccc}
   .print-header{display:block!important}
-  body{background:white}
+  body{background:white;color:black}
+  .report-table th{background:#1a237e;color:white}
+  .report-table td{color:black;border-color:#ddd}
 }
 .print-header{display:none;text-align:center;margin-bottom:16px}
 .print-header h2{font-size:18px;font-weight:800;color:#000}
 .print-header p{font-size:12px;color:#555}
 
+/* ══ RESPONSIVE ══ */
+@media(min-width:600px){
+  body{padding:0}
+  .screen{max-width:100%}
+  #loginScreen{padding:40px 20px}
+  .login-card{border-radius:24px}
+}
 @media(max-width:600px){
   .dash-sidebar{width:60px;min-width:60px}
-  .sidebar-item span:last-child,.sidebar-section-title,.sb-logout button span,.sidebar-logo .sb-user,.sidebar-logo .sb-badge-text{display:none}
-  .sidebar-logo .sb-badge{font-size:12px;padding:6px}
+  .sidebar-logo-text,.sidebar-section-title,.sidebar-item span:not(.si-icon){display:none}
+  .sidebar-logo{justify-content:center;padding:14px 8px}
+  .sidebar-item{justify-content:center;padding:12px}
+  .sb-logout button span{display:none}
 }
 </style>
 </head>
 <body>
-
-<!-- ═══════════════════════════════════════════════
-     LOGIN SCREEN
-═══════════════════════════════════════════════ -->
+<!-- ══ LOGIN SCREEN ══ -->
 <div id="loginScreen" class="screen active">
   <div class="login-card">
     <div class="login-logo">
-      <div class="logo-badge" id="logoBadge">MLAM</div>
-      <h1 id="loginTitle">Shuttle Driver App</h1>
-      <p>Meiborg Inc. / Logisnext / Geodis</p>
+      <div class="meiborg-logo-svg" id="loginLogoWrap">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#0a0a0f" stroke="#1a237e" stroke-width="3"/><path d="M14 75 L14 28 L50 58 L86 28 L86 75" fill="none" stroke="#1a237e" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M14 75 L14 28 L50 58 L86 28 L86 75" fill="none" stroke="#F5C518" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><path d="M36 72 Q50 52 64 72" fill="none" stroke="#F5C518" stroke-width="4" stroke-linecap="round"/></svg>
+      </div>
+      <h1 id="loginTitle">MLAM Driver App</h1>
+      <p>Meiborg Logistics &amp; Asset Management</p>
     </div>
-
-    <!-- Role Toggle -->
     <div class="role-toggle">
       <button class="role-btn active" id="roleDriverBtn" onclick="setRole('driver')">&#128665; Driver</button>
       <button class="role-btn" id="roleOfficeBtn" onclick="setRole('office')">&#128188; Office</button>
     </div>
-
-    <!-- Driver fields -->
     <div id="driverFields">
       <div class="form-group">
         <label>Select Your Name</label>
@@ -297,8 +330,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
         <input type="date" id="loginWeekEnding"/>
       </div>
     </div>
-
-    <!-- Office fields -->
     <div id="officeFields" style="display:none">
       <div class="form-group">
         <label>Select Your Name</label>
@@ -308,11 +339,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
           <option value="Mike Houston|meiborg">Mike Houston (Meiborg)</option>
           <option value="Melissa Kiely|meiborg">Melissa Kiely (Meiborg)</option>
           <option value="Kim Rote|geodis">Kim Rote (Geodis)</option>
+          <option value="Dev|meiborg">Dev (Meiborg)</option>
         </select>
       </div>
     </div>
-
-    <!-- Password -->
     <div class="form-group" id="pwGroup">
       <label id="pwLabel">Password</label>
       <input type="password" id="pwInput" placeholder="Enter password" autocomplete="current-password"/>
@@ -322,20 +352,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
       <label>Confirm Password</label>
       <input type="password" id="pwConfirm" placeholder="Re-enter password"/>
     </div>
-
     <div class="login-err" id="loginErr"></div>
     <button class="btn-primary" id="loginBtn" onclick="doLogin()">&#9654; Start My Shift</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     DRIVER APP SCREEN
-═══════════════════════════════════════════════ -->
+<!-- ══ DRIVER APP SCREEN ══ -->
 <div id="appScreen" class="screen">
   <div class="app-header" id="appHeader">
     <div class="header-left">
-      <div class="header-name" id="headerName"></div>
-      <div class="header-sub" id="headerTruck"></div>
+      <svg class="header-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#0a0a0f"/><path d="M14 75 L14 28 L50 58 L86 28 L86 75" fill="none" stroke="#1a237e" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M14 75 L14 28 L50 58 L86 28 L86 75" fill="none" stroke="#F5C518" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><path d="M36 72 Q50 52 64 72" fill="none" stroke="#F5C518" stroke-width="4" stroke-linecap="round"/></svg>
+      <div>
+        <div class="header-name" id="headerName"></div>
+        <div class="header-sub" id="headerTruck"></div>
+      </div>
     </div>
     <button class="btn-logout" onclick="doLogout()">&#10006; Log Out</button>
   </div>
@@ -360,8 +390,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
       </div>
     </div>
     <div class="gps-banner">
-      <div style="font-size:12px;font-weight:700;color:#92400e">GPS TRACKING</div>
-      <div style="font-size:12px;color:#78350f;margin-top:3px" id="gpsStatusText">Tap Clock In to begin</div>
+      <div style="font-size:12px;font-weight:700;color:var(--gold)">GPS TRACKING</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px" id="gpsStatusText">Tap Clock In to begin</div>
       <span class="gps-badge off" id="gpsBadge">OFF</span>
     </div>
   </div>
@@ -373,14 +403,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
         <h3>&#128205; Stop Log <span class="gps-badge off" id="stopGpsBadge">OFF</span></h3>
         <button class="btn-add-stop" onclick="addManualStop()">+ Add Stop</button>
       </div>
-      <div id="stopsList"><p style="text-align:center;color:var(--muted);font-size:13px;padding:18px 0">No stops yet. Clock in to start GPS.</p></div>
+      <div id="stopsList"><p style="text-align:center;color:var(--text-muted);font-size:13px;padding:18px 0">No stops yet. Clock in to start GPS.</p></div>
     </div>
   </div>
 
   <!-- EXPENSES TAB -->
   <div class="tab-content" id="panel-expenses" style="display:none">
     <div class="card">
-      <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px">&#9981; Fuel &amp; Toll Receipts</h3>
+      <h3 style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px">&#9981; Fuel &amp; Toll Receipts</h3>
       <div class="exp-row">
         <div class="exp-field"><label>Fuel Total ($)</label><div class="exp-input-wrap"><span>$</span><input type="number" id="fuelAmt" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()"/></div></div>
         <div class="exp-field"><label>Tolls Total ($)</label><div class="exp-input-wrap"><span>$</span><input type="number" id="tollsAmt" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()"/></div></div>
@@ -396,7 +426,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
       <div class="receipt-preview" id="receiptPreview"></div>
     </div>
     <div class="card">
-      <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px">Total Expenses</h3>
+      <h3 style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">Total Expenses</h3>
       <div class="exp-totals">
         <div class="exp-total-box"><div class="etl">Fuel</div><div class="etv" id="fuelDisplay">$0.00</div></div>
         <div class="exp-total-box"><div class="etl">Tolls</div><div class="etv" id="tollsDisplay">$0.00</div></div>
@@ -407,8 +437,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   <!-- HOURS TAB -->
   <div class="tab-content" id="panel-hours" style="display:none">
     <div class="card">
-      <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px">Daily Hours (Sun - Thu)</h3>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Adjust if needed</p>
+      <h3 style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">Daily Hours (Sun - Thu)</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Adjust if needed</p>
       <div id="hoursGrid"></div>
     </div>
     <div class="total-badge">
@@ -422,34 +452,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   <div class="tab-content" id="panel-submit" style="display:none">
     <div class="card">
       <div class="section-hdr"><h3>&#9998; Driver Signature</h3></div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:6px">Sign to certify your hours are correct</p>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Sign to certify your hours are correct</p>
       <div class="sig-canvas-wrap"><canvas id="sigCanvas" height="150"></canvas><div class="sig-hint" id="sigHint">Sign here</div></div>
       <button class="btn-clear-sig" onclick="clearSig()">&#10005; Clear Signature</button>
     </div>
     <div class="card">
-      <h3 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px">&#128221; Notes</h3>
+      <h3 style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">&#128221; Notes</h3>
       <textarea class="notes-ta" id="notesField" rows="3" placeholder="Any corrections, issues, or extra info..."></textarea>
     </div>
     <div style="padding:0 0 28px">
       <button class="btn-submit" id="submitBtn" onclick="submitTimesheet()">&#10003; Submit Timesheet</button>
       <div class="msg" id="submitMsg"></div>
-      <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:9px">Submits to the Geodis billing sheet</p>
+      <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:9px">Submits to the Geodis billing sheet</p>
     </div>
   </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════
-     OFFICE DASHBOARD with SIDEBAR
-════════════════════════════════════════ -->
+<!-- ══ OFFICE DASHBOARD ══ -->
 <div id="dashScreen" class="screen">
   <!-- SIDEBAR -->
   <div class="dash-sidebar" id="dashSidebar">
     <div class="sidebar-logo">
-      <div class="sb-badge" id="sbBadge">MLAM</div>
-      <div class="sb-user" id="sbUser"></div>
+      <div class="sidebar-logo-img" id="sbLogoImg"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#0a0a0f"/><path d="M14 75 L14 28 L50 58 L86 28 L86 75" fill="none" stroke="#1a237e" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><path d="M14 75 L14 28 L50 58 L86 28 L86 75" fill="none" stroke="#F5C518" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><path d="M36 72 Q50 52 64 72" fill="none" stroke="#F5C518" stroke-width="4" stroke-linecap="round"/></svg></div>
+      <div class="sidebar-logo-text">
+        <div class="sb-org" id="sbBadge">MLAM</div>
+        <div class="sb-user" id="sbUser"></div>
+      </div>
     </div>
-
     <div class="sidebar-section">
       <div class="sidebar-section-title">Live Operations</div>
       <div class="sidebar-item active" onclick="showDashPanel('overview')" id="si-overview">
@@ -462,9 +491,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
         <span class="si-icon">&#128665;</span><span>Driver Status</span>
       </div>
     </div>
-
     <hr class="sidebar-divider"/>
-
     <div class="sidebar-section">
       <div class="sidebar-section-title">Reports</div>
       <div class="sidebar-item" onclick="showDashPanel('rpt-weekly')" id="si-rpt-weekly">
@@ -480,9 +507,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
         <span class="si-icon">&#128104;&#8205;&#128187;</span><span>Driver Summary</span>
       </div>
     </div>
-
     <div class="sb-logout">
-      <button onclick="doLogout()">&#10006; Log Out</button>
+      <button onclick="doLogout()"><span>&#10006; Log Out</span></button>
     </div>
   </div>
 
@@ -490,7 +516,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   <div class="dash-main">
     <div class="dash-main-header">
       <div>
-        <div class="dash-main-header h2" id="dashPanelTitle" style="font-size:17px;font-weight:700;color:var(--navy)">Overview</div>
+        <div class="dash-main-header-title" id="dashPanelTitle">Overview</div>
         <div class="dh-sub" id="dashPanelSub"></div>
       </div>
       <button class="refresh-btn" onclick="refreshDashboard()" style="margin-bottom:0">&#8635; Refresh</button>
@@ -499,7 +525,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
     <!-- OVERVIEW PANEL -->
     <div class="dash-panel active" id="panel-overview">
       <div style="padding-top:4px">
-        <div class="last-updated" id="lastUpdated" style="padding:8px 0">Loading...</div>
+        <div class="last-updated" id="lastUpdated">Loading...</div>
         <div class="dash-stats">
           <div class="stat-box"><div class="sv" id="statActive">--</div><div class="sl">Active Now</div></div>
           <div class="stat-box"><div class="sv" id="statTotal">--</div><div class="sl">Drivers Today</div></div>
@@ -544,7 +570,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
       <div id="weeklyReportSummary" class="report-summary"></div>
       <div class="report-table-wrap"><table class="report-table" id="weeklyReportTable">
         <thead><tr><th>Driver</th><th>Truck</th><th>Week Ending</th><th>Clock In</th><th>Clock Out</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Total Hrs</th><th>Gross Pay</th><th>Fuel</th><th>Tolls</th><th>Signature</th></tr></thead>
-        <tbody id="weeklyReportBody"><tr><td colspan="15" style="text-align:center;padding:20px;color:var(--muted)">Select a week and click Run</td></tr></tbody>
+        <tbody id="weeklyReportBody"><tr><td colspan="15" style="text-align:center;padding:20px;color:var(--text-muted)">Select a week and click Run</td></tr></tbody>
       </table></div>
     </div>
 
@@ -571,7 +597,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
       <div id="expReportSummary" class="report-summary"></div>
       <div class="report-table-wrap"><table class="report-table">
         <thead><tr><th>Date</th><th>Driver</th><th>Truck</th><th>Fuel</th><th>Tolls</th><th>Total</th></tr></thead>
-        <tbody id="expReportBody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">Select range and click Run</td></tr></tbody>
+        <tbody id="expReportBody"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">Select range and click Run</td></tr></tbody>
       </table></div>
     </div>
 
@@ -594,7 +620,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
       </div>
       <div class="report-table-wrap"><table class="report-table">
         <thead><tr><th>Driver</th><th>Week Ending</th><th>Stop #</th><th>Time</th><th>Address</th><th>Lat</th><th>Lng</th><th>Label</th></tr></thead>
-        <tbody id="stopReportBody"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Select filters and click Run</td></tr></tbody>
+        <tbody id="stopReportBody"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">Select filters and click Run</td></tr></tbody>
       </table></div>
     </div>
 
@@ -611,7 +637,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
       <div id="summaryReportSummary" class="report-summary"></div>
       <div class="report-table-wrap"><table class="report-table">
         <thead><tr><th>Driver</th><th>Truck</th><th>Total Submissions</th><th>Total Hours</th><th>Total Gross Pay</th><th>Total Fuel</th><th>Total Tolls</th><th>Avg Hrs/Week</th><th>Last Submission</th></tr></thead>
-        <tbody id="summaryReportBody"><tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Click Run to load</td></tr></tbody>
+        <tbody id="summaryReportBody"><tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-muted)">Click Run to load</td></tr></tbody>
       </table></div>
     </div>
 
@@ -620,24 +646,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 
 <script>
 // ════════════════════════════════════════════════════════
-//  CONSTANTS & CONFIG
+// CONSTANTS & CONFIG
 // ════════════════════════════════════════════════════════
-const WEBHOOK      = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-timesheet';
-const STATUS_HOOK  = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-driver-status';   // new n8n endpoint for status pings
-const POLL_HOOK    = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-dashboard-data';  // new n8n endpoint for dashboard pull
-const RATE         = 76.50;
-const DAYS         = ['Sunday','Monday','Tuesday','Wednesday','Thursday'];
-const DAY_KEYS     = ['sun','mon','tue','wed','thu'];
-
+const WEBHOOK = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-timesheet';
+const STATUS_HOOK = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-driver-status';
+const POLL_HOOK = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-dashboard-data';
+const RATE = 76.50;
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday'];
+const DAY_KEYS = ['sun','mon','tue','wed','thu'];
 const OFFICE_USERS = {
   'Sharon Ruter':  { org:'meiborg', role:'office' },
   'Mike Houston':  { org:'meiborg', role:'office' },
   'Melissa Kiely': { org:'meiborg', role:'office' },
-  'Kim Rote':      { org:'geodis',  role:'office' }
+  'Kim Rote':      { org:'geodis',  role:'office' },
+  'Dev':           { org:'meiborg', role:'office' }
 };
 
 // ════════════════════════════════════════════════════════
-//  APP STATE
+// APP STATE
 // ════════════════════════════════════════════════════════
 let state = {
   role:'driver', driver:'', truck:'', org:'meiborg', weekEnding:'',
@@ -646,11 +672,10 @@ let state = {
   gpsWatchId:null, gpsActive:false, statusInterval:null,
   currentLat:null, currentLng:null
 };
-
-let currentRole = 'driver'; // 'driver' or 'office'
+let currentRole = 'driver';
 
 // ════════════════════════════════════════════════════════
-//  LIVE CLOCK
+// LIVE CLOCK
 // ════════════════════════════════════════════════════════
 setInterval(() => {
   const d = document.getElementById('clockDisplay');
@@ -663,30 +688,26 @@ setInterval(() => {
   const cd = document.getElementById('clockDate');
   if (cd) cd.textContent = now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
 }, 1000);
-
 function pad(n){ return n < 10 ? '0'+n : ''+n; }
 
 // ════════════════════════════════════════════════════════
-//  ROLE TOGGLE
+// ROLE TOGGLE
 // ════════════════════════════════════════════════════════
 function setRole(r) {
   currentRole = r;
-  document.getElementById('driverFields').style.display  = r === 'driver' ? 'block' : 'none';
-  document.getElementById('officeFields').style.display  = r === 'office' ? 'block' : 'none';
+  document.getElementById('driverFields').style.display = r === 'driver' ? 'block' : 'none';
+  document.getElementById('officeFields').style.display = r === 'office' ? 'block' : 'none';
   document.getElementById('roleDriverBtn').classList.toggle('active', r === 'driver');
   document.getElementById('roleOfficeBtn').classList.toggle('active', r === 'office');
-  document.getElementById('logoBadge').className = r === 'office' ? 'logo-badge' : 'logo-badge';
   document.getElementById('loginBtn').textContent = r === 'driver' ? '▶ Start My Shift' : '▶ Open Dashboard';
   checkFirstTime();
 }
 
 // ════════════════════════════════════════════════════════
-//  PASSWORD HELPERS
+// PASSWORD HELPERS
 // ════════════════════════════════════════════════════════
 function pwKey(name) { return 'mlam_pw_' + name.toLowerCase().replace(/\s+/g,'_'); }
-
 function hasPassword(name) { return !!localStorage.getItem(pwKey(name)); }
-
 function checkFirstTime() {
   const name = selectedName();
   if (!name) { document.getElementById('pwHint').style.display='none'; document.getElementById('pwConfirmGroup').style.display='none'; return; }
@@ -695,7 +716,6 @@ function checkFirstTime() {
   document.getElementById('pwConfirmGroup').style.display = first ? 'block' : 'none';
   document.getElementById('pwLabel').textContent = first ? 'Create Password' : 'Password';
 }
-
 function selectedName() {
   if (currentRole === 'driver') {
     const sel = document.getElementById('loginDriver');
@@ -710,29 +730,20 @@ function selectedName() {
 }
 
 // ════════════════════════════════════════════════════════
-//  LOGIN
+// LOGIN
 // ════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  // Wire up change listeners
   document.getElementById('loginDriver').addEventListener('change', () => {
     const v = document.getElementById('loginDriver').value;
     document.getElementById('otherNameWrap').style.display = v === 'OTHER|' ? 'block' : 'none';
     checkFirstTime();
   });
-  document.getElementById('loginOffice').addEventListener('change', () => {
-    const sel = document.getElementById('loginOffice');
-    const org = sel.value.split('|')[1] || 'meiborg';
-    document.getElementById('logoBadge').className = org === 'geodis' ? 'logo-badge geodis-badge' : 'logo-badge';
-    checkFirstTime();
-  });
+  document.getElementById('loginOffice').addEventListener('change', checkFirstTime);
   document.getElementById('otherName').addEventListener('input', checkFirstTime);
-
-  // Default week ending
   const dt = new Date(), dy = dt.getDay();
   const diff = (6 - dy + 7) % 7 || 7;
   dt.setDate(dt.getDate() + diff);
   document.getElementById('loginWeekEnding').value = dt.toISOString().slice(0,10);
-
   buildHoursGrid();
   initSigCanvas();
 });
@@ -740,37 +751,24 @@ document.addEventListener('DOMContentLoaded', () => {
 function doLogin() {
   const errEl = document.getElementById('loginErr');
   errEl.classList.remove('show');
-
   const name = selectedName();
   if (!name) { showErr('Please select your name.'); return; }
-
-  const pw    = document.getElementById('pwInput').value;
-  const pwc   = document.getElementById('pwConfirm').value;
-  if (!pw)    { showErr('Please enter a password.'); return; }
-
-  const key   = pwKey(name);
+  const pw = document.getElementById('pwInput').value;
+  const pwc = document.getElementById('pwConfirm').value;
+  if (!pw) { showErr('Please enter a password.'); return; }
+  const key = pwKey(name);
   const stored = localStorage.getItem(key);
-
   if (!stored) {
-    // First time — set password
     if (pw.length < 4) { showErr('Password must be at least 4 characters.'); return; }
-    if (pw !== pwc)    { showErr('Passwords do not match.'); return; }
+    if (pw !== pwc) { showErr('Passwords do not match.'); return; }
     localStorage.setItem(key, btoa(pw));
   } else {
     if (btoa(pw) !== stored) { showErr('Incorrect password.'); return; }
   }
-
-  // Successful login
-  document.getElementById('pwInput').value   = '';
+  document.getElementById('pwInput').value = '';
   document.getElementById('pwConfirm').value = '';
-
-  if (currentRole === 'office') {
-    launchDashboard(name);
-  } else {
-    launchDriverApp(name);
-  }
+  if (currentRole === 'office') { launchDashboard(name); } else { launchDriverApp(name); }
 }
-
 function showErr(msg) {
   const el = document.getElementById('loginErr');
   el.textContent = msg;
@@ -778,17 +776,16 @@ function showErr(msg) {
 }
 
 // ════════════════════════════════════════════════════════
-//  LAUNCH DRIVER APP
+// LAUNCH DRIVER APP
 // ════════════════════════════════════════════════════════
 function launchDriverApp(name) {
-  const sel   = document.getElementById('loginDriver');
+  const sel = document.getElementById('loginDriver');
   const parts = sel.value.split('|');
   state.driver = name;
-  state.truck  = parts[0] === 'OTHER' ? '' : (parts[1] || '');
+  state.truck = parts[0] === 'OTHER' ? '' : (parts[1] || '');
   state.weekEnding = document.getElementById('loginWeekEnding').value;
   state.org = 'meiborg';
-
-  document.getElementById('headerName').textContent  = name;
+  document.getElementById('headerName').textContent = name;
   document.getElementById('headerTruck').textContent = state.truck ? 'Truck #' + state.truck : '';
   document.getElementById('loginScreen').classList.remove('active');
   document.getElementById('appScreen').classList.add('active');
@@ -796,19 +793,21 @@ function launchDriverApp(name) {
 }
 
 // ════════════════════════════════════════════════════════
-//  LAUNCH DASHBOARD
+// LAUNCH DASHBOARD
 // ════════════════════════════════════════════════════════
 function launchDashboard(name) {
   setTimeout(loadTimesheetHistory, 500);
   const sel = document.getElementById('loginOffice');
   const org = sel.value.split('|')[1] || 'meiborg';
   const isGeodis = org === 'geodis';
-
   document.getElementById('dashSidebar').className = 'dash-sidebar' + (isGeodis ? ' geodis-sidebar' : '');
-    document.getElementById('sbBadge').textContent = isGeodis ? 'GEODIS' : 'MLAM';
+  document.getElementById('sbBadge').textContent = isGeodis ? 'GEODIS' : 'MLAM';
   document.getElementById('sbUser').textContent = name;
   document.getElementById('dashPanelSub').textContent = isGeodis ? 'Geodis Logistics Dashboard' : 'Meiborg Operations Dashboard';
-
+  // Geodis: swap logo to red circle
+  if (isGeodis) {
+    document.getElementById('sbLogoImg').innerHTML = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#cc0010"/><text x="50" y="67" text-anchor="middle" font-size="44" font-weight="900" fill="white" font-family="Arial">G</text></svg>';
+  }
   document.getElementById('loginScreen').classList.remove('active');
   document.getElementById('dashScreen').classList.add('active');
   refreshDashboard();
@@ -818,11 +817,7 @@ function doLogout() {
   if (state.clockedIn && !confirm('You are still clocked in. Log out anyway?')) return;
   stopGPS();
   if (state.statusInterval) { clearInterval(state.statusInterval); state.statusInterval = null; }
-  state = { role:'driver', driver:'', truck:'', org:'meiborg', weekEnding:'',
-    clockedIn:false, clockInTime:null, clockOutTime:null,
-    stops:[], fuelAmt:0, tollsAmt:0, receiptImages:[],
-    gpsWatchId:null, gpsActive:false, statusInterval:null,
-    currentLat:null, currentLng:null };
+  state = { role:'driver', driver:'', truck:'', org:'meiborg', weekEnding:'', clockedIn:false, clockInTime:null, clockOutTime:null, stops:[], fuelAmt:0, tollsAmt:0, receiptImages:[], gpsWatchId:null, gpsActive:false, statusInterval:null, currentLat:null, currentLng:null };
   document.getElementById('appScreen').classList.remove('active');
   document.getElementById('dashScreen').classList.remove('active');
   document.getElementById('loginScreen').classList.add('active');
@@ -833,59 +828,56 @@ function doLogout() {
   document.getElementById('clockStatus').className = 'clock-status out';
   document.getElementById('clockStatus').textContent = 'NOT CLOCKED IN';
   document.getElementById('clockTimes').style.display = 'none';
-  document.getElementById('stopsList').innerHTML = '<p style="text-align:center;color:var(--muted);font-size:13px;padding:18px 0">No stops yet. Clock in to start GPS.</p>';
+  document.getElementById('stopsList').innerHTML = '<p style="text-align:center;color:var(--text-muted);font-size:13px;padding:18px 0">No stops yet. Clock in to start GPS.</p>';
   document.getElementById('loginErr').classList.remove('show');
   clearSig();
 }
 
 // ════════════════════════════════════════════════════════
-//  DRIVER TABS
+// DRIVER TABS
 // ════════════════════════════════════════════════════════
 function switchTab(name) {
   ['clock','stops','expenses','hours','submit'].forEach(t => {
     document.getElementById('panel-'+t).style.display = t === name ? 'block' : 'none';
     document.getElementById('tab-'+t).classList.toggle('active', t === name);
   });
-  if (name === 'hours')  calcTotalHours();
+  if (name === 'hours') calcTotalHours();
   if (name === 'submit') setTimeout(resizeSigCanvas, 80);
 }
 
 // ════════════════════════════════════════════════════════
-//  CLOCK IN / OUT
+// CLOCK IN / OUT
 // ════════════════════════════════════════════════════════
 function toggleClock() {
   if (!state.clockedIn) {
-    state.clockedIn   = true;
-    state.clockInTime = new Date();
-    document.getElementById('clockInDisplay').textContent  = fmtTime12(state.clockInTime);
+    state.clockedIn = true; state.clockInTime = new Date();
+    document.getElementById('clockInDisplay').textContent = fmtTime12(state.clockInTime);
     document.getElementById('clockOutDisplay').textContent = '--';
-    document.getElementById('clockTimes').style.display    = 'grid';
-    document.getElementById('clockStatus').className       = 'clock-status in';
-    document.getElementById('clockStatus').textContent     = 'CLOCKED IN';
-    document.getElementById('clockBtn').className          = 'btn-clock-out';
-    document.getElementById('clockBtn').innerHTML          = '&#9646;&#9646; CLOCK OUT';
+    document.getElementById('clockTimes').style.display = 'grid';
+    document.getElementById('clockStatus').className = 'clock-status in';
+    document.getElementById('clockStatus').textContent = 'CLOCKED IN';
+    document.getElementById('clockBtn').className = 'btn-clock-out';
+    document.getElementById('clockBtn').innerHTML = '&#9646;&#9646; CLOCK OUT';
     const dayIdx = new Date().getDay();
-    const key    = DAY_KEYS[dayIdx <= 4 ? dayIdx : 0];
-    const sel    = document.querySelector('[name="'+key+'Start"]');
+    const key = DAY_KEYS[dayIdx <= 4 ? dayIdx : 0];
+    const sel = document.querySelector('[name="'+key+'Start"]');
     if (sel) setSelectClosest(sel, timeToVal(state.clockInTime));
     startGPS();
     document.getElementById('gpsStatusText').textContent = 'Tracking your stops...';
     document.getElementById('gpsBadge').className = 'gps-badge';
     document.getElementById('gpsBadge').textContent = 'ON';
-    // Periodic status ping every 3 min
     state.statusInterval = setInterval(pushStatusPing, 180000);
     pushStatusPing();
   } else {
-    state.clockedIn    = false;
-    state.clockOutTime = new Date();
+    state.clockedIn = false; state.clockOutTime = new Date();
     document.getElementById('clockOutDisplay').textContent = fmtTime12(state.clockOutTime);
-    document.getElementById('clockStatus').className       = 'clock-status out';
-    document.getElementById('clockStatus').textContent     = 'CLOCKED OUT';
-    document.getElementById('clockBtn').className          = 'btn-clock-in';
-    document.getElementById('clockBtn').innerHTML          = '&#9654; CLOCK IN AGAIN';
+    document.getElementById('clockStatus').className = 'clock-status out';
+    document.getElementById('clockStatus').textContent = 'CLOCKED OUT';
+    document.getElementById('clockBtn').className = 'btn-clock-in';
+    document.getElementById('clockBtn').innerHTML = '&#9654; CLOCK IN AGAIN';
     const dayIdx = new Date().getDay();
-    const key    = DAY_KEYS[dayIdx <= 4 ? dayIdx : 0];
-    const sel    = document.querySelector('[name="'+key+'End"]');
+    const key = DAY_KEYS[dayIdx <= 4 ? dayIdx : 0];
+    const sel = document.querySelector('[name="'+key+'End"]');
     if (sel) setSelectClosest(sel, timeToVal(state.clockOutTime));
     stopGPS();
     document.getElementById('gpsStatusText').textContent = 'GPS stopped. ' + state.stops.length + ' stop(s) logged.';
@@ -895,86 +887,37 @@ function toggleClock() {
     pushStatusPing();
   }
 }
-
-function fmtTime12(d) {
-  let h = d.getHours(), m = d.getMinutes(), ampm = h >= 12 ? 'PM' : 'AM';
-  h = h % 12 || 12;
-  return h + ':' + pad(m) + ' ' + ampm;
-}
-
-function timeToVal(d) {
-  const mins = Math.round(d.getMinutes() / 15) * 15;
-  const h = mins === 60 ? d.getHours() + 1 : d.getHours();
-  const m = mins === 60 ? 0 : mins;
-  return pad(h) + ':' + pad(m);
-}
-
+function fmtTime12(d) { let h = d.getHours(), m = d.getMinutes(), ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return h + ':' + pad(m) + ' ' + ampm; }
+function timeToVal(d) { const mins = Math.round(d.getMinutes() / 15) * 15; const h = mins === 60 ? d.getHours() + 1 : d.getHours(); const m = mins === 60 ? 0 : mins; return pad(h) + ':' + pad(m); }
 function setSelectClosest(sel, val) {
-  const [th, tm] = val.split(':').map(Number);
-  const target = th * 60 + tm;
-  let best = null, bestDiff = Infinity;
-  Array.from(sel.options).forEach(o => {
-    if (!o.value) return;
-    const [oh, om] = o.value.split(':').map(Number);
-    const diff = Math.abs((oh * 60 + om) - target);
-    if (diff < bestDiff) { bestDiff = diff; best = o.value; }
-  });
+  const [th, tm] = val.split(':').map(Number); const target = th * 60 + tm; let best = null, bestDiff = Infinity;
+  Array.from(sel.options).forEach(o => { if (!o.value) return; const [oh, om] = o.value.split(':').map(Number); const diff = Math.abs((oh * 60 + om) - target); if (diff < bestDiff) { bestDiff = diff; best = o.value; } });
   if (best) sel.value = best;
 }
 
 // ════════════════════════════════════════════════════════
-//  STATUS PING  (sends current position to n8n for dashboard)
+// STATUS PING
 // ════════════════════════════════════════════════════════
 function pushStatusPing() {
   const hours = calcWeekHours();
-  const payload = {
-    type: 'status_ping',
-    driverName: state.driver,
-    truckNumber: state.truck,
-    clockedIn: state.clockedIn,
-    clockInTime: state.clockInTime ? state.clockInTime.toISOString() : null,
-    clockOutTime: state.clockOutTime ? state.clockOutTime.toISOString() : null,
-    weekHours: hours,
-    fuel: state.fuelAmt,
-    tolls: state.tollsAmt,
-    stopCount: state.stops.length,
-    lastStop: state.stops.length ? state.stops[state.stops.length-1] : null,
-    lat: state.currentLat,
-    lng: state.currentLng,
-    weekEnding: state.weekEnding,
-    ts: new Date().toISOString()
-  };
+  const payload = { type:'status_ping', driverName:state.driver, truckNumber:state.truck, clockedIn:state.clockedIn, clockInTime:state.clockInTime?state.clockInTime.toISOString():null, clockOutTime:state.clockOutTime?state.clockOutTime.toISOString():null, weekHours:hours, fuel:state.fuelAmt, tolls:state.tollsAmt, stopCount:state.stops.length, lastStop:state.stops.length?state.stops[state.stops.length-1]:null, lat:state.currentLat, lng:state.currentLng, weekEnding:state.weekEnding, ts:new Date().toISOString() };
   fetch(STATUS_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).catch(()=>{});
 }
-
 function calcWeekHours() {
   let total = 0;
-  DAY_KEYS.forEach(k => {
-    const s = document.querySelector('[name="'+k+'Start"]');
-    const e = document.querySelector('[name="'+k+'End"]');
-    if (!s||!e||!s.value||!e.value) return;
-    const [sh,sm] = s.value.split(':').map(Number);
-    const [eh,em] = e.value.split(':').map(Number);
-    const h = ((eh*60+em)-(sh*60+sm))/60;
-    if (h > 0) total += h;
-  });
+  DAY_KEYS.forEach(k => { const s = document.querySelector('[name="'+k+'Start"]'), e = document.querySelector('[name="'+k+'End"]'); if (!s||!e||!s.value||!e.value) return; const [sh,sm] = s.value.split(':').map(Number), [eh,em] = e.value.split(':').map(Number); const h = ((eh*60+em)-(sh*60+sm))/60; if (h > 0) total += h; });
   return parseFloat(total.toFixed(2));
 }
 
 // ════════════════════════════════════════════════════════
-//  GPS / STOPS
+// GPS / STOPS
 // ════════════════════════════════════════════════════════
 function startGPS() {
   if (!navigator.geolocation) { document.getElementById('gpsStatusText').textContent = 'GPS unavailable'; return; }
   state.gpsActive = true;
   document.getElementById('stopGpsBadge').className = 'gps-badge';
   document.getElementById('stopGpsBadge').textContent = 'LIVE';
-  navigator.geolocation.getCurrentPosition(pos => {
-    state.currentLat = pos.coords.latitude;
-    state.currentLng = pos.coords.longitude;
-    addStop(pos.coords.latitude, pos.coords.longitude, 'Clock-In Location');
-  }, () => addStop(null, null, 'Clock-In (GPS unavailable)'));
-
+  navigator.geolocation.getCurrentPosition(pos => { state.currentLat = pos.coords.latitude; state.currentLng = pos.coords.longitude; addStop(pos.coords.latitude, pos.coords.longitude, 'Clock-In Location'); }, () => addStop(null, null, 'Clock-In (GPS unavailable)'));
   let lastLat=null, lastLng=null, lastMoveTime=Date.now();
   const MIN_DIST=0.0005, DWELL_MS=180000;
   state.gpsWatchId = navigator.geolocation.watchPosition(pos => {
@@ -983,13 +926,9 @@ function startGPS() {
     if (lastLat===null) { lastLat=lat; lastLng=lng; return; }
     const dist = Math.sqrt(Math.pow(lat-lastLat,2)+Math.pow(lng-lastLng,2));
     if (dist > MIN_DIST) { lastLat=lat; lastLng=lng; lastMoveTime=Date.now(); }
-    else if (Date.now()-lastMoveTime > DWELL_MS) {
-      addStop(lat, lng, null);
-      lastLat=lat; lastLng=lng; lastMoveTime=Date.now();
-    }
+    else if (Date.now()-lastMoveTime > DWELL_MS) { addStop(lat, lng, null); lastLat=lat; lastLng=lng; lastMoveTime=Date.now(); }
   }, null, {enableHighAccuracy:true, maximumAge:10000, timeout:15000});
 }
-
 function stopGPS() {
   state.gpsActive = false;
   if (state.gpsWatchId!==null) { navigator.geolocation.clearWatch(state.gpsWatchId); state.gpsWatchId=null; }
@@ -997,7 +936,6 @@ function stopGPS() {
   document.getElementById('stopGpsBadge').className = 'gps-badge off';
   document.getElementById('stopGpsBadge').textContent = 'OFF';
 }
-
 function addStop(lat, lng, label) {
   const now = new Date();
   const stop = { id:Date.now(), time:fmtTime12(now), timestamp:now.toISOString(), lat, lng, label:label||null, address: lat ? 'Fetching address...' : 'Location unavailable' };
@@ -1005,149 +943,102 @@ function addStop(lat, lng, label) {
   renderStops();
   if (lat) {
     fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat='+lat+'&lon='+lng)
-      .then(r=>r.json())
-      .then(d => {
-        const idx = state.stops.findIndex(s=>s.id===stop.id);
-        if (idx>=0) { state.stops[idx].address = d.display_name ? d.display_name.split(',').slice(0,3).join(', ') : lat.toFixed(5)+','+lng.toFixed(5); renderStops(); }
-      }).catch(()=>{
-        const idx=state.stops.findIndex(s=>s.id===stop.id);
-        if(idx>=0){ state.stops[idx].address=lat.toFixed(5)+', '+lng.toFixed(5); renderStops(); }
-      });
+      .then(r=>r.json()).then(d => { const idx = state.stops.findIndex(s=>s.id===stop.id); if (idx>=0) { state.stops[idx].address = d.display_name ? d.display_name.split(',').slice(0,3).join(', ') : lat.toFixed(5)+','+lng.toFixed(5); renderStops(); } })
+      .catch(()=>{ const idx=state.stops.findIndex(s=>s.id===stop.id); if(idx>=0){ state.stops[idx].address=lat.toFixed(5)+', '+lng.toFixed(5); renderStops(); } });
   }
 }
-
-function addManualStop() {
-  if (navigator.geolocation) navigator.geolocation.getCurrentPosition(pos=>addStop(pos.coords.latitude,pos.coords.longitude,'Manual Stop'),()=>addStop(null,null,'Manual Stop'));
-  else addStop(null,null,'Manual Stop');
-}
-
+function addManualStop() { if (navigator.geolocation) navigator.geolocation.getCurrentPosition(pos=>addStop(pos.coords.latitude,pos.coords.longitude,'Manual Stop'),()=>addStop(null,null,'Manual Stop')); else addStop(null,null,'Manual Stop'); }
 function deleteStop(id) { state.stops=state.stops.filter(s=>s.id!==id); renderStops(); }
-
 function renderStops() {
   const el = document.getElementById('stopsList');
-  if (!state.stops.length) { el.innerHTML='<p style="text-align:center;color:var(--muted);font-size:13px;padding:18px 0">No stops yet.</p>'; return; }
-  el.innerHTML = state.stops.map((s,i) => `<div class="stop-item">
-    <div class="stop-num">${i+1}</div>
-    <div class="stop-info">
-      <div class="stop-time">${s.time}${s.label?' &mdash; <em>'+s.label+'</em>':''}</div>
-      <div class="stop-addr">${s.address||''}</div>
-    </div>
-    <button class="stop-del" onclick="deleteStop(${s.id})">&#10005;</button>
-  </div>`).join('');
+  if (!state.stops.length) { el.innerHTML='<p style="text-align:center;color:var(--text-muted);font-size:13px;padding:18px 0">No stops yet.</p>'; return; }
+  el.innerHTML = state.stops.map((s,i) => `<div class="stop-item"><div class="stop-num">${i+1}</div><div class="stop-info"><div class="stop-time">${s.time}${s.label?' &mdash; <em>'+s.label+'</em>':''}</div><div class="stop-addr">${s.address||''}</div></div><button class="stop-del" onclick="deleteStop(${s.id})">&#10005;</button></div>`).join('');
 }
 
 // ════════════════════════════════════════════════════════
-//  RECEIPT OCR
+// RECEIPT OCR
 // ════════════════════════════════════════════════════════
 const receiptFiles = [];
-
 function handleReceiptUpload(files) {
   if (!files.length) return;
   const ind=document.getElementById('scanIndicator'), res=document.getElementById('receiptResult');
   ind.classList.add('visible'); res.classList.remove('visible');
   let pending=files.length;
-
   Array.from(files).forEach(file => {
     const reader=new FileReader();
     reader.onload = e => {
       const wrap=document.createElement('div'), img=document.createElement('img'), btn=document.createElement('button');
-      wrap.className='receipt-thumb'; img.src=e.target.result;
-      btn.className='remove-thumb'; btn.innerHTML='&#10005;';
+      wrap.className='receipt-thumb'; img.src=e.target.result; btn.className='remove-thumb'; btn.innerHTML='&#10005;';
       const idx=receiptFiles.push({src:e.target.result,file})-1;
       btn.onclick=()=>{ receiptFiles.splice(idx,1); wrap.remove(); };
       wrap.appendChild(img); wrap.appendChild(btn);
       document.getElementById('receiptPreview').appendChild(wrap);
       state.receiptImages.push(e.target.result);
-
       if (window.Tesseract) {
         document.getElementById('scanText').textContent='Reading receipt '+(receiptFiles.length)+'...';
-        Tesseract.recognize(e.target.result,'eng',{logger:()=>{}})
-          .then(({data:{text}}) => {
-            const amt=extractTotal(text);
-            if (amt>0) {
-              const isToll=/toll|plaza|e-zpass|turnpike|i-pass/i.test(text);
-              if (isToll) { state.tollsAmt=parseFloat((state.tollsAmt+amt).toFixed(2)); document.getElementById('tollsAmt').value=state.tollsAmt; }
-              else        { state.fuelAmt =parseFloat((state.fuelAmt +amt).toFixed(2)); document.getElementById('fuelAmt').value =state.fuelAmt; }
-              calcTotal();
-              res.className='receipt-result visible';
-              res.textContent='✓ Detected '+(isToll?'toll':'fuel')+' amount: $'+amt.toFixed(2)+'. Total updated!';
-            }
-            pending--; if(pending<=0) ind.classList.remove('visible');
-          }).catch(()=>{ pending--; if(pending<=0) ind.classList.remove('visible'); });
+        Tesseract.recognize(e.target.result,'eng',{logger:()=>{}}).then(({data:{text}}) => {
+          const amt=extractTotal(text);
+          if (amt>0) {
+            const isToll=/toll|plaza|e-zpass|turnpike|i-pass/i.test(text);
+            if (isToll) { state.tollsAmt=parseFloat((state.tollsAmt+amt).toFixed(2)); document.getElementById('tollsAmt').value=state.tollsAmt; }
+            else { state.fuelAmt=parseFloat((state.fuelAmt+amt).toFixed(2)); document.getElementById('fuelAmt').value=state.fuelAmt; }
+            calcTotal();
+            res.className='receipt-result visible';
+            res.textContent='✓ Detected '+(isToll?'toll':'fuel')+' amount: $'+amt.toFixed(2)+'. Total updated!';
+          }
+          pending--; if(pending<=0) ind.classList.remove('visible');
+        }).catch(()=>{ pending--; if(pending<=0) ind.classList.remove('visible'); });
       } else {
-        pending--; if(pending<=0){ ind.classList.remove('visible'); res.className='receipt-result visible'; res.style.background='#fef3c7'; res.style.borderColor='#fde68a'; res.style.color='#92400e'; res.textContent='Receipt saved. Please enter the amount above.'; }
+        pending--; if(pending<=0){ ind.classList.remove('visible'); res.className='receipt-result visible'; res.textContent='Receipt saved. Please enter the amount above.'; }
       }
     };
     reader.readAsDataURL(file);
   });
 }
-
 function extractTotal(text) {
   const lines=text.split('\n'); let best=0;
   const patterns=[/total[^\d]*(\d+\.\d{2})/i,/amount[^\d]*(\d+\.\d{2})/i,/sale[^\d]*(\d+\.\d{2})/i,/\$(\d+\.\d{2})/,/(\d+\.\d{2})/];
-  for (const line of lines) {
-    for (const pat of patterns) {
-      const m=line.match(pat); if(m){ const v=parseFloat(m[1]); if(v>best&&v<2000){best=v;break;} }
-    }
-  }
+  for (const line of lines) { for (const pat of patterns) { const m=line.match(pat); if(m){ const v=parseFloat(m[1]); if(v>best&&v<2000){best=v;break;} } } }
   return best;
 }
-
 function calcTotal() {
-  const f=parseFloat(document.getElementById('fuelAmt').value)||0;
-  const t=parseFloat(document.getElementById('tollsAmt').value)||0;
+  const f=parseFloat(document.getElementById('fuelAmt').value)||0, t=parseFloat(document.getElementById('tollsAmt').value)||0;
   state.fuelAmt=f; state.tollsAmt=t;
   document.getElementById('fuelDisplay').textContent='$'+f.toFixed(2);
   document.getElementById('tollsDisplay').textContent='$'+t.toFixed(2);
 }
 
 // ════════════════════════════════════════════════════════
-//  HOURS GRID
+// HOURS GRID
 // ════════════════════════════════════════════════════════
 function buildTimeOptions(sel) {
   let o='<option value="">No work</option>';
-  for(let h=4;h<=23;h++) for(let m=0;m<60;m+=15){
-    const hh=h%12||12,ampm=h<12?'AM':'PM',val=pad(h)+':'+pad(m),lbl=hh+':'+pad(m)+' '+ampm;
-    o+='<option value="'+val+'"'+(val===sel?' selected':'')+'>'+lbl+'</option>';
-  }
+  for(let h=4;h<=23;h++) for(let m=0;m<60;m+=15){ const hh=h%12||12,ampm=h<12?'AM':'PM',val=pad(h)+':'+pad(m),lbl=hh+':'+pad(m)+' '+ampm; o+='<option value="'+val+'"'+(val===sel?' selected':'')+'>'+lbl+'</option>'; }
   return o;
 }
-
 function buildHoursGrid() {
-  const grid=document.getElementById('hoursGrid'); if(!grid) return;
-  grid.innerHTML=DAYS.map((day,i)=>`<div class="day-row">
-    <span class="dlabel">${day.substring(0,3)}</span>
-    <div class="ftime"><label>Start</label><select name="${DAY_KEYS[i]}Start">${buildTimeOptions('06:00')}</select></div>
-    <div class="ftime"><label>End</label><select name="${DAY_KEYS[i]}End">${buildTimeOptions('14:00')}</select></div>
-  </div>`).join('');
+  const grid=document.getElementById('hoursGrid');
+  if(!grid) return;
+  grid.innerHTML=DAYS.map((day,i)=>`<div class="day-row"><span class="dlabel">${day.substring(0,3)}</span><div class="ftime"><label>Start</label><select name="${DAY_KEYS[i]}Start">${buildTimeOptions('06:00')}</select></div><div class="ftime"><label>End</label><select name="${DAY_KEYS[i]}End">${buildTimeOptions('14:00')}</select></div></div>`).join('');
   grid.querySelectorAll('select').forEach(s=>s.addEventListener('change',calcTotalHours));
 }
-
 function calcTotalHours() {
   let total=0;
-  DAY_KEYS.forEach(k=>{
-    const s=document.querySelector('[name="'+k+'Start"]'),e=document.querySelector('[name="'+k+'End"]');
-    if(!s||!e||!s.value||!e.value) return;
-    const [sh,sm]=s.value.split(':').map(Number),[eh,em]=e.value.split(':').map(Number);
-    const h=((eh*60+em)-(sh*60+sm))/60; if(h>0) total+=h;
-  });
+  DAY_KEYS.forEach(k=>{ const s=document.querySelector('[name="'+k+'Start"]'),e=document.querySelector('[name="'+k+'End"]'); if(!s||!e||!s.value||!e.value) return; const [sh,sm]=s.value.split(':').map(Number),[eh,em]=e.value.split(':').map(Number); const h=((eh*60+em)-(sh*60+sm))/60; if(h>0) total+=h; });
   document.getElementById('totalHoursDisplay').textContent=total.toFixed(2)+' hrs';
   document.getElementById('totalPayDisplay').textContent='@ $'+RATE.toFixed(2)+'/hr = $'+(total*RATE).toFixed(2);
 }
 
 // ════════════════════════════════════════════════════════
-//  SIGNATURE
+// SIGNATURE
 // ════════════════════════════════════════════════════════
 let sigCtx,sigDrawing=false,sigHasMark=false;
-
 function initSigCanvas() {
-  const canvas=document.getElementById('sigCanvas'); if(!canvas) return;
-  resizeSigCanvas();
-  sigCtx=canvas.getContext('2d');
-  sigCtx.strokeStyle='#003366'; sigCtx.lineWidth=2.5; sigCtx.lineCap='round'; sigCtx.lineJoin='round';
-
+  const canvas=document.getElementById('sigCanvas');
+  if(!canvas) return;
+  resizeSigCanvas(); sigCtx=canvas.getContext('2d');
+  sigCtx.strokeStyle='#1a237e'; sigCtx.lineWidth=2.5; sigCtx.lineCap='round'; sigCtx.lineJoin='round';
   function getPos(e){ const r=canvas.getBoundingClientRect(),src=e.touches?e.touches[0]:e; return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)}; }
-
   canvas.addEventListener('mousedown',e=>{sigDrawing=true;const p=getPos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);});
   canvas.addEventListener('mousemove',e=>{if(!sigDrawing)return;const p=getPos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHasMark=true;document.getElementById('sigHint').style.display='none';});
   canvas.addEventListener('mouseup',()=>sigDrawing=false);
@@ -1155,13 +1046,12 @@ function initSigCanvas() {
   canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!sigDrawing)return;const p=getPos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHasMark=true;document.getElementById('sigHint').style.display='none';},{passive:false});
   canvas.addEventListener('touchend',()=>sigDrawing=false);
 }
-
 function resizeSigCanvas() {
-  const canvas=document.getElementById('sigCanvas'); if(!canvas) return;
+  const canvas=document.getElementById('sigCanvas');
+  if(!canvas) return;
   canvas.width=canvas.parentElement.clientWidth; canvas.height=150;
-  if(sigCtx){sigCtx.strokeStyle='#003366';sigCtx.lineWidth=2.5;sigCtx.lineCap='round';sigCtx.lineJoin='round';}
+  if(sigCtx){sigCtx.strokeStyle='#1a237e';sigCtx.lineWidth=2.5;sigCtx.lineCap='round';sigCtx.lineJoin='round';}
 }
-
 function clearSig() {
   const canvas=document.getElementById('sigCanvas');
   if(canvas&&sigCtx) sigCtx.clearRect(0,0,canvas.width,canvas.height);
@@ -1170,34 +1060,17 @@ function clearSig() {
 }
 
 // ════════════════════════════════════════════════════════
-//  SUBMIT TIMESHEET
+// SUBMIT TIMESHEET
 // ════════════════════════════════════════════════════════
 async function submitTimesheet() {
   const btn=document.getElementById('submitBtn'),msg=document.getElementById('submitMsg');
   msg.className='msg'; msg.textContent='';
   if(!sigHasMark){ alert('Please sign the timesheet before submitting.'); switchTab('submit'); return; }
   btn.disabled=true; btn.textContent='Submitting...';
-
   const hours={};
-  DAY_KEYS.forEach(k=>{
-    const s=document.querySelector('[name="'+k+'Start"]'),e=document.querySelector('[name="'+k+'End"]');
-    hours[k+'Start']=s?s.value:''; hours[k+'End']=e?e.value:'';
-  });
-
+  DAY_KEYS.forEach(k=>{ const s=document.querySelector('[name="'+k+'Start"]'),e=document.querySelector('[name="'+k+'End"]'); hours[k+'Start']=s?s.value:''; hours[k+'End']=e?e.value:''; });
   const canvas=document.getElementById('sigCanvas');
-  const payload={
-    driverName:state.driver, truckNumber:state.truck, weekEnding:state.weekEnding,
-    clockIn:state.clockInTime?state.clockInTime.toISOString():'',
-    clockOut:state.clockOutTime?state.clockOutTime.toISOString():'',
-    fuel:state.fuelAmt, tolls:state.tollsAmt,
-    stops:state.stops.map(s=>({time:s.time,address:s.address,lat:s.lat,lng:s.lng,label:s.label})),
-    stopCount:state.stops.length,
-    notes:document.getElementById('notesField').value,
-    signature:canvas?canvas.toDataURL('image/png'):'',
-    receiptCount:state.receiptImages.length,
-    submittedAt:new Date().toISOString(), rate:RATE, ...hours
-  };
-
+  const payload={ driverName:state.driver, truckNumber:state.truck, weekEnding:state.weekEnding, clockIn:state.clockInTime?state.clockInTime.toISOString():'', clockOut:state.clockOutTime?state.clockOutTime.toISOString():'', fuel:state.fuelAmt, tolls:state.tollsAmt, stops:state.stops.map(s=>({time:s.time,address:s.address,lat:s.lat,lng:s.lng,label:s.label})), stopCount:state.stops.length, notes:document.getElementById('notesField').value, signature:canvas?canvas.toDataURL('image/png'):'', receiptCount:state.receiptImages.length, submittedAt:new Date().toISOString(), rate:RATE, ...hours };
   try {
     const res=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if(res.ok){ msg.className='msg success'; msg.textContent='✓ Submitted! Thank you, '+state.driver+'.'; btn.textContent='✓ Submitted'; }
@@ -1209,164 +1082,86 @@ async function submitTimesheet() {
 }
 
 // ════════════════════════════════════════════════════════
-//  DASHBOARD — fetch & render
+// DASHBOARD
 // ════════════════════════════════════════════════════════
 let dashMap=null, dashMarkers=[];
-
 async function refreshDashboard() {
   document.getElementById('lastUpdated').textContent='Refreshing...';
   try {
     const res = await fetch(POLL_HOOK, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'dashboard_request',ts:new Date().toISOString()})});
     const drivers = res.ok ? await res.json() : [];
     renderDashboard(Array.isArray(drivers) ? drivers : (drivers.drivers || []));
-  } catch(e) {
-    // Offline / n8n not set up yet — show placeholder data
-    renderDashboard([]);
-  }
+  } catch(e) { renderDashboard([]); }
   document.getElementById('lastUpdated').textContent='Last updated: '+new Date().toLocaleTimeString();
 }
-
 function renderDashboard(drivers) {
-  const active   = drivers.filter(d=>d.clockedIn).length;
+  const active = drivers.filter(d=>d.clockedIn).length;
   const totalHrs = drivers.reduce((a,d)=>a+(parseFloat(d.weekHours)||0),0);
   document.getElementById('statActive').textContent = active;
-  document.getElementById('statTotal').textContent  = drivers.length || '--';
-  document.getElementById('statHours').textContent  = totalHrs ? totalHrs.toFixed(1) : '--';
-
-  // Driver cards
+  document.getElementById('statTotal').textContent = drivers.length || '--';
+  document.getElementById('statHours').textContent = totalHrs ? totalHrs.toFixed(1) : '--';
   const container = document.getElementById('driverCards');
   const detail = document.getElementById('driverCardsDetail');
   if (!drivers.length) {
-    container.innerHTML = `<div style="background:white;border-radius:14px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07)">
-      <div style="font-size:32px;margin-bottom:10px">&#128665;</div>
-      <div style="font-weight:700;color:var(--navy);margin-bottom:6px">No live data yet</div>
-      <div style="font-size:12px;color:var(--muted)">Driver data will appear here once drivers clock in.<br>Make sure the n8n <strong>meiborg-driver-status</strong> and <strong>meiborg-dashboard-data</strong> webhooks are active.</div>
-    </div>`;
+    container.innerHTML = `<div class="no-data"><div style="font-size:32px;margin-bottom:10px">&#128665;</div><div style="font-weight:700;color:var(--gold);margin-bottom:6px">No live data yet</div><div style="font-size:12px">Driver data will appear here once drivers clock in.</div></div>`;
   } else {
     const cardsHtml = drivers.map(d => {
       const statusClass = d.clockedIn ? 'clocked-in' : 'clocked-out';
-      const statusText  = d.clockedIn ? 'Clocked In' : 'Clocked Out';
-      const lastStop    = d.lastStop ? d.lastStop.address || (d.lastStop.lat ? d.lastStop.lat.toFixed(4)+', '+d.lastStop.lng.toFixed(4) : 'Unknown') : 'No stops yet';
+      const statusText = d.clockedIn ? 'Clocked In' : 'Clocked Out';
+      const lastStop = d.lastStop ? d.lastStop.address || (d.lastStop.lat ? d.lastStop.lat.toFixed(4)+', '+d.lastStop.lng.toFixed(4) : 'Unknown') : 'No stops yet';
       const lastStopTime = d.lastStop ? d.lastStop.time || '' : '';
-      const hrs = parseFloat(d.weekHours||0).toFixed(1);
-      const pay = (parseFloat(d.weekHours||0)*RATE).toFixed(2);
-      const fuel = parseFloat(d.fuel||0).toFixed(2);
-      const tolls = parseFloat(d.tolls||0).toFixed(2);
-      return `<div class="driver-card">
-        <div class="driver-card-header">
-          <div><div class="driver-name">${d.driverName||'Unknown'}</div><div class="driver-truck">Truck #${d.truckNumber||'--'}</div></div>
-          <span class="status-pill ${statusClass}">${statusText}</span>
-        </div>
-        <div class="driver-stats">
-          <div class="ds-item"><div class="dsv">${hrs}</div><div class="dsl">Wk Hrs</div></div>
-          <div class="ds-item"><div class="dsv">$${fuel}</div><div class="dsl">Fuel</div></div>
-          <div class="ds-item"><div class="dsv">$${tolls}</div><div class="dsl">Tolls</div></div>
-        </div>
-        <div class="last-stop">&#128205; <strong>Last Stop${lastStopTime?' @ '+lastStopTime:''}</strong><br>${lastStop}</div>
-      </div>`;
+      const hrs = parseFloat(d.weekHours||0).toFixed(1), pay = (parseFloat(d.weekHours||0)*RATE).toFixed(2);
+      const fuel = parseFloat(d.fuel||0).toFixed(2), tolls = parseFloat(d.tolls||0).toFixed(2);
+      return `<div class="driver-card"><div class="driver-card-header"><div><div class="driver-name">${d.driverName||'Unknown'}</div><div class="driver-truck">Truck #${d.truckNumber||'--'}</div></div><span class="status-pill ${statusClass}">${statusText}</span></div><div class="driver-stats"><div class="ds-item"><div class="dsv">${hrs}</div><div class="dsl">Wk Hrs</div></div><div class="ds-item"><div class="dsv">$${fuel}</div><div class="dsl">Fuel</div></div><div class="ds-item"><div class="dsv">$${tolls}</div><div class="dsl">Tolls</div></div></div><div class="last-stop">&#128205; <strong>Last Stop${lastStopTime?' @ '+lastStopTime:''}</strong><br>${lastStop}</div></div>`;
     }).join('');
-    container.innerHTML = cardsHtml;
-    if(detail) detail.innerHTML = cardsHtml;
+    container.innerHTML = cardsHtml; if(detail) detail.innerHTML = cardsHtml;
   }
-
-  // Map
   renderMap(drivers);
 }
-
 function renderMap(drivers) {
   const mapEl = document.getElementById('dashMap');
   const withLoc = drivers.filter(d=>d.lat&&d.lng);
-
-  if (!withLoc.length) {
-    mapEl.innerHTML=`<div class="map-placeholder"><div class="mp-icon">&#128205;</div><p>Map will show live positions</p><p style="font-size:11px;color:var(--muted)">GPS positions appear when drivers clock in</p></div>`;
-    return;
-  }
-
-  // Use Leaflet if available, otherwise embed static link
+  if (!withLoc.length) { mapEl.innerHTML=`<div class="map-placeholder"><div class="mp-icon">&#128205;</div><p>Map will show live positions</p></div>`; return; }
   if (window.L) {
-    if (!dashMap) {
-      mapEl.innerHTML=''; mapEl.style.height='280px';
-      dashMap = L.map('dashMap').setView([withLoc[0].lat, withLoc[0].lng], 11);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(dashMap);
-    }
+    if (!dashMap) { mapEl.innerHTML=''; mapEl.style.height='280px'; dashMap = L.map('dashMap').setView([withLoc[0].lat, withLoc[0].lng], 11); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(dashMap); }
     dashMarkers.forEach(m=>dashMap.removeLayer(m)); dashMarkers=[];
-    withLoc.forEach(d=>{
-      const marker = L.marker([d.lat,d.lng]).addTo(dashMap).bindPopup(`<b>${d.driverName}</b><br>Truck #${d.truckNumber}<br>${d.clockedIn?'&#x1F7E2; Clocked In':'&#x1F534; Clocked Out'}<br>${d.weekHours||0} hrs this week`);
-      dashMarkers.push(marker);
-    });
-    const bounds = L.latLngBounds(withLoc.map(d=>[d.lat,d.lng]));
-    dashMap.fitBounds(bounds,{padding:[20,20]});
+    withLoc.forEach(d=>{ const marker = L.marker([d.lat,d.lng]).addTo(dashMap).bindPopup(`<b>${d.driverName}</b><br>Truck #${d.truckNumber}<br>${d.clockedIn?'&#x1F7E2; Clocked In':'&#x1F534; Clocked Out'}<br>${d.weekHours||0} hrs this week`); dashMarkers.push(marker); });
+    const bounds = L.latLngBounds(withLoc.map(d=>[d.lat,d.lng])); dashMap.fitBounds(bounds,{padding:[20,20]});
   } else {
-    // Fallback: show coordinates as map links
-    mapEl.innerHTML=`<div class="map-placeholder" style="flex-direction:column;align-items:flex-start;padding:14px;height:auto;min-height:120px">${withLoc.map(d=>`
-      <div style="margin-bottom:8px;font-size:13px">
-        <strong style="color:var(--navy)">${d.driverName}</strong> — Truck #${d.truckNumber}<br>
-        <a href="https://maps.google.com/?q=${d.lat},${d.lng}" target="_blank" style="color:var(--blue);font-size:12px">&#128205; View on Map (${d.lat.toFixed(4)}, ${d.lng.toFixed(4)})</a>
-      </div>`).join('')}`+`</div>`;
+    mapEl.innerHTML=`<div class="map-placeholder" style="flex-direction:column;align-items:flex-start;padding:14px;height:auto;min-height:120px">${withLoc.map(d=>`<div style="margin-bottom:8px;font-size:13px"><strong style="color:var(--gold)">${d.driverName}</strong> — Truck #${d.truckNumber}<br><a href="https://maps.google.com/?q=${d.lat},${d.lng}" target="_blank" style="color:var(--gold-dark)">&#128205; View on Map</a></div>`).join('')}</div>`;
   }
 }
 
 // ════════════════════════════════════════════════════════
-//  INIT LIBS
+// INIT LIBS
 // ════════════════════════════════════════════════════════
 (function loadLibs(){
-  // Tesseract OCR
-  const t=document.createElement('script');
-  t.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
-  t.onload=()=>console.log('Tesseract ready');
-  document.head.appendChild(t);
-
-  // Leaflet map
-  const lCss=document.createElement('link');
-  lCss.rel='stylesheet'; lCss.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-  document.head.appendChild(lCss);
-  const lJs=document.createElement('script');
-  lJs.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-  lJs.onload=()=>console.log('Leaflet ready');
-  document.head.appendChild(lJs);
+  const t=document.createElement('script'); t.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'; t.onload=()=>console.log('Tesseract ready'); document.head.appendChild(t);
+  const lCss=document.createElement('link'); lCss.rel='stylesheet'; lCss.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(lCss);
+  const lJs=document.createElement('script'); lJs.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; lJs.onload=()=>console.log('Leaflet ready'); document.head.appendChild(lJs);
 })();
 
-
-
 // ════════════════════════════════════════════════════════
-//  DASHBOARD PANEL NAVIGATION
+// DASHBOARD PANEL NAVIGATION
 // ════════════════════════════════════════════════════════
 let currentDashPanel = 'overview';
 let allTimesheetData = [];
-
 function showDashPanel(name) {
   currentDashPanel = name;
-  // Update sidebar
-  document.querySelectorAll('.sidebar-item').forEach(el => {
-    el.classList.toggle('active', el.id === 'si-' + name);
-  });
-  // Show correct panel
-  document.querySelectorAll('.dash-panel').forEach(el => {
-    el.classList.toggle('active', el.id === 'panel-' + name);
-  });
-  // Update header title
-  const titles = {
-    'overview': 'Overview', 'map': 'Live Driver Locations', 'drivers': 'Driver Status',
-    'rpt-weekly': 'Weekly Hours Report', 'rpt-expenses': 'Expense Report',
-    'rpt-stops': 'Stop Log Report', 'rpt-summary': 'Driver Summary'
-  };
+  document.querySelectorAll('.sidebar-item').forEach(el => { el.classList.toggle('active', el.id === 'si-' + name); });
+  document.querySelectorAll('.dash-panel').forEach(el => { el.classList.toggle('active', el.id === 'panel-' + name); });
+  const titles = { 'overview':'Overview','map':'Live Driver Locations','drivers':'Driver Status','rpt-weekly':'Weekly Hours Report','rpt-expenses':'Expense Report','rpt-stops':'Stop Log Report','rpt-summary':'Driver Summary' };
   document.getElementById('dashPanelTitle').textContent = titles[name] || name;
-
-  // Auto-load data for report panels
   if (name.startsWith('rpt-') && allTimesheetData.length === 0) loadTimesheetHistory();
   if (name === 'map' || name === 'overview' || name === 'drivers') refreshDashboard();
   if (name === 'rpt-weekly') {
-    // Default to last Saturday
-    const dt = new Date(), dy = dt.getDay();
-    const diff = dy === 6 ? 0 : (dy + 1);
-    const sat = new Date(dt); sat.setDate(dt.getDate() - diff);
+    const dt = new Date(), dy = dt.getDay(); const diff = dy === 6 ? 0 : (dy + 1); const sat = new Date(dt); sat.setDate(dt.getDate() - diff);
     document.getElementById('rptWeekFilter').value = sat.toISOString().slice(0,10);
     document.getElementById('phWeekly').textContent = 'Week Ending: ' + sat.toLocaleDateString();
     runWeeklyReport();
   }
   if (name === 'rpt-expenses') {
-    const now = new Date();
-    const first = new Date(now.getFullYear(), now.getMonth(), 1);
+    const now = new Date(), first = new Date(now.getFullYear(), now.getMonth(), 1);
     document.getElementById('rptExpFrom').value = first.toISOString().slice(0,10);
     document.getElementById('rptExpTo').value = now.toISOString().slice(0,10);
     runExpenseReport();
@@ -1376,154 +1171,68 @@ function showDashPanel(name) {
 }
 
 // ════════════════════════════════════════════════════════
-//  LOAD TIMESHEET HISTORY FROM n8n / SHEET
+// LOAD TIMESHEET HISTORY
 // ════════════════════════════════════════════════════════
 async function loadTimesheetHistory() {
   try {
-    const res = await new Promise((resolve) => {
-      fetch(POLL_HOOK, {
-        method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({type:'timesheet_history', ts: new Date().toISOString()})
-      }).then(r => r.ok ? r.json() : {timesheets:[]}).then(resolve).catch(() => resolve({timesheets:[]}));
-    });
-    allTimesheetData = res.timesheets || res || [];
+    const res = await fetch(POLL_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type:'timesheet_history', ts: new Date().toISOString()}) });
+    const data = res.ok ? await res.json() : {};
+    allTimesheetData = data.timesheets || data || [];
   } catch(e) { allTimesheetData = []; }
 }
-
-function calcDayHours(start, end) {
-  if (!start || !end) return 0;
-  const [sh,sm] = start.split(':').map(Number);
-  const [eh,em] = end.split(':').map(Number);
-  const h = ((eh*60+em)-(sh*60+sm))/60;
-  return h > 0 ? h : 0;
-}
-
+function calcDayHours(start, end) { if (!start || !end) return 0; const [sh,sm] = start.split(':').map(Number), [eh,em] = end.split(':').map(Number); const h = ((eh*60+em)-(sh*60+sm))/60; return h > 0 ? h : 0; }
 function fmtHours(h) { return parseFloat(h||0).toFixed(2); }
 function fmtMoney(v) { return '$' + parseFloat(v||0).toFixed(2); }
 function fmtTime(t) { if(!t) return '--'; try{ return new Date(t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}); }catch{return t;} }
 
 // ════════════════════════════════════════════════════════
-//  WEEKLY HOURS REPORT
+// WEEKLY HOURS REPORT
 // ════════════════════════════════════════════════════════
 function runWeeklyReport() {
   const weekFilter = document.getElementById('rptWeekFilter').value;
   const driverFilter = document.getElementById('rptDriverFilter').value;
   document.getElementById('phWeekly').textContent = weekFilter ? 'Week Ending: ' + weekFilter : '';
-
-  const rows = allTimesheetData.filter(r => {
-    if (weekFilter && r.weekEnding !== weekFilter) return false;
-    if (driverFilter && r.driverName !== driverFilter) return false;
-    return true;
-  });
-
+  const rows = allTimesheetData.filter(r => { if (weekFilter && r.weekEnding !== weekFilter) return false; if (driverFilter && r.driverName !== driverFilter) return false; return true; });
   const tbody = document.getElementById('weeklyReportBody');
-  if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="15" style="text-align:center;padding:20px;color:var(--muted)">No records found for selected filters</td></tr>';
-    document.getElementById('weeklyReportSummary').innerHTML = '';
-    return;
-  }
-
-  let totalHrs = 0, totalPay = 0, totalFuel = 0, totalTolls = 0;
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="15" style="text-align:center;padding:20px;color:var(--text-muted)">No records found for selected filters</td></tr>'; document.getElementById('weeklyReportSummary').innerHTML = ''; return; }
+  let totalHrs=0,totalPay=0,totalFuel=0,totalTolls=0;
   tbody.innerHTML = rows.map(r => {
-    const hrs = parseFloat(r.totalHours||0);
-    const pay = parseFloat(r.grossPay||0);
-    const fuel = parseFloat(r.fuel||0);
-    const tolls = parseFloat(r.tolls||0);
-    totalHrs += hrs; totalPay += pay; totalFuel += fuel; totalTolls += tolls;
-    const sun = fmtHours(calcDayHours(r.sunStart,r.sunEnd));
-    const mon = fmtHours(calcDayHours(r.monStart,r.monEnd));
-    const tue = fmtHours(calcDayHours(r.tueStart,r.tueEnd));
-    const wed = fmtHours(calcDayHours(r.wedStart,r.wedEnd));
-    const thu = fmtHours(calcDayHours(r.thuStart,r.thuEnd));
-    const cin = r.clockIn ? fmtTime(r.clockIn) : (r.sunStart||'--');
-    const cout = r.clockOut ? fmtTime(r.clockOut) : (r.thuEnd||'--');
-    return `<tr>
-      <td><strong>${r.driverName||'--'}</strong></td>
-      <td>${r.truckNumber||'--'}</td>
-      <td>${r.weekEnding||'--'}</td>
-      <td>${cin}</td><td>${cout}</td>
-      <td>${sun}</td><td>${mon}</td><td>${tue}</td><td>${wed}</td><td>${thu}</td>
-      <td><strong>${fmtHours(hrs)}</strong></td>
-      <td><strong>${fmtMoney(pay)}</strong></td>
-      <td>${fmtMoney(fuel)}</td><td>${fmtMoney(tolls)}</td>
-      <td>${r.hasSignature==='YES'?'<span class="badge-in">&#10003; YES</span>':'<span class="badge-out">NO</span>'}</td>
-    </tr>`;
-  }).join('') + `<tr class="total-row">
-    <td colspan="10" style="text-align:right">TOTALS:</td>
-    <td>${fmtHours(totalHrs)}</td><td>${fmtMoney(totalPay)}</td>
-    <td>${fmtMoney(totalFuel)}</td><td>${fmtMoney(totalTolls)}</td><td></td>
-  </tr>`;
-
-  document.getElementById('weeklyReportSummary').innerHTML = `
-    <div class="rs-box"><div class="rsv">${rows.length}</div><div class="rsl">Submissions</div></div>
-    <div class="rs-box"><div class="rsv">${fmtHours(totalHrs)}</div><div class="rsl">Total Hours</div></div>
-    <div class="rs-box"><div class="rsv">${fmtMoney(totalPay)}</div><div class="rsl">Gross Pay</div></div>
-    <div class="rs-box"><div class="rsv">${fmtMoney(totalFuel)}</div><div class="rsl">Fuel</div></div>
-    <div class="rs-box"><div class="rsv">${fmtMoney(totalTolls)}</div><div class="rsl">Tolls</div></div>`;
+    const hrs=parseFloat(r.totalHours||0),pay=parseFloat(r.grossPay||0),fuel=parseFloat(r.fuel||0),tolls=parseFloat(r.tolls||0);
+    totalHrs+=hrs; totalPay+=pay; totalFuel+=fuel; totalTolls+=tolls;
+    return `<tr><td><strong>${r.driverName||'--'}</strong></td><td>${r.truckNumber||'--'}</td><td>${r.weekEnding||'--'}</td><td>${r.clockIn?fmtTime(r.clockIn):(r.sunStart||'--')}</td><td>${r.clockOut?fmtTime(r.clockOut):(r.thuEnd||'--')}</td><td>${fmtHours(calcDayHours(r.sunStart,r.sunEnd))}</td><td>${fmtHours(calcDayHours(r.monStart,r.monEnd))}</td><td>${fmtHours(calcDayHours(r.tueStart,r.tueEnd))}</td><td>${fmtHours(calcDayHours(r.wedStart,r.wedEnd))}</td><td>${fmtHours(calcDayHours(r.thuStart,r.thuEnd))}</td><td><strong>${fmtHours(hrs)}</strong></td><td><strong>${fmtMoney(pay)}</strong></td><td>${fmtMoney(fuel)}</td><td>${fmtMoney(tolls)}</td><td>${r.hasSignature==='YES'?'<span class="badge-in">&#10003; YES</span>':'<span class="badge-out">NO</span>'}</td></tr>`;
+  }).join('') + `<tr class="total-row"><td colspan="10" style="text-align:right">TOTALS:</td><td>${fmtHours(totalHrs)}</td><td>${fmtMoney(totalPay)}</td><td>${fmtMoney(totalFuel)}</td><td>${fmtMoney(totalTolls)}</td><td></td></tr>`;
+  document.getElementById('weeklyReportSummary').innerHTML = `<div class="rs-box"><div class="rsv">${rows.length}</div><div class="rsl">Submissions</div></div><div class="rs-box"><div class="rsv">${fmtHours(totalHrs)}</div><div class="rsl">Total Hours</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalPay)}</div><div class="rsl">Gross Pay</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalFuel)}</div><div class="rsl">Fuel</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalTolls)}</div><div class="rsl">Tolls</div></div>`;
 }
 
 // ════════════════════════════════════════════════════════
-//  EXPENSE REPORT
+// EXPENSE REPORT
 // ════════════════════════════════════════════════════════
 function runExpenseReport() {
-  const from = document.getElementById('rptExpFrom').value;
-  const to = document.getElementById('rptExpTo').value;
-  const driver = document.getElementById('rptExpDriver').value;
+  const from=document.getElementById('rptExpFrom').value, to=document.getElementById('rptExpTo').value, driver=document.getElementById('rptExpDriver').value;
   document.getElementById('phExpenses').textContent = from && to ? from + ' to ' + to : '';
-
-  const rows = allTimesheetData.filter(r => {
-    if (driver && r.driverName !== driver) return false;
-    const d = r.weekEnding || r.submittedAt?.slice(0,10);
-    if (from && d < from) return false;
-    if (to && d > to) return false;
-    return (parseFloat(r.fuel)||0) > 0 || (parseFloat(r.tolls)||0) > 0;
-  });
-
+  const rows = allTimesheetData.filter(r => { if (driver && r.driverName !== driver) return false; const d = r.weekEnding || r.submittedAt?.slice(0,10); if (from && d < from) return false; if (to && d > to) return false; return (parseFloat(r.fuel)||0) > 0 || (parseFloat(r.tolls)||0) > 0; });
   const tbody = document.getElementById('expReportBody');
-  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">No expense records found</td></tr>'; document.getElementById('expReportSummary').innerHTML=''; return; }
-
-  let totalFuel=0, totalTolls=0;
-  tbody.innerHTML = rows.map(r => {
-    const f = parseFloat(r.fuel||0), t = parseFloat(r.tolls||0);
-    totalFuel+=f; totalTolls+=t;
-    return `<tr><td>${r.weekEnding||r.submittedAt?.slice(0,10)||'--'}</td><td>${r.driverName||'--'}</td><td>${r.truckNumber||'--'}</td><td>${fmtMoney(f)}</td><td>${fmtMoney(t)}</td><td><strong>${fmtMoney(f+t)}</strong></td></tr>`;
-  }).join('') + `<tr class="total-row"><td colspan="3">TOTALS</td><td>${fmtMoney(totalFuel)}</td><td>${fmtMoney(totalTolls)}</td><td>${fmtMoney(totalFuel+totalTolls)}</td></tr>`;
-
-  document.getElementById('expReportSummary').innerHTML = `
-    <div class="rs-box"><div class="rsv">${rows.length}</div><div class="rsl">Records</div></div>
-    <div class="rs-box"><div class="rsv">${fmtMoney(totalFuel)}</div><div class="rsl">Total Fuel</div></div>
-    <div class="rs-box"><div class="rsv">${fmtMoney(totalTolls)}</div><div class="rsl">Total Tolls</div></div>
-    <div class="rs-box"><div class="rsv">${fmtMoney(totalFuel+totalTolls)}</div><div class="rsl">Grand Total</div></div>`;
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No expense records found</td></tr>'; document.getElementById('expReportSummary').innerHTML=''; return; }
+  let totalFuel=0,totalTolls=0;
+  tbody.innerHTML = rows.map(r => { const f=parseFloat(r.fuel||0),t=parseFloat(r.tolls||0); totalFuel+=f; totalTolls+=t; return `<tr><td>${r.weekEnding||r.submittedAt?.slice(0,10)||'--'}</td><td>${r.driverName||'--'}</td><td>${r.truckNumber||'--'}</td><td>${fmtMoney(f)}</td><td>${fmtMoney(t)}</td><td><strong>${fmtMoney(f+t)}</strong></td></tr>`; }).join('') + `<tr class="total-row"><td colspan="3">TOTALS</td><td>${fmtMoney(totalFuel)}</td><td>${fmtMoney(totalTolls)}</td><td>${fmtMoney(totalFuel+totalTolls)}</td></tr>`;
+  document.getElementById('expReportSummary').innerHTML = `<div class="rs-box"><div class="rsv">${rows.length}</div><div class="rsl">Records</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalFuel)}</div><div class="rsl">Total Fuel</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalTolls)}</div><div class="rsl">Total Tolls</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalFuel+totalTolls)}</div><div class="rsl">Grand Total</div></div>`;
 }
 
 // ════════════════════════════════════════════════════════
-//  STOP LOG REPORT
+// STOP LOG REPORT
 // ════════════════════════════════════════════════════════
 function runStopReport() {
-  const driver = document.getElementById('rptStopsDriver').value;
-  const date = document.getElementById('rptStopsDate').value;
-
-  const filtered = allTimesheetData.filter(r => {
-    if (driver && r.driverName !== driver) return false;
-    if (date && r.weekEnding !== date && r.submittedAt?.slice(0,10) !== date) return false;
-    return r.stopLog && r.stopLog !== '[]';
-  });
-
+  const driver=document.getElementById('rptStopsDriver').value, date=document.getElementById('rptStopsDate').value;
+  const filtered = allTimesheetData.filter(r => { if (driver && r.driverName !== driver) return false; if (date && r.weekEnding !== date && r.submittedAt?.slice(0,10) !== date) return false; return r.stopLog && r.stopLog !== '[]'; });
   const tbody = document.getElementById('stopReportBody');
-  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">No stop data found</td></tr>'; return; }
-
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">No stop data found</td></tr>'; return; }
   const rows = [];
-  filtered.forEach(r => {
-    try {
-      const stops = JSON.parse(r.stopLog||'[]');
-      stops.forEach((s,i) => rows.push(`<tr><td>${r.driverName}</td><td>${r.weekEnding||'--'}</td><td>${i+1}</td><td>${s.time||'--'}</td><td>${s.address||'--'}</td><td>${s.lat?parseFloat(s.lat).toFixed(4):'--'}</td><td>${s.lng?parseFloat(s.lng).toFixed(4):'--'}</td><td>${s.label||''}</td></tr>`));
-    } catch(e) {}
-  });
-  tbody.innerHTML = rows.join('') || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">No stops in records</td></tr>';
+  filtered.forEach(r => { try { const stops = JSON.parse(r.stopLog||'[]'); stops.forEach((s,i) => rows.push(`<tr><td>${r.driverName}</td><td>${r.weekEnding||'--'}</td><td>${i+1}</td><td>${s.time||'--'}</td><td>${s.address||'--'}</td><td>${s.lat?parseFloat(s.lat).toFixed(4):'--'}</td><td>${s.lng?parseFloat(s.lng).toFixed(4):'--'}</td><td>${s.label||''}</td></tr>`)); } catch(e) {} });
+  tbody.innerHTML = rows.join('') || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">No stops in records</td></tr>';
 }
 
 // ════════════════════════════════════════════════════════
-//  DRIVER SUMMARY REPORT
+// DRIVER SUMMARY REPORT
 // ════════════════════════════════════════════════════════
 function runSummaryReport() {
   const search = (document.getElementById('rptSummarySearch').value||'').toLowerCase();
@@ -1532,33 +1241,16 @@ function runSummaryReport() {
     const name = r.driverName||'Unknown';
     if (search && !name.toLowerCase().includes(search)) return;
     if (!grouped[name]) grouped[name] = {name, truck:r.truckNumber||'', count:0, hours:0, pay:0, fuel:0, tolls:0, lastSub:''};
-    const g = grouped[name];
-    g.count++;
-    g.hours += parseFloat(r.totalHours||0);
-    g.pay += parseFloat(r.grossPay||0);
-    g.fuel += parseFloat(r.fuel||0);
-    g.tolls += parseFloat(r.tolls||0);
+    const g = grouped[name]; g.count++; g.hours+=parseFloat(r.totalHours||0); g.pay+=parseFloat(r.grossPay||0); g.fuel+=parseFloat(r.fuel||0); g.tolls+=parseFloat(r.tolls||0);
     if (!g.lastSub || r.submittedAt > g.lastSub) g.lastSub = r.submittedAt;
     if (r.truckNumber) g.truck = r.truckNumber;
   });
-
   const drivers = Object.values(grouped).sort((a,b) => b.hours - a.hours);
   const tbody = document.getElementById('summaryReportBody');
-  if (!drivers.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">No data found</td></tr>'; document.getElementById('summaryReportSummary').innerHTML=''; return; }
-
-  let totHours=0, totPay=0, totFuel=0, totTolls=0;
-  tbody.innerHTML = drivers.map(d => {
-    totHours+=d.hours; totPay+=d.pay; totFuel+=d.fuel; totTolls+=d.tolls;
-    const avgHrs = d.count > 0 ? (d.hours/d.count).toFixed(2) : '0.00';
-    const lastSub = d.lastSub ? new Date(d.lastSub).toLocaleDateString() : '--';
-    return `<tr><td><strong>${d.name}</strong></td><td>${d.truck||'--'}</td><td>${d.count}</td><td>${fmtHours(d.hours)}</td><td>${fmtMoney(d.pay)}</td><td>${fmtMoney(d.fuel)}</td><td>${fmtMoney(d.tolls)}</td><td>${avgHrs}</td><td>${lastSub}</td></tr>`;
-  }).join('') + `<tr class="total-row"><td colspan="3">TOTALS (${drivers.length} drivers)</td><td>${fmtHours(totHours)}</td><td>${fmtMoney(totPay)}</td><td>${fmtMoney(totFuel)}</td><td>${fmtMoney(totTolls)}</td><td colspan="2"></td></tr>`;
-
-  document.getElementById('summaryReportSummary').innerHTML = `
-    <div class="rs-box"><div class="rsv">${drivers.length}</div><div class="rsl">Drivers</div></div>
-    <div class="rs-box"><div class="rsv">${fmtHours(totHours)}</div><div class="rsl">Total Hours</div></div>
-    <div class="rs-box"><div class="rsv">${fmtMoney(totPay)}</div><div class="rsl">Total Pay</div></div>
-    <div class="rs-box"><div class="rsv">${fmtMoney(totFuel+totTolls)}</div><div class="rsl">Total Expenses</div></div>`;
+  if (!drivers.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-muted)">No data found</td></tr>'; document.getElementById('summaryReportSummary').innerHTML=''; return; }
+  let totHours=0,totPay=0,totFuel=0,totTolls=0;
+  tbody.innerHTML = drivers.map(d => { totHours+=d.hours; totPay+=d.pay; totFuel+=d.fuel; totTolls+=d.tolls; const avgHrs=d.count>0?(d.hours/d.count).toFixed(2):'0.00', lastSub=d.lastSub?new Date(d.lastSub).toLocaleDateString():'--'; return `<tr><td><strong>${d.name}</strong></td><td>${d.truck||'--'}</td><td>${d.count}</td><td>${fmtHours(d.hours)}</td><td>${fmtMoney(d.pay)}</td><td>${fmtMoney(d.fuel)}</td><td>${fmtMoney(d.tolls)}</td><td>${avgHrs}</td><td>${lastSub}</td></tr>`; }).join('') + `<tr class="total-row"><td colspan="3">TOTALS (${drivers.length} drivers)</td><td>${fmtHours(totHours)}</td><td>${fmtMoney(totPay)}</td><td>${fmtMoney(totFuel)}</td><td>${fmtMoney(totTolls)}</td><td colspan="2"></td></tr>`;
+  document.getElementById('summaryReportSummary').innerHTML = `<div class="rs-box"><div class="rsv">${drivers.length}</div><div class="rsl">Drivers</div></div><div class="rs-box"><div class="rsv">${fmtHours(totHours)}</div><div class="rsl">Total Hours</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totPay)}</div><div class="rsl">Total Pay</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totFuel+totTolls)}</div><div class="rsl">Total Expenses</div></div>`;
 }
 </script>
 </body>
