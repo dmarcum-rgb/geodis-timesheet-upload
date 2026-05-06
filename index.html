@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Geodis Timesheet Upload</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+    .logo {
+      background: #003366;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      margin-bottom: 28px;
+    }
+    .logo h1 { font-size: 20px; font-weight: bold; }
+    .logo p { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+    label.drop-zone {
+      display: block;
+      border: 2px dashed #003366;
+      border-radius: 8px;
+      padding: 36px 20px;
+      cursor: pointer;
+      color: #555;
+      transition: background 0.2s;
+      margin-bottom: 20px;
+    }
+    label.drop-zone:hover { background: #f0f4ff; }
+    label.drop-zone .icon { font-size: 40px; margin-bottom: 10px; }
+    label.drop-zone .hint { font-size: 13px; color: #888; margin-top: 6px; }
+    #fileInput { display: none; }
+    #fileName {
+      font-weight: bold;
+      color: #003366;
+      margin-bottom: 20px;
+      min-height: 20px;
+      font-size: 14px;
+    }
+    button {
+      background: #003366;
+      color: white;
+      border: none;
+      padding: 14px 40px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    button:hover:not(:disabled) { background: #004d99; }
+    button:disabled { background: #aaa; cursor: not-allowed; }
+    #status {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+    #status.success { background: #e6f9ee; color: #1a7a40; border: 1px solid #a3d9b1; }
+    #status.error   { background: #fdecea; color: #c0392b; border: 1px solid #f5b7b1; }
+    #status.loading { background: #e8f0fe; color: #1a56db; border: 1px solid #a4c2f4; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <h1>Geodis Timesheet Upload</h1>
+      <p>Meiborg Inc — Shuttle Driver Billing</p>
+    </div>
+    <label class="drop-zone" for="fileInput">
+      <div class="icon">📄</div>
+      <div>Click to select a PDF timesheet</div>
+      <div class="hint">Accepts .pdf files only</div>
+    </label>
+    <input type="file" id="fileInput" accept=".pdf" />
+    <div id="fileName">No file selected</div>
+    <button id="submitBtn" disabled>Upload to Google Sheets</button>
+    <div id="status"></div>
+  </div>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const fileNameEl = document.getElementById('fileName');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusEl = document.getElementById('status');
+    const WEBHOOK = 'https://dmarcum11.app.n8n.cloud/webhook/meiborg-timesheet';
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        fileNameEl.textContent = String.fromCodePoint(128206) + ' ' + fileInput.files[0].name;
+        submitBtn.disabled = false;
+        statusEl.style.display = 'none';
+      }
+    });
+    submitBtn.addEventListener('click', async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      submitBtn.disabled = true;
+      showStatus('loading', String.fromCodePoint(9203) + ' Uploading and processing your timesheet...');
+      const formData = new FormData();
+      formData.append('data', file);
+      try {
+        const response = await fetch(WEBHOOK, { method: 'POST', body: formData });
+        if (response.ok) {
+          showStatus('success', String.fromCodePoint(9989) + ' Success! Your timesheet has been added to the Google Sheet.');
+          fileInput.value = '';
+          fileNameEl.textContent = 'No file selected';
+        } else {
+          showStatus('error', String.fromCodePoint(10060) + ' Upload failed. Please try again or contact your admin.');
+        }
+      } catch (err) {
+        showStatus('error', String.fromCodePoint(10060) + ' Could not connect. Check your internet and try again.');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+    function showStatus(type, message) {
+      statusEl.className = type;
+      statusEl.textContent = message;
+      statusEl.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
