@@ -709,71 +709,10 @@ function setRole(r) {
 function pwKey(name) { return 'mlam_pw_' + name.toLowerCase().replace(/\s+/g,'_'); }
 function hasPassword(name) { return !!localStorage.getItem(pwKey(name)); }
 function checkFirstTime() {
-  const name = selectedName();
-  if (!name) { document.getElementById('pwHint').style.display='none'; document.getElementById('pwConfirmGroup').style.display='none'; return; }
-  const first = !hasPassword(name);
-  document.getElementById('pwHint').style.display = first ? 'block' : 'none';
-  document.getElementById('pwConfirmGroup').style.display = first ? 'block' : 'none';
-  document.getElementById('pwLabel').textContent = first ? 'Create Password' : 'Password';
+  document.getElementById('pwHint').style.display = 'none';
+  document.getElementById('pwConfirmGroup').style.display = 'none';
+  document.getElementById('pwLabel').textContent = 'Password';
 }
-function selectedName() {
-  if (currentRole === 'driver') {
-    const sel = document.getElementById('loginDriver');
-    if (!sel.value) return '';
-    const parts = sel.value.split('|');
-    return parts[0] === 'OTHER' ? document.getElementById('otherName').value.trim() : parts[0];
-  } else {
-    const sel = document.getElementById('loginOffice');
-    if (!sel.value) return '';
-    return sel.value.split('|')[0];
-  }
-}
-
-// ════════════════════════════════════════════════════════
-// LOGIN
-// ════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('loginDriver').addEventListener('change', () => {
-    const v = document.getElementById('loginDriver').value;
-    document.getElementById('otherNameWrap').style.display = v === 'OTHER|' ? 'block' : 'none';
-    checkFirstTime();
-  });
-  document.getElementById('loginOffice').addEventListener('change', checkFirstTime);
-  document.getElementById('otherName').addEventListener('input', checkFirstTime);
-  const dt = new Date(), dy = dt.getDay();
-  const diff = (6 - dy + 7) % 7 || 7;
-  dt.setDate(dt.getDate() + diff);
-  document.getElementById('loginWeekEnding').value = dt.toISOString().slice(0,10);
-  buildHoursGrid();
-  // Restore session on page load/refresh
-  const saved = localStorage.getItem('mlam_session');
-  if (saved) {
-    try {
-      const sess = JSON.parse(saved);
-      if (sess && sess.name && sess.role) {
-        currentRole = sess.role;
-        if (sess.role === 'driver') {
-          const dSel = document.getElementById('loginDriver');
-          if (sess.driverValue) {
-            dSel.value = sess.driverValue;
-            if (sess.driverValue === 'OTHER|') {
-              document.getElementById('otherNameWrap').style.display = 'block';
-              document.getElementById('otherName').value = sess.name;
-            }
-          }
-          if (sess.weekEnding) document.getElementById('loginWeekEnding').value = sess.weekEnding;
-          launchDriverApp(sess.name);
-        } else {
-          const oSel = document.getElementById('loginOffice');
-          if (sess.officeValue) oSel.value = sess.officeValue;
-          launchDashboard(sess.name);
-        }
-      }
-    } catch(e) { localStorage.removeItem('mlam_session'); }
-  }
-
-  initSigCanvas();
-});
 
 function doLogin() {
   const errEl = document.getElementById('loginErr');
@@ -781,20 +720,12 @@ function doLogin() {
   const name = selectedName();
   if (!name) { showErr('Please select your name.'); return; }
   const pw = document.getElementById('pwInput').value;
-  const pwc = document.getElementById('pwConfirm').value;
   if (!pw) { showErr('Please enter a password.'); return; }
-  const key = pwKey(name);
-  const stored = localStorage.getItem(key);
-  if (!stored) {
-    if (pw.length < 4) { showErr('Password must be at least 4 characters.'); return; }
-    if (pw !== pwc) { showErr('Passwords do not match.'); return; }
-    localStorage.setItem(key, btoa(pw));
-  } else {
-    if (btoa(pw) !== stored) { showErr('Incorrect password.'); return; }
-  }
+  const correctPw = currentRole === 'office' ? '1992' : '3814';
+  if (pw !== correctPw) { showErr('Incorrect password.'); return; }
   document.getElementById('pwInput').value = '';
   document.getElementById('pwConfirm').value = '';
-    const _sessData = {
+  const _sessData = {
     role: currentRole,
     name: name,
     weekEnding: currentRole === 'driver' ? document.getElementById('loginWeekEnding').value : '',
@@ -802,8 +733,13 @@ function doLogin() {
     officeValue: currentRole === 'office' ? document.getElementById('loginOffice').value : ''
   };
   localStorage.setItem('mlam_session', JSON.stringify(_sessData));
-  if (currentRole === 'office') { launchDashboard(name); } else { launchDriverApp(name); }
+  if (currentRole === 'office') {
+    launchDashboard(name);
+  } else {
+    launchDriverApp(name);
+  }
 }
+
 function showErr(msg) {
   const el = document.getElementById('loginErr');
   el.textContent = msg;
