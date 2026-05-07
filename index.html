@@ -1293,5 +1293,434 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
+
+<!-- ══ MLAM ASSISTANT BOT ══ -->
+<style>
+/* Bot Widget */
+#botWidget{position:fixed;bottom:22px;right:22px;z-index:9999;font-family:'Inter',-apple-system,sans-serif}
+#botFab{width:54px;height:54px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;border-radius:50%;cursor:pointer;box-shadow:0 4px 20px rgba(245,197,24,0.5);display:flex;align-items:center;justify-content:center;font-size:22px;transition:.2s;color:var(--black)}
+#botFab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(245,197,24,0.6)}
+#botFab .bot-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:white;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid var(--black)}
+#botFab .bot-badge.show{display:flex}
+#botWindow{display:none;position:absolute;bottom:64px;right:0;width:320px;background:var(--dark);border:1px solid var(--border-gold);border-radius:18px;box-shadow:0 12px 50px rgba(0,0,0,0.7);overflow:hidden;flex-direction:column;max-height:480px}
+#botWindow.open{display:flex}
+#botHeader{background:linear-gradient(135deg,var(--navy),#1e2a8a);padding:13px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+#botHeader .bot-avatar{width:32px;height:32px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:var(--black)}
+#botHeader .bot-title{flex:1}
+#botHeader .bot-title strong{font-size:13px;font-weight:800;color:var(--gold);display:block}
+#botHeader .bot-title span{font-size:10px;color:var(--text-muted)}
+#botClose{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:2px 5px;transition:.2s}
+#botClose:hover{color:var(--red)}
+#botMessages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:200px}
+.bot-msg{max-width:88%;padding:10px 13px;border-radius:14px;font-size:12.5px;line-height:1.5;animation:botSlide .25s ease}
+@keyframes botSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.bot-msg.bot{background:var(--dark3);color:var(--text);border-bottom-left-radius:4px;align-self:flex-start;border:1px solid var(--border)}
+.bot-msg.bot a{color:var(--gold);text-decoration:none;font-weight:700}
+.bot-msg.user{background:var(--gold);color:var(--black);border-bottom-right-radius:4px;align-self:flex-end;font-weight:600}
+.bot-msg.alert{background:var(--red-dim);color:#ff8c9a;border:1px solid rgba(255,23,68,0.4);border-radius:10px;align-self:stretch;max-width:100%;font-size:12px}
+.bot-msg.ok{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,200,83,0.3);border-radius:10px;align-self:stretch;max-width:100%;font-size:12px}
+.bot-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 10px;align-self:flex-start}
+.bot-chip{background:var(--gold-dim);color:var(--gold);border:1px solid var(--border-gold);border-radius:20px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap}
+.bot-chip:hover{background:var(--gold);color:var(--black)}
+#botInputRow{display:flex;gap:7px;padding:10px 12px;border-top:1px solid var(--border);background:var(--dark2)}
+#botInput{flex:1;background:var(--dark3);border:1.5px solid var(--border);border-radius:10px;padding:9px 11px;font-size:13px;color:var(--text);font-family:inherit;outline:none;transition:.2s}
+#botInput:focus{border-color:var(--gold)}
+#botSend{background:var(--gold);color:var(--black);border:none;border-radius:8px;padding:9px 13px;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;flex-shrink:0}
+#botSend:hover{background:var(--gold-dark)}
+.bot-typing{display:flex;gap:5px;align-items:center;padding:8px 13px}
+.bot-typing span{width:7px;height:7px;background:var(--text-muted);border-radius:50%;animation:dotBounce 1.2s ease infinite}
+.bot-typing span:nth-child(2){animation-delay:.2s}
+.bot-typing span:nth-child(3){animation-delay:.4s}
+@keyframes dotBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+</style>
+
+<div id="botWidget">
+  <div id="botFab" onclick="toggleBot()" title="MLAM Assistant">
+    🤖
+    <div class="bot-badge" id="botBadge">!</div>
+  </div>
+  <div id="botWindow">
+    <div id="botHeader">
+      <div class="bot-avatar">🤖</div>
+      <div class="bot-title">
+        <strong>MLAM Assistant</strong>
+        <span>Your shift guide & error checker</span>
+      </div>
+      <button id="botClose" onclick="toggleBot()">✕</button>
+    </div>
+    <div id="botMessages"></div>
+    <div id="botInputRow">
+      <input id="botInput" type="text" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')botSend()"/>
+      <button id="botSend" onclick="botSend()">➤</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// MLAM ASSISTANT BOT
+// ════════════════════════════════════════════════════════
+(function(){
+  let botOpen = false;
+  let botGreeted = false;
+  let lastCheckedState = {};
+  
+  window.toggleBot = function(){
+    botOpen = !botOpen;
+    document.getElementById('botWindow').classList.toggle('open', botOpen);
+    document.getElementById('botBadge').classList.remove('show');
+    if(botOpen && !botGreeted){
+      botGreeted = true;
+      setTimeout(()=>botWelcome(), 300);
+    }
+  };
+  
+  function botWelcome(){
+    const inApp = document.getElementById('appScreen') && document.getElementById('appScreen').classList.contains('active');
+    const inDash = document.getElementById('dashScreen') && document.getElementById('dashScreen').classList.contains('active');
+    const inLogin = document.getElementById('loginScreen') && document.getElementById('loginScreen').classList.contains('active');
+    
+    if(inLogin){
+      botMsg("👋 Hi! I'm your MLAM Assistant. Need help getting started?", 'bot');
+      setTimeout(()=>showChips([
+        '🔐 How do I log in?',
+        '👤 I\'m a driver',
+        '💼 I\'m office staff',
+        '❓ What is this app?'
+      ]),400);
+    } else if(inApp){
+      const name = document.getElementById('headerName') ? document.getElementById('headerName').textContent : 'Driver';
+      botMsg("👋 Hey " + name.split(' ')[0] + "! I'm your shift assistant. I'll help you navigate and catch any clock errors.", 'bot');
+      setTimeout(()=>{
+        runClockCheck();
+        showChips([
+          '⏰ How do I clock in?',
+          '📍 Log a stop',
+          '⛽ Add expenses',
+          '📋 Submit timesheet',
+          '🔍 Check my errors'
+        ]);
+      }, 500);
+    } else if(inDash){
+      botMsg("👋 Welcome to the dashboard! I can guide you through the reports and live data.", 'bot');
+      setTimeout(()=>showChips([
+        '📊 Overview guide',
+        '🗺️ Live map help',
+        '📅 Weekly hours report',
+        '🔍 Check clock errors',
+        '💰 Expense report'
+      ]),400);
+    }
+  }
+  
+  function botMsg(text, type, delay){
+    delay = delay || 0;
+    setTimeout(()=>{
+      const msgs = document.getElementById('botMessages');
+      // Remove chips if any
+      const chips = msgs.querySelector('.bot-chips');
+      if(chips && type !== 'chip-placeholder') chips.remove();
+      
+      const el = document.createElement('div');
+      el.className = 'bot-msg ' + type;
+      el.innerHTML = text;
+      msgs.appendChild(el);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, delay);
+  }
+  
+  function showChips(options){
+    const msgs = document.getElementById('botMessages');
+    const el = document.createElement('div');
+    el.className = 'bot-chips';
+    options.forEach(opt => {
+      const chip = document.createElement('button');
+      chip.className = 'bot-chip';
+      chip.textContent = opt;
+      chip.onclick = ()=>{ botHandleChip(opt); };
+      el.appendChild(chip);
+    });
+    msgs.appendChild(el);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  
+  function showTyping(cb, delay){
+    delay = delay || 700;
+    const msgs = document.getElementById('botMessages');
+    const el = document.createElement('div');
+    el.className = 'bot-msg bot bot-typing';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    msgs.appendChild(el);
+    msgs.scrollTop = msgs.scrollHeight;
+    setTimeout(()=>{ el.remove(); cb(); }, delay);
+  }
+  
+  window.botSend = function(){
+    const input = document.getElementById('botInput');
+    const text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    botMsg(text, 'user');
+    showTyping(()=>botRespond(text.toLowerCase()));
+  };
+  
+  function botHandleChip(text){
+    botMsg(text, 'user');
+    showTyping(()=>botRespond(text.toLowerCase()));
+  }
+  
+  function botRespond(q){
+    // ── Login screen ──
+    if(q.includes('log in') || q.includes('login') || q.includes('how do i log') || q.includes('getting started')){
+      botMsg("To log in:<br>1️⃣ Choose <strong>Driver</strong> or <strong>Office</strong><br>2️⃣ Select your name from the dropdown<br>3️⃣ Enter the password<br>4️⃣ For drivers, make sure the <strong>Week Ending</strong> date (Saturday) is set correctly.", 'bot');
+      return;
+    }
+    if(q.includes("what is this app") || q.includes("what does this do")){
+      botMsg("This is the <strong>MLAM Driver App</strong> — a shift management tool for Meiborg drivers and office staff.<br>🚚 Drivers clock in/out, log stops & expenses, then submit weekly timesheets.<br>💼 Office staff see live driver status, maps, and reports.", 'bot');
+      return;
+    }
+    if(q.includes("i'm a driver") || q.includes("im a driver")){
+      botMsg("As a driver, here's your workflow:<br>1️⃣ <strong>Clock</strong> tab → Clock In at start of shift<br>2️⃣ <strong>Stops</strong> tab → GPS logs stops automatically (or tap + Add Stop)<br>3️⃣ <strong>Receipts</strong> tab → Upload fuel/toll receipts<br>4️⃣ <strong>Hours</strong> tab → Review/adjust your daily hours<br>5️⃣ <strong>Submit</strong> tab → Sign and submit", 'bot');
+      setTimeout(()=>showChips(['⏰ Clock in/out', '📍 Stops', '⛽ Expenses', '✅ Submit']), 200);
+      return;
+    }
+    if(q.includes("i'm office") || q.includes("i'm a manager") || q.includes("office staff")){
+      botMsg("As office staff, the <strong>Dashboard</strong> has:<br>📊 <strong>Overview</strong> — Active drivers, total hours, quick status<br>🗺️ <strong>Live Map</strong> — GPS locations of clocked-in drivers<br>🚙 <strong>Driver Status</strong> — Detailed cards per driver<br>📅 <strong>Reports</strong> — Weekly hours, expenses, stops, summaries", 'bot');
+      setTimeout(()=>showChips(['📊 Overview guide', '📅 Weekly report', '💰 Expense report', '🗺️ Live map']), 200);
+      return;
+    }
+    
+    // ── Clock in/out ──
+    if(q.includes('clock in') || q.includes('clock out') || q.includes('how do i clock')){
+      const clocked = state && state.clockedIn;
+      if(clocked){
+        botMsg("✅ You're currently <strong>clocked in</strong>.<br>To clock out: go to the <strong>Clock</strong> tab and tap the red <strong>CLOCK OUT</strong> button.", 'bot');
+      } else {
+        botMsg("To clock in:<br>1️⃣ Tap the <strong>Clock</strong> tab at the top<br>2️⃣ Tap the green <strong>CLOCK IN</strong> button<br>3️⃣ Allow GPS if prompted — this starts stop tracking automatically!", 'bot');
+      }
+      return;
+    }
+    
+    // ── Stops ──
+    if(q.includes('stop') || q.includes('gps') || q.includes('location')){
+      botMsg("🗺️ <strong>Stops</strong> are logged automatically via GPS when you're stationary for ~3 minutes.<br>You can also tap <strong>+ Add Stop</strong> to manually log your location.<br>Stops appear in the Stops tab with time & address.", 'bot');
+      return;
+    }
+    
+    // ── Expenses ──
+    if(q.includes('expense') || q.includes('fuel') || q.includes('toll') || q.includes('receipt')){
+      botMsg("⛽ In the <strong>Receipts</strong> tab:<br>• Enter <strong>Fuel Total</strong> and <strong>Tolls Total</strong> manually<br>• OR take a photo of your receipt — the app will try to auto-read the amount!<br>• Receipts are attached to your submitted timesheet.", 'bot');
+      return;
+    }
+    
+    // ── Hours ──
+    if(q.includes('hour') || q.includes('daily') || q.includes('schedule')){
+      botMsg("📅 In the <strong>Hours</strong> tab, you can adjust your start/end times for Sun–Thu.<br>When you clock in/out, the times are auto-filled. Just confirm they look right before submitting.", 'bot');
+      return;
+    }
+    
+    // ── Submit ──
+    if(q.includes('submit') || q.includes('timesheet') || q.includes('sign')){
+      botMsg("✅ To submit your timesheet:<br>1️⃣ Go to the <strong>Submit</strong> tab<br>2️⃣ <strong>Sign</strong> the canvas with your finger/mouse<br>3️⃣ Add any notes (optional)<br>4️⃣ Tap <strong>Submit Timesheet</strong><br><br>⚠️ Make sure you've clocked out first!", 'bot');
+      return;
+    }
+    
+    // ── Error check ──
+    if(q.includes('error') || q.includes('check') || q.includes('problem') || q.includes('wrong') || q.includes('issue')){
+      runClockCheck();
+      return;
+    }
+    
+    // ── Dashboard / Reports ──
+    if(q.includes('overview')){
+      botMsg("📊 The <strong>Overview</strong> panel shows:<br>• <strong>Active Now</strong> — drivers currently clocked in<br>• <strong>Drivers Today</strong> — total drivers with data today<br>• <strong>Total Hrs</strong> — combined hours across all drivers<br>• Quick status cards with each driver's fuel, tolls & last stop", 'bot');
+      return;
+    }
+    if(q.includes('live map') || q.includes('map')){
+      botMsg("🗺️ The <strong>Live Map</strong> panel shows GPS pins for all drivers currently clocked in.<br>Click a pin to see driver name, truck #, and hours.<br>Map updates when you click <strong>Refresh</strong> or navigate to this panel.", 'bot');
+      return;
+    }
+    if(q.includes('weekly') || q.includes('weekly report') || q.includes('weekly hours')){
+      botMsg("📅 The <strong>Weekly Hours Report</strong>:<br>1️⃣ Select a <strong>Week Ending</strong> date (Saturday)<br>2️⃣ Optionally filter by driver<br>3️⃣ Click <strong>Run</strong> to see all submissions<br><br>Shows clock times, daily hours, totals, gross pay, fuel, tolls & signature status.", 'bot');
+      return;
+    }
+    if(q.includes('expense report') || q.includes('expense')){
+      botMsg("💰 The <strong>Expense Report</strong>:<br>1️⃣ Set a date range (From / To)<br>2️⃣ Optionally filter by driver<br>3️⃣ Click <strong>Run</strong><br><br>Shows fuel & toll totals per driver with a grand total row.", 'bot');
+      return;
+    }
+    if(q.includes('driver summary') || q.includes('summary')){
+      botMsg("👨‍💻 The <strong>Driver Summary</strong> shows lifetime stats per driver — total submissions, hours, pay, expenses, and last submission date. Great for payroll reviews!", 'bot');
+      return;
+    }
+    if(q.includes('stop log') || q.includes('stop report')){
+      botMsg("📍 The <strong>Stop Log Report</strong> shows every GPS stop logged per driver, with address, lat/lng, and label. Filter by driver and/or date.", 'bot');
+      return;
+    }
+    
+    // ── Fallback ──
+    botMsg("🤔 I'm not sure about that one. Here are things I can help with:", 'bot');
+    const inApp = document.getElementById('appScreen') && document.getElementById('appScreen').classList.contains('active');
+    const inDash = document.getElementById('dashScreen') && document.getElementById('dashScreen').classList.contains('active');
+    if(inApp){
+      setTimeout(()=>showChips(['⏰ Clock in/out', '📍 Stops', '⛽ Expenses', '📋 Submit', '🔍 Check errors']), 200);
+    } else if(inDash){
+      setTimeout(()=>showChips(['📊 Overview', '🗺️ Live map', '📅 Weekly report', '💰 Expenses', '🔍 Clock errors']), 200);
+    } else {
+      setTimeout(()=>showChips(['🔐 How to log in', '👤 Driver guide', '💼 Office guide']), 200);
+    }
+  }
+  
+  // ── CLOCK ERROR CHECKER ──
+  function runClockCheck(){
+    const alerts = [];
+    const ok = [];
+    const inApp = document.getElementById('appScreen') && document.getElementById('appScreen').classList.contains('active');
+    const inDash = document.getElementById('dashScreen') && document.getElementById('dashScreen').classList.contains('active');
+    
+    if(inApp && typeof state !== 'undefined'){
+      // Check: week ending set?
+      if(!state.weekEnding){
+        alerts.push("⚠️ <strong>No Week Ending date set.</strong> Go back to login and select the Saturday date.");
+      }
+      
+      // Check: clocked in but no clock-out
+      if(state.clockedIn && state.clockInTime){
+        const hoursIn = (Date.now() - state.clockInTime.getTime()) / 3600000;
+        if(hoursIn > 14){
+          alerts.push("🚨 <strong>You've been clocked in for " + hoursIn.toFixed(1) + " hours!</strong> Did you forget to clock out?");
+        } else {
+          ok.push("✅ Currently clocked in (" + fmtTime12(state.clockInTime) + ")");
+        }
+      }
+      
+      // Check: clocked in but clock-out also recorded (inconsistency)
+      if(!state.clockedIn && state.clockOutTime && !state.clockInTime){
+        alerts.push("⚠️ <strong>Clock-out recorded but no clock-in found.</strong> There may be a missing clock-in time.");
+      }
+      
+      // Check: clock out before clock in
+      if(state.clockInTime && state.clockOutTime){
+        if(state.clockOutTime <= state.clockInTime){
+          alerts.push("🚨 <strong>Clock-out time is before or equal to clock-in time!</strong> Please verify your times in the Hours tab.");
+        } else {
+          const hrs = (state.clockOutTime - state.clockInTime) / 3600000;
+          if(hrs < 1){
+            alerts.push("⚠️ <strong>Shift was only " + hrs.toFixed(1) + " hr.</strong> Was this intentional?");
+          } else if(hrs > 16){
+            alerts.push("⚠️ <strong>Shift length is " + hrs.toFixed(1) + " hrs.</strong> That seems unusually long — please double-check.");
+          } else {
+            ok.push("✅ Shift duration looks normal: " + hrs.toFixed(1) + " hrs");
+          }
+        }
+      }
+      
+      // Check hours grid for issues
+      if(typeof DAY_KEYS !== 'undefined'){
+        let hasAnyHours = false;
+        DAY_KEYS.forEach(k=>{
+          const s = document.querySelector('[name="'+k+'Start"]');
+          const e = document.querySelector('[name="'+k+'End"]');
+          if(s && e && s.value && e.value){
+            const [sh,sm] = s.value.split(':').map(Number);
+            const [eh,em] = e.value.split(':').map(Number);
+            const h = ((eh*60+em)-(sh*60+sm))/60;
+            if(h < 0) alerts.push("🚨 <strong>" + k.toUpperCase() + ": End time is before start time!</strong> Fix this in the Hours tab.");
+            else if(h > 16) alerts.push("⚠️ <strong>" + k.toUpperCase() + ": " + h.toFixed(1) + " hrs logged</strong> — over 16 hrs in one day, please verify.");
+            else if(h > 0) hasAnyHours = true;
+          }
+        });
+        if(!hasAnyHours && !state.clockedIn){
+          alerts.push("⚠️ <strong>No hours entered in the Hours tab.</strong> Make sure to fill in your daily times before submitting.");
+        } else if(hasAnyHours){
+          ok.push("✅ Hours grid has valid entries");
+        }
+      }
+      
+      // Not clocked out before submit
+      if(state.clockedIn){
+        alerts.push("⚠️ <strong>You are still clocked in!</strong> Remember to clock out before submitting your timesheet.");
+      }
+      
+      // Missing signature check (if on submit tab)
+      const sigHint = document.getElementById('sigHint');
+      if(sigHint && sigHint.style.display !== 'none'){
+        alerts.push("📝 <strong>No signature yet.</strong> You'll need to sign the canvas in the Submit tab.");
+      }
+    }
+    
+    if(inDash && typeof allTimesheetData !== 'undefined'){
+      // Check for drivers still clocked in from yesterday (stale)
+      // We'll just show general OK message since we don't have live data right now
+      ok.push("ℹ️ Clock error detection in dashboard mode monitors via Live Driver Status. Click Driver Status to see who's still clocked in.");
+    }
+    
+    if(!inApp && !inDash){
+      botMsg("🔍 Log in first and I'll check for clock errors on your shift!", 'bot');
+      return;
+    }
+    
+    if(alerts.length === 0 && ok.length === 0){
+      botMsg("✅ No issues detected! Everything looks good.", 'ok');
+    } else {
+      if(alerts.length > 0){
+        alerts.forEach(a => botMsg(a, 'alert'));
+      }
+      if(ok.length > 0){
+        ok.forEach(o => botMsg(o, 'ok'));
+      }
+    }
+    
+    // Follow-up chips
+    const inAppNow = document.getElementById('appScreen') && document.getElementById('appScreen').classList.contains('active');
+    setTimeout(()=>showChips(inAppNow ? 
+      ['⏰ Clock in/out', '📋 Submit guide', '❓ More help'] :
+      ['📊 Overview', '🚙 Driver Status', '❓ More help']
+    ), 300);
+  }
+  
+  // ── PROACTIVE ALERTS ──
+  // Monitor state changes and show badge if issues detected
+  setInterval(()=>{
+    if(typeof state === 'undefined') return;
+    const issues = [];
+    if(state.clockedIn && state.clockInTime){
+      const hoursIn = (Date.now() - state.clockInTime.getTime()) / 3600000;
+      if(hoursIn > 14) issues.push('long shift');
+    }
+    if(state.clockInTime && state.clockOutTime && state.clockOutTime <= state.clockInTime){
+      issues.push('clock order error');
+    }
+    const badge = document.getElementById('botBadge');
+    if(badge){
+      if(issues.length > 0 && !botOpen){
+        badge.classList.add('show');
+        badge.textContent = issues.length;
+      } else {
+        badge.classList.remove('show');
+      }
+    }
+  }, 30000);
+  
+  // Re-greet when switching screens
+  const origLaunchDriver = window.launchDriverApp;
+  if(typeof origLaunchDriver === 'function'){
+    window.launchDriverApp = function(name){
+      origLaunchDriver.apply(this, arguments);
+      botGreeted = false;
+      if(botOpen){ botGreeted = true; setTimeout(botWelcome, 400); }
+    };
+  }
+  const origLaunchDash = window.launchDashboard;
+  if(typeof origLaunchDash === 'function'){
+    window.launchDashboard = function(name){
+      origLaunchDash.apply(this, arguments);
+      botGreeted = false;
+      if(botOpen){ botGreeted = true; setTimeout(botWelcome, 400); }
+    };
+  }
+  
+})();
+</script>
+
 </body>
 </html>
