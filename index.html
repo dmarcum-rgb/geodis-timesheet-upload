@@ -507,6 +507,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div class="sidebar-item" onclick="showDashPanel('rpt-summary')" id="si-rpt-summary">
         <span class="si-icon">&#128104;&#8205;&#128187;</span><span>Driver Summary</span>
       </div>
+      <div class="sidebar-item" onclick="showDashPanel('rpt-geodis')" id="si-rpt-geodis"><span class="si-icon">&#x1F69A;</span><span>Geodis Report</span></div>
+      <div class="sidebar-item" onclick="showDashPanel('rpt-meiborg')" id="si-rpt-meiborg"><span class="si-icon">&#x1F4CB;</span><span>Meiborg Report</span></div>
     </div>
     <div class="sb-logout">
       <button onclick="doLogout()"><span>&#10006; Log Out</span></button>
@@ -642,6 +644,51 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       </table></div>
     </div>
 
+
+    <!-- REPORT: GEODIS CUSTOM -->
+    <div class="dash-panel" id="panel-rpt-geodis">
+      <div class="print-header"><h2>Geodis Custom Report</h2><p id="phGeodis"></p></div>
+      <div class="report-toolbar">
+        <div class="report-range-selector">
+          <div><label>Date Range</label>
+            <div class="range-presets">
+              <button class="range-preset-btn active" onclick="setGeodisRange('week')" id="geodisBtn-week">Week</button>
+              <button class="range-preset-btn" onclick="setGeodisRange('month')" id="geodisBtn-month">Month</button>
+              <button class="range-preset-btn" onclick="setGeodisRange('quarter')" id="geodisBtn-quarter">Quarter</button>
+              <button class="range-preset-btn" onclick="setGeodisRange('year')" id="geodisBtn-year">Year</button>
+              <button class="range-preset-btn" onclick="setGeodisRange('custom')" id="geodisBtn-custom">Custom</button>
+            </div>
+          </div>
+          <div class="custom-range" id="geodisCustomRange" style="display:none"><label>From</label><input type="date" id="geodisDateFrom"><label>To</label><input type="date" id="geodisDateTo"></div>
+          <div><label>Driver</label><select id="geodisDriverFilter"><option value="">All Drivers</option></select></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runGeodisReport()">&#9654; Run</button><button class="btn-print" onclick="window.print()">&#128438; Print / PDF</button></div>
+      </div>
+      <div id="geodisReportSummary" class="report-summary"></div>
+      <div class="report-table-wrap"><table class="report-table geodis-report-table" id="geodisReportTable"><thead><tr><th>Week Ending</th><th>Driver</th><th>Truck</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Total Hrs</th><th>Labor Cost</th><th>Fuel</th><th>Tolls</th><th>Toll &amp; Labor</th></tr></thead><tbody id="geodisReportBody"><tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">Select a range and click Run</td></tr></tbody></table></div>
+    </div>
+    <!-- REPORT: MEIBORG CUSTOM -->
+    <div class="dash-panel" id="panel-rpt-meiborg">
+      <div class="print-header"><h2>Meiborg Custom Report</h2><p id="phMeiborg"></p></div>
+      <div class="report-toolbar">
+        <div class="report-range-selector">
+          <div><label>Date Range</label>
+            <div class="range-presets">
+              <button class="range-preset-btn active" onclick="setMeiborgRange('week')" id="meiborgBtn-week">Week</button>
+              <button class="range-preset-btn" onclick="setMeiborgRange('month')" id="meiborgBtn-month">Month</button>
+              <button class="range-preset-btn" onclick="setMeiborgRange('quarter')" id="meiborgBtn-quarter">Quarter</button>
+              <button class="range-preset-btn" onclick="setMeiborgRange('year')" id="meiborgBtn-year">Year</button>
+              <button class="range-preset-btn" onclick="setMeiborgRange('custom')" id="meiborgBtn-custom">Custom</button>
+            </div>
+          </div>
+          <div class="custom-range" id="meiborgCustomRange" style="display:none"><label>From</label><input type="date" id="meiborgDateFrom"><label>To</label><input type="date" id="meiborgDateTo"></div>
+          <div><label>Driver</label><select id="meiborgDriverFilter"><option value="">All Drivers</option></select></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runMeiborgReport()">&#9654; Run</button><button class="btn-print" onclick="window.print()">&#128438; Print / PDF</button></div>
+      </div>
+      <div id="meiborgReportSummary" class="report-summary"></div>
+      <div class="report-table-wrap"><table class="report-table meiborg-report-table" id="meiborgReportTable"><thead><tr><th>Rate Schedule / Driver</th><th>Truck</th><th>Week Ending</th><th>Fuel</th><th>Tolls</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Reg Hrs</th><th class="rate-col">Rate</th><th class="rate-col">Total Pay</th></tr></thead><tbody id="meiborgReportBody"><tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">Select a range and click Run</td></tr></tbody></table></div>
+    </div>
   </div><!-- end dash-main -->
 </div><!-- end dashScreen -->
 
@@ -1333,6 +1380,18 @@ document.addEventListener('DOMContentLoaded', () => {
 .bot-typing span:nth-child(2){animation-delay:.2s}
 .bot-typing span:nth-child(3){animation-delay:.4s}
 @keyframes dotBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+/* ===== CUSTOM RANGE REPORTS =====*/
+.report-range-selector{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:8px}
+.range-presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.range-preset-btn{padding:4px 12px;border-radius:4px;border:1px solid var(--border-gold);background:transparent;color:var(--gold);cursor:pointer;font-size:13px;font-family:inherit;transition:.15s}
+.range-preset-btn.active,.range-preset-btn:hover{background:var(--gold);color:#000;font-weight:600}
+.custom-range{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.custom-range label{color:var(--text-dim);font-size:12px;font-weight:500}
+.custom-range input[type=date]{background:var(--dark3);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-family:inherit}
+.geodis-report-table th,.meiborg-report-table th{white-space:nowrap}
+.meiborg-report-table .rate-col{color:var(--gold)}
+.report-grand-total td{background:var(--dark2);font-weight:700;border-top:2px solid var(--gold)}
 </style>
 
 <div id="botWidget">
@@ -1723,5 +1782,22 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 
+<script>
+(function(){var _orig=window.showDashPanel;window.showDashPanel=function(panel){if(panel==='rpt-geodis'||panel==='rpt-meiborg'){document.querySelectorAll('.dash-panel').forEach(function(p){p.classList.remove('active');});var panelEl=document.getElementById('panel-'+panel);if(panelEl)panelEl.classList.add('active');document.querySelectorAll('.sidebar-item').forEach(function(i){i.classList.remove('active');});var sidebarItem=document.getElementById('si-'+panel);if(sidebarItem)sidebarItem.classList.add('active');var title=document.getElementById('dashPanelTitle');if(title)title.textContent=panel==='rpt-geodis'?'Geodis Report':'Meiborg Report';return;}return _orig(panel);};}());
+function getRangeDates(m){var n=new Date(),f,t;if(m==='week'){var day=n.getDay(),sat=new Date(n);sat.setDate(n.getDate()+(6-day));var sun=new Date(sat);sun.setDate(sat.getDate()-6);f=sun;t=sat;}else if(m==='month'){f=new Date(n.getFullYear(),n.getMonth(),1);t=new Date(n.getFullYear(),n.getMonth()+1,0);}else if(m==='quarter'){var q=Math.floor(n.getMonth()/3);f=new Date(n.getFullYear(),q*3,1);t=new Date(n.getFullYear(),q*3+3,0);}else if(m==='year'){f=new Date(n.getFullYear(),0,1);t=new Date(n.getFullYear(),11,31);}return{from:f,to:t};}
+function fmtDateISO(d){if(!d)return'';var mm=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return d.getFullYear()+'-'+mm+'-'+dd;}
+function parseDateLocal(s){if(!s)return null;var d=new Date(s+'T00:00:00');return isNaN(d.getTime())?null:d;}
+function populateCustomDriverFilter(id){var sel=document.getElementById(id);if(!sel)return;var ex=Array.from(sel.options).map(function(o){return o.value;});var names=[];(allTimesheetData||[]).forEach(function(r){if(r.driverName&&!names.includes(r.driverName))names.push(r.driverName);});names.sort().forEach(function(n){if(!ex.includes(n)){var opt=document.createElement('option');opt.value=n;opt.textContent=n;sel.appendChild(opt);}});}
+function timeValToDecimal(t){if(!t)return -1;var p=String(t).split(':');if(p.length<2)return -1;var h=parseInt(p[0]),m=parseInt(p[1]);return isNaN(h)||isNaN(m)?-1:h+m/60;}
+function filterTimesheetByRange(fv,tv,df){var from=parseDateLocal(fv),to=parseDateLocal(tv);return(allTimesheetData||[]).filter(function(r){var we=parseDateLocal(r.weekEnding);if(!we)return false;var ws=new Date(we);ws.setDate(we.getDate()-6);if(from&&to&&(we<from||ws>to))return false;if(from&&!to&&we<from)return false;if(!from&&to&&ws>to)return false;if(df&&r.driverName!==df)return false;return true;});}
+window.geodisRangeMode='week';
+function setGeodisRange(mode){window.geodisRangeMode=mode;document.querySelectorAll('[id^="geodisBtn-"]').forEach(function(b){b.classList.remove('active');});var btn=document.getElementById('geodisBtn-'+mode);if(btn)btn.classList.add('active');var cd=document.getElementById('geodisCustomRange');if(cd)cd.style.display=mode==='custom'?'flex':'none';if(mode!=='custom'){var d=getRangeDates(mode);var f=document.getElementById('geodisDateFrom'),t=document.getElementById('geodisDateTo');if(f&&d.from)f.value=fmtDateISO(d.from);if(t&&d.to)t.value=fmtDateISO(d.to);}}
+function runGeodisReport(){populateCustomDriverFilter('geodisDriverFilter');var fv=(document.getElementById('geodisDateFrom')||{}).value||'',tv=(document.getElementById('geodisDateTo')||{}).value||'',df=(document.getElementById('geodisDriverFilter')||{}).value||'';var data=filterTimesheetByRange(fv,tv,df);var body=document.getElementById('geodisReportBody'),summary=document.getElementById('geodisReportSummary');if(!data.length){body.innerHTML='<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">No records found</td></tr>';summary.innerHTML='';return;}var R=76.5,gh=0,gp=0,gf=0,gt=0;data.sort(function(a,b){var w=(a.weekEnding||'').localeCompare(b.weekEnding||'');return w!==0?w:(a.driverName||'').localeCompare(b.driverName||'');});var rows='';data.forEach(function(r){var h=parseFloat(r.totalHours||0),lc=h*R,fu=parseFloat(r.fuel||0),to=parseFloat(r.tolls||0),tl=lc+to;gh+=h;gp+=lc;gf+=fu;gt+=to;var dc=['sun','mon','tue','wed','thu'].map(function(d){var sv=timeValToDecimal(r[d+'Start']),ev=timeValToDecimal(r[d+'End']);if(sv<0||ev<0)return'<td>-</td>';var hh=Math.max(0,ev-sv);return'<td>'+(hh>0?hh.toFixed(2):'-')+'</td>';}).join('');rows+='<tr><td>'+(r.weekEnding||'')+'</td><td>'+(r.driverName||'')+'</td><td>'+(r.truckNumber||'')+'</td>'+dc+'<td><strong>'+fmtHours(h)+'</strong></td><td>'+fmtMoney(lc)+'</td><td>'+fmtMoney(fu)+'</td><td>'+fmtMoney(to)+'</td><td><strong>'+fmtMoney(tl)+'</strong></td></tr>';});rows+='<tr class="report-grand-total"><td colspan="8"><strong>TOTALS ('+data.length+' records)</strong></td><td><strong>'+fmtHours(gh)+'</strong></td><td><strong>'+fmtMoney(gp)+'</strong></td><td><strong>'+fmtMoney(gf)+'</strong></td><td><strong>'+fmtMoney(gt)+'</strong></td><td><strong>'+fmtMoney(gp+gt)+'</strong></td></tr>';body.innerHTML=rows;var rl=fv&&tv?fv+' – '+tv:'All dates';summary.innerHTML='<div class="report-summary-cards"><div class="rpt-stat"><div class="rs-val">'+data.length+'</div><div class="rs-lbl">Records</div></div><div class="rpt-stat"><div class="rs-val">'+fmtHours(gh)+'</div><div class="rs-lbl">Total Hours</div></div><div class="rpt-stat"><div class="rs-val">'+fmtMoney(gp)+'</div><div class="rs-lbl">Labor Cost</div></div><div class="rpt-stat"><div class="rs-val">'+fmtMoney(gt)+'</div><div class="rs-lbl">Tolls</div></div><div class="rpt-stat"><div class="rs-val">'+fmtMoney(gp+gt)+'</div><div class="rs-lbl">Toll &amp; Labor</div></div></div>';var ph=document.getElementById('phGeodis');if(ph)ph.textContent=rl+(df?' | '+df:'');}
+window.meiborgRangeMode='week';
+function setMeiborgRange(mode){window.meiborgRangeMode=mode;document.querySelectorAll('[id^="meiborgBtn-"]').forEach(function(b){b.classList.remove('active');});var btn=document.getElementById('meiborgBtn-'+mode);if(btn)btn.classList.add('active');var cd=document.getElementById('meiborgCustomRange');if(cd)cd.style.display=mode==='custom'?'flex':'none';if(mode!=='custom'){var d=getRangeDates(mode);var f=document.getElementById('meiborgDateFrom'),t=document.getElementById('meiborgDateTo');if(f&&d.from)f.value=fmtDateISO(d.from);if(t&&d.to)t.value=fmtDateISO(d.to);}}
+function runMeiborgReport(){populateCustomDriverFilter('meiborgDriverFilter');var fv=(document.getElementById('meiborgDateFrom')||{}).value||'',tv=(document.getElementById('meiborgDateTo')||{}).value||'',df=(document.getElementById('meiborgDriverFilter')||{}).value||'';var data=filterTimesheetByRange(fv,tv,df);var body=document.getElementById('meiborgReportBody'),summary=document.getElementById('meiborgReportSummary');if(!data.length){body.innerHTML='<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">No records found</td></tr>';summary.innerHTML='';return;}var R=76.5,gh=0,gp=0,gf=0,gt=0;data.sort(function(a,b){var w=(a.weekEnding||'').localeCompare(b.weekEnding||'');return w!==0?w:(a.driverName||'').localeCompare(b.driverName||'');});var rows='';data.forEach(function(r,i){var h=parseFloat(r.totalHours||0),gro=parseFloat(r.grossPay||0)||(h*R),er=h>0?gro/h:R,fu=parseFloat(r.fuel||0),to=parseFloat(r.tolls||0);gh+=h;gp+=gro;gf+=fu;gt+=to;var dc=['sun','mon','tue','wed','thu'].map(function(d){var sv=timeValToDecimal(r[d+'Start']),ev=timeValToDecimal(r[d+'End']);if(sv<0||ev<0)return'<td>-</td>';var hh=Math.max(0,ev-sv);return'<td>'+(hh>0?hh.toFixed(2):'-')+'</td>';}).join('');rows+='<tr><td>40 hr - Shuttle Driver '+(i+1)+'<br><small style="color:var(--text-dim)">'+(r.driverName||'')+'</small></td><td>'+(r.truckNumber||'')+'</td><td>'+(r.weekEnding||'')+'</td><td>'+fmtMoney(fu)+'</td><td>'+fmtMoney(to)+'</td>'+dc+'<td><strong>'+fmtHours(h)+'</strong></td><td class="rate-col">$'+er.toFixed(2)+'</td><td class="rate-col"><strong>'+fmtMoney(gro)+'</strong></td></tr>';});rows+='<tr class="report-grand-total"><td colspan="3"><strong>TOTALS ('+data.length+' drivers)</strong></td><td><strong>'+fmtMoney(gf)+'</strong></td><td><strong>'+fmtMoney(gt)+'</strong></td><td colspan="5"></td><td><strong>'+fmtHours(gh)+'</strong></td><td></td><td class="rate-col"><strong>'+fmtMoney(gp)+'</strong></td></tr>';body.innerHTML=rows;var rl=fv&&tv?fv+' – '+tv:'All dates';summary.innerHTML='<div class="report-summary-cards"><div class="rpt-stat"><div class="rs-val">'+data.length+'</div><div class="rs-lbl">Drivers</div></div><div class="rpt-stat"><div class="rs-val">'+fmtHours(gh)+'</div><div class="rs-lbl">Total Hours</div></div><div class="rpt-stat"><div class="rs-val">'+fmtMoney(gf)+'</div><div class="rs-lbl">Total Fuel</div></div><div class="rpt-stat"><div class="rs-val">'+fmtMoney(gt)+'</div><div class="rs-lbl">Total Tolls</div></div><div class="rpt-stat"><div class="rs-val">'+fmtMoney(gp)+'</div><div class="rs-lbl">Gross Pay</div></div></div>';var ph=document.getElementById('phMeiborg');if(ph)ph.textContent=rl+(df?' | '+df:'');}
+document.addEventListener('DOMContentLoaded',function(){setGeodisRange('week');setMeiborgRange('week');});
+if(document.readyState!=='loading'){setTimeout(function(){setGeodisRange('week');setMeiborgRange('week');},100);}
+</script>
 </body>
 </html>
