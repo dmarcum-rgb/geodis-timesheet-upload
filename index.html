@@ -885,11 +885,11 @@ function launchDashboard(name) {
   document.getElementById('dashPanelSub').textContent = isGeodis ? 'Geodis Logistics Dashboard' : 'Meiborg Operations Dashboard';
   // Geodis: swap logo to red circle
   if (isGeodis) {
-    document.getElementById('si-map').style.display='none';doc  else {
-    document.getElementById('si-map').style.display='';
-    document.getElementById('si-rpt-stops').style.display='';
+    document.getElementById('si-map').style.display='none';document.getElementById('si-rpt-stops').style.display='none';
+  } else {
+    document.getElementById('si-map').style.display='';document.getElementById('si-rpt-stops').style.display='';
   }
-ument.getElementById('si-rpt-stops').style.display='none';}if(isGeodis){document.getElementById('sbLogoImg').innerHTML = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#cc0010"/><text x="50" y="67" text-anchor="middle" font-size="44" font-weight="900" fill="white" font-family="Arial">G</text></svg>';
+  if(isGeodis){document.getElementById('sbLogoImg').innerHTML = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#cc0010"/><text x="50" y="67" text-anchor="middle" font-size="44" font-weight="900" fill="white" font-family="Arial">G</text></svg>';
   }
   document.getElementById('loginScreen').classList.remove('active');
   document.getElementById('dashScreen').classList.add('active');
