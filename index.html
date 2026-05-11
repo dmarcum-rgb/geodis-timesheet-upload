@@ -987,8 +987,11 @@ function setSelectClosest(sel, val) {
 function pushStatusPing() {
   const hours = calcWeekHours();
   const payload = { type:'status_ping', driverName:state.driver, truckNumber:state.truck, clockedIn:state.clockedIn, clockInTime:state.clockInTime?state.clockInTime.toISOString():null, clockOutTime:state.clockOutTime?state.clockOutTime.toISOString():null, weekHours:hours, fuel:state.fuelAmt, tolls:state.tollsAmt, stopCount:state.stops.length, lastStop:state.stops.length?state.stops[state.stops.length-1]:null, lat:state.currentLat, lng:state.currentLng, weekEnding:state.weekEnding, ts:new Date().toISOString() };
-  fetch(STATUS_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).catch(()=>{});
+  try { const _lk='mlam_live_'+state.driver.replace(/\\s+/g,'_').toLowerCase(); localStorage.setItem(_lk,JSON.stringify(payload)); const _ld=JSON.parse(localStorage.getItem('mlam_live_drivers')||'{}'); _ld[state.driver]=payload; localStorage.setItem('mlam_live_drivers',JSON.stringify(_ld)); } catch(_le){}
+fetch(STATUS_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).catch(()=>{});
 }
+function getLiveDriversFromStorage(){ try{ const _s=JSON.parse(localStorage.getItem('mlam_live_drivers')||'{}'), _n=Date.now(); return Object.values(_s).filter(function(d){ return (_n-new Date(d.ts).getTime())<600000; }); }catch(e2){ return []; } }
+function mergeDriverData(a,b){ const m={}; (a||[]).forEach(function(d){if(d.driverName)m[d.driverName]=d;}); (b||[]).forEach(function(d){if(!d.driverName)return; if(!m[d.driverName]||new Date(d.ts)>=new Date((m[d.driverName].ts||0)))m[d.driverName]=d;}); return Object.values(m); }
 function calcWeekHours() {
   let total = 0;
   DAY_KEYS.forEach(k => { const s = document.querySelector('[name="'+k+'Start"]'), e = document.querySelector('[name="'+k+'End"]'); if (!s||!e||!s.value||!e.value) return; const [sh,sm] = s.value.split(':').map(Number), [eh,em] = e.value.split(':').map(Number); const h = ((eh*60+em)-(sh*60+sm))/60; if (h > 0) total += h; });
@@ -1172,315 +1175,119 @@ async function submitTimesheet() {
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 let dashMap=null, dashMarkers=[];
 async function refreshDashboard() {
-  document.getElementById('lastUpdated').textContent='Refreshing...';
-  try {
-    const res = await fetch(POLL_HOOK, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'dashboard_request',ts:new Date().toISOString()})});
-    const drivers = res.ok ? await res.json() : [];
-    renderDashboard(Array.isArray(drivers) ? drivers : (drivers.drivers || []));
-  } catch(e) { renderDashboard([]); }
-  document.getElementById('lastUpdated').textContent='Last updated: '+new Date().toLocaleTimeString();
+const updEl = document.getElementById('lastUpdated');
+if(updEl) updEl.textContent='Refreshing...';
+const lsDrivers = getLiveDriversFromStorage();
+if(lsDrivers.length > 0) renderDashboard(lsDrivers);
+try {
+const res = await fetch(POLL_HOOK, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'dashboard_request',ts:new Date().toISOString()})});
+const n8nRaw = res.ok ? await res.json() : [];
+const n8nArr = Array.isArray(n8nRaw) ? n8nRaw : (n8nRaw.drivers || []);
+const merged = mergeDriverData(n8nArr, lsDrivers);
+renderDashboard(merged.length > 0 ? merged : lsDrivers);
+if(updEl) updEl.textContent='Updated: '+new Date().toLocaleTimeString()+(n8nArr.length?' (server+local)':lsDrivers.length?' (local)':'');
+} catch(err) {
+renderDashboard(lsDrivers);
+if(updEl) updEl.textContent='Updated: '+new Date().toLocaleTimeString()+' (local only)';
 }
+}
+let _dashAutoRefresh = null;
+function startDashAutoRefresh() {
+if(_dashAutoRefresh) clearInterval(_dashAutoRefresh);
+_dashAutoRefresh = setInterval(function(){
+if(['overview','map','drivers'].indexOf(currentDashPanel)>=0) refreshDashboard();
+}, 30000);
+}
+
 function renderDashboard(drivers) {
-  const active = drivers.filter(d=>d.clockedIn).length;
-  const totalHrs = drivers.reduce((a,d)=>a+(parseFloat(d.weekHours)||0),0);
-  document.getElementById('statActive').textContent = active;
-  document.getElementById('statTotal').textContent = drivers.length || '--';
-  document.getElementById('statHours').textContent = totalHrs ? totalHrs.toFixed(1) : '--';
-  const container = document.getElementById('driverCards');
-  const detail = document.getElementById('driverCardsDetail');
-  if (!drivers.length) {
-    container.innerHTML = `<div class="no-data"><div style="font-size:32px;margin-bottom:10px">&#128665;</div><div style="font-weight:700;color:var(--gold);margin-bottom:6px">No live data yet</div><div style="font-size:12px">Driver data will appear here once drivers clock in.</div></div>`;
-  } else {
-    const cardsHtml = drivers.map(d => {
-      const statusClass = d.clockedIn ? 'clocked-in' : 'clocked-out';
-      const statusText = d.clockedIn ? 'Route Started' : 'Route Stopped';
-      const lastStop = d.lastStop ? d.lastStop.address || (d.lastStop.lat ? d.lastStop.lat.toFixed(4)+', '+d.lastStop.lng.toFixed(4) : 'Unknown') : 'No stops yet';
-      const lastStopTime = d.lastStop ? d.lastStop.time || '' : '';
-      const hrs = parseFloat(d.weekHours||0).toFixed(1), pay = (parseFloat(d.weekHours||0)*RATE).toFixed(2);
-      const fuel = parseFloat(d.fuel||0).toFixed(2), tolls = parseFloat(d.tolls||0).toFixed(2);
-      return `<div class="driver-card"><div class="driver-card-header"><div><div class="driver-name">${d.driverName||'Unknown'}</div><div class="driver-truck">Truck #${d.truckNumber||'--'}</div></div><span class="status-pill ${statusClass}">${statusText}</span></div><div class="driver-stats"><div class="ds-item"><div class="dsv">${hrs}</div><div class="dsl">Wk Hrs</div></div><div class="ds-item"><div class="dsv">$${fuel}</div><div class="dsl">Fuel</div></div><div class="ds-item"><div class="dsv">$${tolls}</div><div class="dsl">Tolls</div></div></div><div class="last-stop"><strong>Last Stop${lastStopTime?' @ '+lastStopTime:''}</strong><br>${lastStop}</div></div>`;
-    }).join('');
-    container.innerHTML = cardsHtml; if(detail) detail.innerHTML = cardsHtml;
-  }
-  renderMap(drivers);
-}
-function renderMap(drivers) {
-  const mapEl = document.getElementById('dashMap');
-  const withLoc = drivers.filter(d=>d.lat&&d.lng);
-  if (!withLoc.length) { mapEl.innerHTML=`<div class="map-placeholder"><p>Map will show live positions</p></div>`; return; }
-  if (window.L) {
-    if (!dashMap) { mapEl.innerHTML=''; mapEl.style.height='280px'; dashMap = L.map('dashMap').setView([withLoc[0].lat, withLoc[0].lng], 11); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(dashMap); }
-    dashMarkers.forEach(m=>dashMap.removeLayer(m)); dashMarkers=[];
-    withLoc.forEach(d=>{ const marker = L.marker([d.lat,d.lng]).addTo(dashMap).bindPopup(`<b>${d.driverName}</b><br>Truck #${d.truckNumber}<br>${d.clockedIn?'&#x1F7E2; Route Started':'&#x1F534; Route Stopped'}<br>${d.weekHours||0} hrs this week`); dashMarkers.push(marker); });
-    const bounds = L.latLngBounds(withLoc.map(d=>[d.lat,d.lng])); dashMap.fitBounds(bounds,{padding:[20,20]});
-  } else {
-    mapEl.innerHTML=`<div class="map-placeholder" style="flex-direction:column;align-items:flex-start;padding:14px;height:auto;min-height:120px">${withLoc.map(d=>`<div style="margin-bottom:8px;font-size:13px"><strong style="color:var(--gold)">${d.driverName}</strong> â Truck #${d.truckNumber}<br><a href="https://maps.google.com/?q=${d.lat},${d.lng}" target="_blank" style="color:var(--gold-dark)">&#128205; View on Map</a></div>`).join('')}</div>`;
-  }
-}
-
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// INIT LIBS
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-(function loadLibs(){
-  const t=document.createElement('script'); t.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'; t.onload=()=>console.log('Tesseract ready'); document.head.appendChild(t);
-  const lCss=document.createElement('link'); lCss.rel='stylesheet'; lCss.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(lCss);
-  const lJs=document.createElement('script'); lJs.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; lJs.onload=()=>console.log('Leaflet ready'); document.head.appendChild(lJs);
-})();
-
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// DASHBOARD PANEL NAVIGATION
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-let currentDashPanel = 'overview';
-let allTimesheetData = [];
-function showDashPanel(name) {
-  currentDashPanel = name;
-  document.querySelectorAll('.sidebar-item').forEach(el => { el.classList.toggle('active', el.id === 'si-' + name); });
-  document.querySelectorAll('.dash-panel').forEach(el => { el.classList.toggle('active', el.id === 'panel-' + name); });
-  const titles = { 'overview':'Overview','map':'Live Driver Locations','drivers':'Driver Status','rpt-weekly':'Weekly Hours Report','rpt-expenses':'Expense Report','rpt-stops':'Stop Log Report','rpt-summary':'Driver Summary' };
-  document.getElementById('dashPanelTitle').textContent = titles[name] || name;
-  if (name.startsWith('rpt-') && allTimesheetData.length === 0) loadTimesheetHistory();
-  if (name === 'map' || name === 'overview' || name === 'drivers') refreshDashboard();
-  if (name === 'rpt-weekly') {
-    const dt = new Date(), dy = dt.getDay(); const diff = dy === 6 ? 0 : (dy + 1); const sat = new Date(dt); sat.setDate(dt.getDate() - diff);
-    document.getElementById('rptWeekFilter').value = sat.toISOString().slice(0,10);
-    document.getElementById('phWeekly').textContent = 'Week Ending: ' + sat.toLocaleDateString();
-    runWeeklyReport();
-  }
-  if (name === 'rpt-expenses') {
-    const now = new Date(), first = new Date(now.getFullYear(), now.getMonth(), 1);
-    document.getElementById('rptExpFrom').value = first.toISOString().slice(0,10);
-    document.getElementById('rptExpTo').value = now.toISOString().slice(0,10);
-    runExpenseReport();
-  }
-  if (name === 'rpt-summary') runSummaryReport();
-  if (name === 'rpt-stops') runStopReport();
-}
-
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// LOAD TIMESHEET HISTORY
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-async function loadTimesheetHistory() {
-  try {
-    const res = await fetch(POLL_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type:'timesheet_history', ts: new Date().toISOString()}) });
-    const data = res.ok ? await res.json() : {};
-    allTimesheetData = data.timesheets || data || [];
-  } catch(e) { allTimesheetData = []; }
-}
-function calcDayHours(start, end) { if (!start || !end) return 0; const [sh,sm] = start.split(':').map(Number), [eh,em] = end.split(':').map(Number); const h = ((eh*60+em)-(sh*60+sm))/60; return h > 0 ? h : 0; }
-function fmtHours(h) { return parseFloat(h||0).toFixed(2); }
-function fmtMoney(v) { return '$' + parseFloat(v||0).toFixed(2); }
-function fmtTime(t) { if(!t) return '--'; try{ return new Date(t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}); }catch{return t;} }
-
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// WEEKLY HOURS REPORT
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-function runWeeklyReport() {
-  const weekFilter = document.getElementById('rptWeekFilter').value;
-  const driverFilter = document.getElementById('rptDriverFilter').value;
-  document.getElementById('phWeekly').textContent = weekFilter ? 'Week Ending: ' + weekFilter : '';
-  const rows = allTimesheetData.filter(r => { if (weekFilter && r.weekEnding !== weekFilter) return false; if (driverFilter && r.driverName !== driverFilter) return false; return true; });
-  const tbody = document.getElementById('weeklyReportBody');
-  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="15" style="text-align:center;padding:20px;color:var(--text-muted)">No records found for selected filters</td></tr>'; document.getElementById('weeklyReportSummary').innerHTML = ''; return; }
-  let totalHrs=0,totalPay=0,totalFuel=0,totalTolls=0;
-  tbody.innerHTML = rows.map(r => {
-    const hrs=parseFloat(r.totalHours||0),pay=parseFloat(r.grossPay||0),fuel=parseFloat(r.fuel||0),tolls=parseFloat(r.tolls||0);
-    totalHrs+=hrs; totalPay+=pay; totalFuel+=fuel; totalTolls+=tolls;
-    return `<tr><td><strong>${r.driverName||'--'}</strong></td><td>${r.truckNumber||'--'}</td><td>${r.weekEnding||'--'}</td><td>${r.clockIn?fmtTime(r.clockIn):(r.sunStart||'--')}</td><td>${r.clockOut?fmtTime(r.clockOut):(r.thuEnd||'--')}</td><td>${fmtHours(calcDayHours(r.sunStart,r.sunEnd))}</td><td>${fmtHours(calcDayHours(r.monStart,r.monEnd))}</td><td>${fmtHours(calcDayHours(r.tueStart,r.tueEnd))}</td><td>${fmtHours(calcDayHours(r.wedStart,r.wedEnd))}</td><td>${fmtHours(calcDayHours(r.thuStart,r.thuEnd))}</td><td><strong>${fmtHours(hrs)}</strong></td><td><strong>${fmtMoney(pay)}</strong></td><td>${fmtMoney(fuel)}</td><td>${fmtMoney(tolls)}</td><td>${r.hasSignature==='YES'?'<span class="badge-in">&#10003; YES</span>':'<span class="badge-out">NO</span>'}</td></tr>`;
-  }).join('') + `<tr class="total-row"><td colspan="10" style="text-align:right">TOTALS:</td><td>${fmtHours(totalHrs)}</td><td>${fmtMoney(totalPay)}</td><td>${fmtMoney(totalFuel)}</td><td>${fmtMoney(totalTolls)}</td><td></td></tr>`;
-  document.getElementById('weeklyReportSummary').innerHTML = `<div class="rs-box"><div class="rsv">${rows.length}</div><div class="rsl">Submissions</div></div><div class="rs-box"><div class="rsv">${fmtHours(totalHrs)}</div><div class="rsl">Total Hours</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalPay)}</div><div class="rsl">Gross Pay</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalFuel)}</div><div class="rsl">Fuel</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalTolls)}</div><div class="rsl">Tolls</div></div>`;
-}
-
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// EXPENSE REPORT
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-function runExpenseReport() {
-  const from=document.getElementById('rptExpFrom').value, to=document.getElementById('rptExpTo').value, driver=document.getElementById('rptExpDriver').value;
-  document.getElementById('phExpenses').textContent = from && to ? from + ' to ' + to : '';
-  const rows = allTimesheetData.filter(r => { if (driver && r.driverName !== driver) return false; const d = r.weekEnding || r.submittedAt?.slice(0,10); if (from && d < from) return false; if (to && d > to) return false; return (parseFloat(r.fuel)||0) > 0 || (parseFloat(r.tolls)||0) > 0; });
-  const tbody = document.getElementById('expReportBody');
-  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No expense records found</td></tr>'; document.getElementById('expReportSummary').innerHTML=''; return; }
-  let totalFuel=0,totalTolls=0;
-  tbody.innerHTML = rows.map(r => { const f=parseFloat(r.fuel||0),t=parseFloat(r.tolls||0); totalFuel+=f; totalTolls+=t; return `<tr><td>${r.weekEnding||r.submittedAt?.slice(0,10)||'--'}</td><td>${r.driverName||'--'}</td><td>${r.truckNumber||'--'}</td><td>${fmtMoney(f)}</td><td>${fmtMoney(t)}</td><td><strong>${fmtMoney(f+t)}</strong></td></tr>`; }).join('') + `<tr class="total-row"><td colspan="3">TOTALS</td><td>${fmtMoney(totalFuel)}</td><td>${fmtMoney(totalTolls)}</td><td>${fmtMoney(totalFuel+totalTolls)}</td></tr>`;
-  document.getElementById('expReportSummary').innerHTML = `<div class="rs-box"><div class="rsv">${rows.length}</div><div class="rsl">Records</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalFuel)}</div><div class="rsl">Total Fuel</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalTolls)}</div><div class="rsl">Total Tolls</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totalFuel+totalTolls)}</div><div class="rsl">Grand Total</div></div>`;
-}
-
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// STOP LOG REPORT
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-function runStopReport() {
-  const driver=document.getElementById('rptStopsDriver').value, date=document.getElementById('rptStopsDate').value;
-  const filtered = allTimesheetData.filter(r => { if (driver && r.driverName !== driver) return false; if (date && r.weekEnding !== date && r.submittedAt?.slice(0,10) !== date) return false; return r.stopLog && r.stopLog !== '[]'; });
-  const tbody = document.getElementById('stopReportBody');
-  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">No stop data found</td></tr>'; return; }
-  const rows = [];
-  filtered.forEach(r => { try { const stops = JSON.parse(r.stopLog||'[]'); stops.forEach((s,i) => rows.push(`<tr><td>${r.driverName}</td><td>${r.weekEnding||'--'}</td><td>${i+1}</td><td>${s.time||'--'}</td><td>${s.address||'--'}</td><td>${s.lat?parseFloat(s.lat).toFixed(4):'--'}</td><td>${s.lng?parseFloat(s.lng).toFixed(4):'--'}</td><td>${s.label||''}</td></tr>`)); } catch(e) {} });
-  tbody.innerHTML = rows.join('') || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">No stops in records</td></tr>';
-}
-
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// DRIVER SUMMARY REPORT
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-function runSummaryReport() {
-  const search = (document.getElementById('rptSummarySearch').value||'').toLowerCase();
-  const grouped = {};
-  allTimesheetData.forEach(r => {
-    const name = r.driverName||'Unknown';
-    if (search && !name.toLowerCase().includes(search)) return;
-    if (!grouped[name]) grouped[name] = {name, truck:r.truckNumber||'', count:0, hours:0, pay:0, fuel:0, tolls:0, lastSub:''};
-    const g = grouped[name]; g.count++; g.hours+=parseFloat(r.totalHours||0); g.pay+=parseFloat(r.grossPay||0); g.fuel+=parseFloat(r.fuel||0); g.tolls+=parseFloat(r.tolls||0);
-    if (!g.lastSub || r.submittedAt > g.lastSub) g.lastSub = r.submittedAt;
-    if (r.truckNumber) g.truck = r.truckNumber;
-  });
-  const drivers = Object.values(grouped).sort((a,b) => b.hours - a.hours);
-  const tbody = document.getElementById('summaryReportBody');
-  if (!drivers.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-muted)">No data found</td></tr>'; document.getElementById('summaryReportSummary').innerHTML=''; return; }
-  let totHours=0,totPay=0,totFuel=0,totTolls=0;
-  tbody.innerHTML = drivers.map(d => { totHours+=d.hours; totPay+=d.pay; totFuel+=d.fuel; totTolls+=d.tolls; const avgHrs=d.count>0?(d.hours/d.count).toFixed(2):'0.00', lastSub=d.lastSub?new Date(d.lastSub).toLocaleDateString():'--'; return `<tr><td><strong>${d.name}</strong></td><td>${d.truck||'--'}</td><td>${d.count}</td><td>${fmtHours(d.hours)}</td><td>${fmtMoney(d.pay)}</td><td>${fmtMoney(d.fuel)}</td><td>${fmtMoney(d.tolls)}</td><td>${avgHrs}</td><td>${lastSub}</td></tr>`; }).join('') + `<tr class="total-row"><td colspan="3">TOTALS (${drivers.length} drivers)</td><td>${fmtHours(totHours)}</td><td>${fmtMoney(totPay)}</td><td>${fmtMoney(totFuel)}</td><td>${fmtMoney(totTolls)}</td><td colspan="2"></td></tr>`;
-  document.getElementById('summaryReportSummary').innerHTML = `<div class="rs-box"><div class="rsv">${drivers.length}</div><div class="rsl">Drivers</div></div><div class="rs-box"><div class="rsv">${fmtHours(totHours)}</div><div class="rsl">Total Hours</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totPay)}</div><div class="rsl">Total Pay</div></div><div class="rs-box"><div class="rsv">${fmtMoney(totFuel+totTolls)}</div><div class="rsl">Total Expenses</div></div>`;
-}
-
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// INIT ON PAGE LOAD
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-document.addEventListener('DOMContentLoaded', () => {
-  // Set up event listeners
-  document.getElementById('loginDriver').addEventListener('change', () => {
-    const v = document.getElementById('loginDriver').value;
-    document.getElementById('otherNameWrap').style.display = v === 'OTHER|' ? 'block' : 'none';
-    checkFirstTime();
-  });
-  document.getElementById('loginOffice').addEventListener('change', checkFirstTime);
-  document.getElementById('otherName').addEventListener('input', checkFirstTime);
-
-  // Auto-set week ending to next Saturday
-  const dt = new Date(), dy = dt.getDay();
-  const diff = (6 - dy + 7) % 7 || 7;
-  dt.setDate(dt.getDate() + diff);
-  document.getElementById('loginWeekEnding').value = dt.toISOString().slice(0,10);
-
-  // Build hours grid and signature canvas
-  buildHoursGrid();
-  initSigCanvas();
-
-  // Restore session from localStorage if available
-  const saved = localStorage.getItem('mlam_session');
-  if (saved) {
-    try {
-      const sess = JSON.parse(saved);
-      if (sess && sess.name && sess.role) {
-        currentRole = sess.role;
-        if (sess.role === 'driver') {
-          const dSel = document.getElementById('loginDriver');
-          if (sess.driverValue) {
-            dSel.value = sess.driverValue;
-            if (sess.driverValue === 'OTHER|') {
-              document.getElementById('otherNameWrap').style.display = 'block';
-              document.getElementById('otherName').value = sess.name;
-            }
-          }
-          if (sess.weekEnding) document.getElementById('loginWeekEnding').value = sess.weekEnding;
-          launchDriverApp(sess.name);
-        } else {
-          const oSel = document.getElementById('loginOffice');
-          if (sess.officeValue) oSel.value = sess.officeValue;
-          launchDashboard(sess.name);
-        }
-      }
-    } catch(e) { localStorage.removeItem('mlam_session'); }
-  }
+drivers = (drivers||[]).slice().sort(function(a,b){
+if(a.clockedIn&&!b.clockedIn)return -1; if(!a.clockedIn&&b.clockedIn)return 1;
+return (a.driverName||'').localeCompare(b.driverName||'');
 });
+const active = drivers.filter(function(d){return d.clockedIn;}).length;
+const totalHrs = drivers.reduce(function(a,d){return a+(parseFloat(d.weekHours)||0);},0);
+document.getElementById('statActive').textContent = active;
+document.getElementById('statTotal').textContent = drivers.length || '--';
+document.getElementById('statHours').textContent = totalHrs ? totalHrs.toFixed(1) : '--';
+const container = document.getElementById('driverCards');
+const detail = document.getElementById('driverCardsDetail');
+if (!drivers.length) {
+const emptyHtml = '<div class="no-data"><div style="font-weight:700;color:var(--gold);margin-bottom:6px">No live data yet</div><div style="font-size:12px">Drivers will appear here once they clock in. Auto-refreshes every 30 seconds.</div></div>';
+if(container) container.innerHTML = emptyHtml;
+if(detail) detail.innerHTML = emptyHtml;
+} else {
+const cardsHtml = drivers.map(function(d){
+const statusClass = d.clockedIn ? 'clocked-in' : 'clocked-out';
+const statusText = d.clockedIn ? 'Route Active' : 'Route Stopped';
+const lastStop = d.lastStop ? (d.lastStop.address&&d.lastStop.address!=='Fetching address...'?d.lastStop.address:(d.lastStop.lat?parseFloat(d.lastStop.lat).toFixed(4)+', '+parseFloat(d.lastStop.lng).toFixed(4):'Location pending')) : 'No stops yet';
+const lastStopTime = d.lastStop ? (d.lastStop.time||'') : '';
+const hrs = parseFloat(d.weekHours||0).toFixed(1);
+const fuel = parseFloat(d.fuel||0).toFixed(2);
+const tolls = parseFloat(d.tolls||0).toFixed(2);
+const stopsCount = parseInt(d.stopCount||0);
+const clockInStr = d.clockInTime ? new Date(d.clockInTime).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}) : '--';
+const lastPing = d.ts ? (function(){ const mins=Math.round((Date.now()-new Date(d.ts).getTime())/60000); return mins<2?'just now':mins+'m ago'; })() : '';
+return '<div class="driver-card">'+
+'<div class="driver-card-header">'+
+'<div><div class="driver-name">'+(d.driverName||'Unknown')+'</div>'+
+'<div class="driver-truck">Truck #'+(d.truckNumber||'--')+(lastPing?' &bull; '+lastPing:'')+'</div></div>'+
+'<span class="status-pill '+statusClass+'">'+statusText+'</span>'+
+'</div>'+
+'<div class="driver-stats">'+
+'<div class="ds-item"><div class="dsv">'+hrs+'</div><div class="dsl">Wk Hrs</div></div>'+
+'<div class="ds-item"><div class="dsv">'+stopsCount+'</div><div class="dsl">Stops</div></div>'+
+'<div class="ds-item"><div class="dsv">'+(d.clockedIn?clockInStr:'--')+'</div><div class="dsl">Started</div></div>'+
+'</div>'+
+'<div class="driver-stats" style="margin-top:6px">'+
+'<div class="ds-item"><div class="dsv">$'+fuel+'</div><div class="dsl">Fuel</div></div>'+
+'<div class="ds-item"><div class="dsv">$'+tolls+'</div><div class="dsl">Tolls</div></div>'+
+'<div class="ds-item"><div class="dsv">'+(d.lat?'GPS OK':'No GPS')+'</div><div class="dsl">Location</div></div>'+
+'</div>'+
+'<div class="last-stop"><strong>Last Stop'+(lastStopTime?' @ '+lastStopTime:'')+'</strong><br>'+lastStop+'</div>'+
+'</div>';
+}).join('');
+if(container) container.innerHTML = cardsHtml;
+if(detail) detail.innerHTML = cardsHtml;
+}
+renderMap(drivers);
+}
 
-</script>
+function renderMap(drivers) {
+const mapEl = document.getElementById('dashMap');
+if(!mapEl) return;
+const withLoc = (drivers||[]).filter(function(d){return d.lat&&d.lng&&!isNaN(parseFloat(d.lat))&&!isNaN(parseFloat(d.lng));});
+if (!withLoc.length) {
+mapEl.innerHTML='<div class="map-placeholder" style="height:280px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px"><p style="color:var(--text-muted);font-size:13px">No GPS positions available yet</p><p style="color:var(--text-muted);font-size:11px">Drivers need GPS enabled and active route</p></div>';
+return;
+}
+if (window.L) {
+try {
+if (!dashMap) {
+mapEl.innerHTML=''; mapEl.style.height='400px';
+dashMap = L.map('dashMap').setView([withLoc[0].lat, withLoc[0].lng], 11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors',maxZoom:18}).addTo(dashMap);
+}
+dashMarkers.forEach(function(m){ try{dashMap.removeLayer(m);}catch(ex){} }); dashMarkers=[];
+withLoc.forEach(function(d){
+const color = d.clockedIn ? '#00c853' : '#ff1744';
+const icon = L.divIcon({className:'',html:'<div style="width:14px;height:14px;border-radius:50%;background:'+color+';border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,.5)"></div>',iconSize:[14,14],iconAnchor:[7,7]});
+const popup = '<b>'+(d.driverName||'Unknown')+'</b><br>Truck #'+(d.truckNumber||'--')+'<br><span style="color:'+color+'">'+(d.clockedIn?'Route Active':'Route Stopped')+'</span><br>Stops: '+(d.stopCount||0)+'<br>'+(d.weekHours||0)+' hrs this week';
+const marker = L.marker([d.lat,d.lng],{icon:icon}).addTo(dashMap).bindPopup(popup);
+dashMarkers.push(marker);
+});
+if(withLoc.length===1){ dashMap.setView([parseFloat(withLoc[0].lat),parseFloat(withLoc[0].lng)],13); }
+else { dashMap.fitBounds(L.latLngBounds(withLoc.map(function(d){return[parseFloat(d.lat),parseFloat(d.lng)];})),{padding:[30,30],maxZoom:14}); }
+setTimeout(function(){ if(dashMap) dashMap.invalidateSize(); }, 150);
+} catch(mapErr) {
+mapEl.innerHTML='<div class="map-placeholder" style="height:280px;display:flex;align-items:center;justify-content:center"><p style="color:var(--text-muted)">Map error - try refreshing</p></div>';
+}
+} else {
+mapEl.innerHTML='<div style="padding:14px">'+withLoc.map(function(d){
+return '<div style="margin-bottom:10px;font-size:13px;background:var(--dark3);padding:10px;border-radius:8px"><strong style="color:var(--gold)">'+(d.driverName||'?')+'</strong> Truck #'+(d.truckNumber||'--')+'<br><a href="https://maps.google.com/?q='+d.lat+','+d.lng+'" target="_blank" style="color:var(--gold)">View on Map</a></div>';
+}).join('')+'</div>';
+}
+}
 
-<!-- ââ MLAM ASSISTANT BOT ââ -->
-<style>
-/* Bot Widget */
-#botWidget{position:fixed;bottom:22px;right:22px;z-index:9999;font-family:'Inter',-apple-system,sans-serif}
-#botFab{width:54px;height:54px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;border-radius:50%;cursor:pointer;box-shadow:0 4px 20px rgba(245,197,24,0.5);display:flex;align-items:center;justify-content:center;font-size:22px;transition:.2s;color:var(--black)}
-#botFab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(245,197,24,0.6)}
-#botFab .bot-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:white;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid var(--black)}
-#botFab .bot-badge.show{display:flex}
-#botWindow{display:none;position:absolute;bottom:64px;right:0;width:320px;background:var(--dark);border:1px solid var(--border-gold);border-radius:18px;box-shadow:0 12px 50px rgba(0,0,0,0.7);overflow:hidden;flex-direction:column;max-height:480px}
-#botWindow.open{display:flex}
-#botHeader{background:linear-gradient(135deg,var(--navy),#1e2a8a);padding:13px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
-#botHeader .bot-avatar{width:32px;height:32px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:var(--black)}
-#botHeader .bot-title{flex:1}
-#botHeader .bot-title strong{font-size:13px;font-weight:800;color:var(--gold);display:block}
-#botHeader .bot-title span{font-size:10px;color:var(--text-muted)}
-#botClose{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:2px 5px;transition:.2s}
-#botClose:hover{color:var(--red)}
-#botMessages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:200px}
-.bot-msg{max-width:88%;padding:10px 13px;border-radius:14px;font-size:12.5px;line-height:1.5;animation:botSlide .25s ease}
-@keyframes botSlide{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.bot-msg.bot{background:var(--dark3);color:var(--text);border-bottom-left-radius:4px;align-self:flex-start;border:1px solid var(--border)}
-.bot-msg.bot a{color:var(--gold);text-decoration:none;font-weight:700}
-.bot-msg.user{background:var(--gold);color:var(--black);border-bottom-right-radius:4px;align-self:flex-end;font-weight:600}
-.bot-msg.alert{background:var(--red-dim);color:#ff8c9a;border:1px solid rgba(255,23,68,0.4);border-radius:10px;align-self:stretch;max-width:100%;font-size:12px}
-.bot-msg.ok{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,200,83,0.3);border-radius:10px;align-self:stretch;max-width:100%;font-size:12px}
-.bot-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 10px;align-self:flex-start}
-.bot-chip{background:var(--gold-dim);color:var(--gold);border:1px solid var(--border-gold);border-radius:20px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap}
-.bot-chip:hover{background:var(--gold);color:var(--black)}
-#botInputRow{display:flex;gap:7px;padding:10px 12px;border-top:1px solid var(--border);background:var(--dark2)}
-#botInput{flex:1;background:var(--dark3);border:1.5px solid var(--border);border-radius:10px;padding:9px 11px;font-size:13px;color:var(--text);font-family:inherit;outline:none;transition:.2s}
-#botInput:focus{border-color:var(--gold)}
-#botSend{background:var(--gold);color:var(--black);border:none;border-radius:8px;padding:9px 13px;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;flex-shrink:0}
-#botSend:hover{background:var(--gold-dark)}
-.bot-typing{display:flex;gap:5px;align-items:center;padding:8px 13px}
-.bot-typing span{width:7px;height:7px;background:var(--text-muted);border-radius:50%;animation:dotBounce 1.2s ease infinite}
-.bot-typing span:nth-child(2){animation-delay:.2s}
-.bot-typing span:nth-child(3){animation-delay:.4s}
-@keyframes dotBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-
-/* ===== CUSTOM RANGE REPORTS =====*/
-.report-range-selector{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:8px}
-.range-presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
-.range-preset-btn{padding:4px 12px;border-radius:4px;border:1px solid var(--border-gold);background:transparent;color:var(--gold);cursor:pointer;font-size:13px;font-family:inherit;transition:.15s}
-.range-preset-btn.active,.range-preset-btn:hover{background:var(--gold);color:#000;font-weight:600}
-.custom-range{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
-.custom-range label{color:var(--text-dim);font-size:12px;font-weight:500}
-.custom-range input[type=date]{background:var(--dark3);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-family:inherit}
-.geodis-report-table th,.meiborg-report-table th{white-space:nowrap}
-.meiborg-report-table .rate-col{color:var(--gold)}
-.report-grand-total td{background:var(--dark2);font-weight:700;border-top:2px solid var(--gold)}
-
-/* ===== CUSTOM RANGE REPORTS =====*/
-.report-range-selector{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:8px}
-.range-presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
-.range-preset-btn{padding:4px 12px;border-radius:4px;border:1px solid var(--border-gold);background:transparent;color:var(--gold);cursor:pointer;font-size:13px;font-family:inherit;transition:.15s}
-.range-preset-btn.active,.range-preset-btn:hover{background:var(--gold);color:#000;font-weight:600}
-.custom-range{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
-.custom-range label{color:var(--text-dim);font-size:12px;font-weight:500}
-.custom-range input[type=date]{background:var(--dark3);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-family:inherit}
-.geodis-report-table th,.meiborg-report-table th{white-space:nowrap}
-.meiborg-report-table .rate-col{color:var(--gold)}
-.report-grand-total td{background:var(--dark2);font-weight:700;border-top:2px solid var(--gold)}
-</style>
-
-<div id="botWidget">
-  <div id="botFab" onclick="toggleBot()" title="MLAM Assistant">
-    ML
-    <div class="bot-badge" id="botBadge">!</div>
-  </div>
-  <div id="botWindow">
-    <div id="botHeader">
-      <div class="bot-avatar">ML</div>
-      <div class="bot-title">
-        <strong>MLAM Assistant</strong>
-        <span>Your shift guide & error checker</span>
-      </div>
-      <button id="botClose" onclick="toggleBot()">X</button>
-    </div>
-    <div id="botMessages"></div>
-    <div id="botInputRow">
-      <input id="botInput" type="text" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')botSend()"/>
-      <button id="botSend" onclick="botSend()">Send</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// MLAM ASSISTANT BOT
 // ════════════════════════════════════════════════════════════
 (function(){
 let botOpen = false;
