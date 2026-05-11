@@ -285,7 +285,24 @@ h
   .sidebar-item{justify-content:center;padding:12px}
   .sb-logout button span{display:none}
 }
-</style>
+
+@media(max-width:768px){
+  #dashScreen{flex-direction:column}
+  .dash-sidebar{position:fixed;left:0;top:0;height:100%;z-index:1000;transform:translateX(-230px);transition:transform 0.25s ease;box-shadow:4px 0 20px rgba(0,0,0,0.5)}
+  .dash-sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999}
+  .sidebar-overlay.open{display:block}
+  .dash-main{min-height:100vh;width:100%}
+  .dash-main-header{padding:12px 16px}
+  .hamburger-btn{display:flex !important;align-items:center}
+  .dash-stats{grid-template-columns:1fr 1fr !important}
+  .driver-card{min-width:0;width:100%}
+  .refresh-btn{font-size:13px;padding:6px 10px}
+}
+@media(min-width:769px){
+  .hamburger-btn{display:none !important}
+  .sidebar-overlay{display:none !important}
+}</style>
 </head>
 <body>
 <!-- ââ LOGIN SCREEN ââ -->
@@ -472,6 +489,7 @@ h
 
 <!-- ââ OFFICE DASHBOARD ââ -->
 <div id="dashScreen" class="screen">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
   <!-- SIDEBAR -->
   <div class="dash-sidebar" id="dashSidebar">
     <div class="sidebar-logo">
@@ -519,6 +537,7 @@ h
   <!-- MAIN CONTENT -->
   <div class="dash-main">
     <div class="dash-main-header">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
       <div>
         <div class="dash-main-header-title" id="dashPanelTitle">Overview</div>
         <div class="dh-sub" id="dashPanelSub"></div>
@@ -1674,6 +1693,8 @@ if(document.readyState!=='loading'){setTimeout(function(){setGeodisRange('week')
   }
 })();
 
+
+function toggleSidebar(){var s=document.getElementById('dashSidebar'),o=document.getElementById('sidebarOverlay');s.classList.toggle('open');o.classList.toggle('open');}
 </script>
 </body>
 </html>
