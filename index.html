@@ -11,7 +11,7 @@
   --gold:#F5C518;
   --gold-dark:#d4a800;h
   --gold-dim:rgba(245,197,24,0.15);
-  --gold-glow:rgba(245,197,24,0.3);h
+  --gold-glow:rgba(245,197,24,0.3);hh
   --navy:#1a237e;
   --navy-light:#283593;
   --blue:#3949ab;
@@ -194,6 +194,7 @@ h
 .ds-item .dsl{font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-top:2px}
 .last-stop{background:var(--dark3);border-radius:8px;padding:9px;font-size:11px;color:var(--text-muted)}
 .last-stop strong{color:var(--text);font-size:12px}
+.geo-badge{display:inline-block;margin-top:6px;padding:3px 8px;background:rgba(0,200,100,0.15);border:1px solid rgba(0,200,100,0.4);border-radius:20px;font-size:10px;color:#00c864;font-weight:700;letter-spacing:0.3px}
 .map-container{background:var(--dark3);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px;position:relative}
 #dashMap{width:100%;height:280px}
 .map-placeholder{width:100%;height:280px;display:flex;align-items:center;justify-content:center;background:var(--dark3);flex-direction:column;gap:8px}
@@ -1213,7 +1214,7 @@ return '<div class="driver-card">'+
 '<div class="ds-item"><div class="dsv">$'+tolls+'</div><div class="dsl">Tolls</div></div>'+
 '<div class="ds-item"><div class="dsv">'+(d.lat?'GPS OK':'No GPS')+'</div><div class="dsl">Location</div></div>'+
 '</div>'+
-'<div class="last-stop"><strong>Last Stop'+(lastStopTime?' @ '+lastStopTime:'')+'</strong><br>'+lastStop+'</div>'+
+'<div class="last-stop"><strong>Last Stop'+(lastStopTime?' @ '+lastStopTime:'')+'</strong><br>'+lastStop+(d.geofence?'<div class="geo-badge">📍 '+d.geofence.name+'</div>':'')+'</div>'+
 '</div>';
 }).join('');
 if(container) container.innerHTML = cardsHtml;
