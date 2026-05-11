@@ -298,8 +298,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <p>Meiborg Logistics &amp; Asset Management</p>
     </div>
     <div class="role-toggle">
-      <button class="role-btn active" id="roleDriverBtn" onclick="setRole('driver')">&#128665; Driver</button>
-      <button class="role-btn" id="roleOfficeBtn" onclick="setRole('office')">&#128188; Office</button>
+      <button class="role-btn active" id="roleDriverBtn" onclick="setRole('driver')">Driver</button>
+      <button class="role-btn" id="roleOfficeBtn" onclick="setRole('office')">Office</button>
     </div>
     <div id="driverFields">
       <div class="form-group">
@@ -318,7 +318,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
           <option value="Rigio Albarran|635">Rigio Albarran - Truck #635</option>
           <option value="Christopher Gober|592">Christopher Gober - Truck #592</option>
           <option value="Steve Lawrence|574">Steve Lawrence - Truck #574</option>
-          <option value="OTHER|">Other / Not Listed</option>
+          <option value="Mark Andrews|">Mark Andrews</option>
+<option value="OTHER|">Other / Not Listed</option>
         </select>
       </div>
       <div class="form-group" id="otherNameWrap" style="display:none">
@@ -353,7 +354,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <input type="password" id="pwConfirm" placeholder="Re-enter password"/>
     </div>
     <div class="login-err" id="loginErr"></div>
-    <button class="btn-primary" id="loginBtn" onclick="doLogin()">&#9654; Start My Shift</button>
+    <button class="btn-primary" id="loginBtn" onclick="doLogin()">Start My Shift</button>
   </div>
 </div>
 
@@ -367,14 +368,14 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         <div class="header-sub" id="headerTruck"></div>
       </div>
     </div>
-    <button class="btn-logout" onclick="doLogout()">&#10006; Log Out</button>
+    <button class="btn-logout" onclick="doLogout()">Log Out</button>
   </div>
   <div class="tab-bar" id="driverTabBar">
-    <button class="tab-btn active" onclick="switchTab('clock')" id="tab-clock"><span class="tab-icon">&#9200;</span><span>Clock</span></button>
-    <button class="tab-btn" onclick="switchTab('stops')" id="tab-stops"><span class="tab-icon">&#128205;</span><span>Stops</span></button>
-    <button class="tab-btn" onclick="switchTab('expenses')" id="tab-expenses"><span class="tab-icon">&#128444;</span><span>Receipts</span></button>
-    <button class="tab-btn" onclick="switchTab('hours')" id="tab-hours"><span class="tab-icon">&#128197;</span><span>Hours</span></button>
-    <button class="tab-btn" onclick="switchTab('submit')" id="tab-submit"><span class="tab-icon">&#10004;</span><span>Submit</span></button>
+    <button class="tab-btn active" onclick="switchTab('clock')" id="tab-clock"><span>Clock</span></button>
+    <button class="tab-btn" onclick="switchTab('stops')" id="tab-stops"><span>Stops</span></button>
+    <button class="tab-btn" onclick="switchTab('expenses')" id="tab-expenses"><span>Receipts</span></button>
+    <button class="tab-btn" onclick="switchTab('hours')" id="tab-hours"><span>Hours</span></button>
+    <button class="tab-btn" onclick="switchTab('submit')" id="tab-submit"><span>Submit</span></button>
   </div>
 
   <!-- CLOCK TAB -->
@@ -382,16 +383,16 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <div class="card">
       <div class="clock-date" id="clockDate"></div>
       <div class="clock-display" id="clockDisplay">--:--:--</div>
-      <div class="clock-wrap"><span class="clock-status out" id="clockStatus">NOT CLOCKED IN</span></div>
-      <button class="btn-clock-in" id="clockBtn" onclick="toggleClock()">&#9654; CLOCK IN</button>
+      <div class="clock-wrap"><span class="clock-status out" id="clockStatus">NOT ON ROUTE</span></div>
+      <button class="btn-clock-in" id="clockBtn" onclick="toggleClock()">&#9654; START ROUTE</button>
       <div class="clock-times" id="clockTimes" style="display:none">
-        <div class="clock-time-box"><div class="label">Clocked In</div><div class="val" id="clockInDisplay">--</div></div>
-        <div class="clock-time-box"><div class="label">Clocked Out</div><div class="val" id="clockOutDisplay">--</div></div>
+        <div class="clock-time-box"><div class="label">Route Started</div><div class="val" id="clockInDisplay">--</div></div>
+        <div class="clock-time-box"><div class="label">Route Stopped</div><div class="val" id="clockOutDisplay">--</div></div>
       </div>
     </div>
     <div class="gps-banner">
       <div style="font-size:12px;font-weight:700;color:var(--gold)">GPS TRACKING</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:3px" id="gpsStatusText">Tap Clock In to begin</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px" id="gpsStatusText">Tap Start Route to begin</div>
       <span class="gps-badge off" id="gpsBadge">OFF</span>
     </div>
   </div>
@@ -400,7 +401,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   <div class="tab-content" id="panel-stops" style="display:none">
     <div class="card">
       <div class="section-hdr">
-        <h3>&#128205; Stop Log <span class="gps-badge off" id="stopGpsBadge">OFF</span></h3>
+        <h3>Stop Log <span class="gps-badge off" id="stopGpsBadge">OFF</span></h3>
         <button class="btn-add-stop" onclick="addManualStop()">+ Add Stop</button>
       </div>
       <div id="stopsList"><p style="text-align:center;color:var(--text-muted);font-size:13px;padding:18px 0">No stops yet. Clock in to start GPS.</p></div>
@@ -410,14 +411,14 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   <!-- EXPENSES TAB -->
   <div class="tab-content" id="panel-expenses" style="display:none">
     <div class="card">
-      <h3 style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px">&#9981; Fuel &amp; Toll Receipts</h3>
+      <h3 style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px">Fuel &amp; Toll Receipts</h3>
       <div class="exp-row">
         <div class="exp-field"><label>Fuel Total ($)</label><div class="exp-input-wrap"><span>$</span><input type="number" id="fuelAmt" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()"/></div></div>
         <div class="exp-field"><label>Tolls Total ($)</label><div class="exp-input-wrap"><span>$</span><input type="number" id="tollsAmt" placeholder="0.00" step="0.01" min="0" oninput="calcTotal()"/></div></div>
       </div>
       <label class="receipt-upload" for="receiptInput">
         <input type="file" id="receiptInput" accept="image/*" capture="environment" multiple onchange="handleReceiptUpload(this.files)"/>
-        <div class="receipt-icon">&#128247;</div>
+        
         <p><strong>Take Photo or Upload Receipt</strong></p>
         <p class="hint">Auto-reads the total from the receipt</p>
       </label>
@@ -451,17 +452,17 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   <!-- SUBMIT TAB -->
   <div class="tab-content" id="panel-submit" style="display:none">
     <div class="card">
-      <div class="section-hdr"><h3>&#9998; Driver Signature</h3></div>
+      <div class="section-hdr"><h3>Driver Signature</h3></div>
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Sign to certify your hours are correct</p>
       <div class="sig-canvas-wrap"><canvas id="sigCanvas" height="150"></canvas><div class="sig-hint" id="sigHint">Sign here</div></div>
-      <button class="btn-clear-sig" onclick="clearSig()">&#10005; Clear Signature</button>
+      <button class="btn-clear-sig" onclick="clearSig()">Clear Signature</button>
     </div>
     <div class="card">
-      <h3 style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">&#128221; Notes</h3>
+      <h3 style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">Notes</h3>
       <textarea class="notes-ta" id="notesField" rows="3" placeholder="Any corrections, issues, or extra info..."></textarea>
     </div>
     <div style="padding:0 0 28px">
-      <button class="btn-submit" id="submitBtn" onclick="submitTimesheet()">&#10003; Submit Timesheet</button>
+      <button class="btn-submit" id="submitBtn" onclick="submitTimesheet()">Submit Timesheet</button>
       <div class="msg" id="submitMsg"></div>
       <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:9px">Submits to the Geodis billing sheet</p>
     </div>
@@ -482,35 +483,35 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <div class="sidebar-section">
       <div class="sidebar-section-title">Live Operations</div>
       <div class="sidebar-item active" onclick="showDashPanel('overview')" id="si-overview">
-        <span class="si-icon">&#128202;</span><span>Overview</span>
+        <span class="si-icon"></span><span>Overview</span>
       </div>
       <div class="sidebar-item" onclick="showDashPanel('map')" id="si-map">
-        <span class="si-icon">&#127758;</span><span>Live Map</span>
+        <span class="si-icon"></span><span>Live Map</span>
       </div>
       <div class="sidebar-item" onclick="showDashPanel('drivers')" id="si-drivers">
-        <span class="si-icon">&#128665;</span><span>Driver Status</span>
+        <span class="si-icon"></span><span>Driver Status</span>
       </div>
     </div>
     <hr class="sidebar-divider"/>
     <div class="sidebar-section">
       <div class="sidebar-section-title">Reports</div>
       <div class="sidebar-item" onclick="showDashPanel('rpt-weekly')" id="si-rpt-weekly">
-        <span class="si-icon">&#128197;</span><span>Weekly Hours</span>
+        <span class="si-icon"></span><span>Weekly Hours</span>
       </div>
       <div class="sidebar-item" onclick="showDashPanel('rpt-expenses')" id="si-rpt-expenses">
-        <span class="si-icon">&#9981;</span><span>Expenses</span>
+        <span class="si-icon"></span><span>Expenses</span>
       </div>
       <div class="sidebar-item" onclick="showDashPanel('rpt-stops')" id="si-rpt-stops">
-        <span class="si-icon">&#128205;</span><span>Stop Log</span>
+        <span class="si-icon"></span><span>Stop Log</span>
       </div>
       <div class="sidebar-item" onclick="showDashPanel('rpt-summary')" id="si-rpt-summary">
-        <span class="si-icon">&#128104;&#8205;&#128187;</span><span>Driver Summary</span>
+        <span class="si-icon"></span><span>Driver Summary</span>
       </div>
-      <div class="sidebar-item" onclick="showDashPanel('rpt-geodis')" id="si-rpt-geodis"><span class="si-icon">&#x1F69A;</span><span>Geodis Report</span></div>
-      <div class="sidebar-item" onclick="showDashPanel('rpt-meiborg')" id="si-rpt-meiborg"><span class="si-icon">&#x1F4CB;</span><span>Meiborg Report</span></div>
+      <div class="sidebar-item" onclick="showDashPanel('rpt-geodis')" id="si-rpt-geodis"><span class="si-icon"></span><span>Geodis Report</span></div>
+      <div class="sidebar-item" onclick="showDashPanel('rpt-meiborg')" id="si-rpt-meiborg"><span class="si-icon"></span><span>Meiborg Report</span></div>
     </div>
     <div class="sb-logout">
-      <button onclick="doLogout()"><span>&#10006; Log Out</span></button>
+      <button onclick="doLogout()"><span>Log Out</span></button>
     </div>
   </div>
 
@@ -521,7 +522,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         <div class="dash-main-header-title" id="dashPanelTitle">Overview</div>
         <div class="dh-sub" id="dashPanelSub"></div>
       </div>
-      <button class="refresh-btn" onclick="refreshDashboard()" style="margin-bottom:0">&#8635; Refresh</button>
+      <button class="refresh-btn" onclick="refreshDashboard()" style="margin-bottom:0">Refresh</button>
     </div>
 
     <!-- OVERVIEW PANEL -->
@@ -533,7 +534,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
           <div class="stat-box"><div class="sv" id="statTotal">--</div><div class="sl">Drivers Today</div></div>
           <div class="stat-box"><div class="sv" id="statHours">--</div><div class="sl">Total Hrs</div></div>
         </div>
-        <div class="dash-section-title">&#128665; Quick Status</div>
+        <div class="dash-section-title">Quick Status</div>
         <div id="driverCards"><p class="no-data">Loading driver data...</p></div>
       </div>
     </div>
@@ -541,7 +542,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     <!-- MAP PANEL -->
     <div class="dash-panel" id="panel-map">
       <div style="padding-top:8px">
-        <div class="map-container"><div id="dashMap" style="height:400px"><div class="map-placeholder" id="mapPlaceholder"><div class="mp-icon">&#128205;</div><p>Loading map...</p></div></div></div>
+        <div class="map-container"><div id="dashMap" style="height:400px"><div class="map-placeholder" id="mapPlaceholder"><p>Loading map...</p></div></div></div>
       </div>
     </div>
 
@@ -565,8 +566,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
           </select>
         </div>
         <div style="display:flex;gap:8px;align-items:flex-end">
-          <button class="btn-run-report" onclick="runWeeklyReport()">&#9654; Run</button>
-          <button class="btn-print" onclick="window.print()">&#128438; Print / PDF</button>
+          <button class="btn-run-report" onclick="runWeeklyReport()">Run</button>
+          <button class="btn-print" onclick="window.print()">Print / PDF</button>
         </div>
       </div>
       <div id="weeklyReportSummary" class="report-summary"></div>
@@ -592,8 +593,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
           </select>
         </div>
         <div style="display:flex;gap:8px;align-items:flex-end">
-          <button class="btn-run-report" onclick="runExpenseReport()">&#9654; Run</button>
-          <button class="btn-print" onclick="window.print()">&#128438; Print</button>
+          <button class="btn-run-report" onclick="runExpenseReport()">Run</button>
+          <button class="btn-print" onclick="window.print()">Print</button>
         </div>
       </div>
       <div id="expReportSummary" class="report-summary"></div>
@@ -617,7 +618,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         </div>
         <div><label>Date</label><input type="date" id="rptStopsDate"/></div>
         <div style="display:flex;gap:8px;align-items:flex-end">
-          <button class="btn-run-report" onclick="runStopReport()">&#9654; Run</button>
+          <button class="btn-run-report" onclick="runStopReport()">Run</button>
         </div>
       </div>
       <div class="report-table-wrap"><table class="report-table">
@@ -632,8 +633,8 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div class="report-toolbar">
         <div><label>Search</label><input type="text" id="rptSummarySearch" placeholder="Driver name..." oninput="runSummaryReport()"/></div>
         <div style="display:flex;gap:8px;align-items:flex-end">
-          <button class="btn-run-report" onclick="runSummaryReport()">&#9654; Run</button>
-          <button class="btn-print" onclick="window.print()">&#128438; Print</button>
+          <button class="btn-run-report" onclick="runSummaryReport()">Run</button>
+          <button class="btn-print" onclick="window.print()">Print</button>
         </div>
       </div>
       <div id="summaryReportSummary" class="report-summary"></div>
@@ -661,7 +662,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
           <div class="custom-range" id="geodisCustomRange" style="display:none"><label>From</label><input type="date" id="geodisDateFrom"><label>To</label><input type="date" id="geodisDateTo"></div>
           <div><label>Driver</label><select id="geodisDriverFilter"><option value="">All Drivers</option></select></div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runGeodisReport()">&#9654; Run</button><button class="btn-print" onclick="window.print()">&#128438; Print / PDF</button></div>
+        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runGeodisReport()">Run</button><button class="btn-print" onclick="window.print()">Print / PDF</button></div>
       </div>
       <div id="geodisReportSummary" class="report-summary"></div>
       <div class="report-table-wrap"><table class="report-table geodis-report-table" id="geodisReportTable"><thead><tr><th>Week Ending</th><th>Driver</th><th>Truck</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Total Hrs</th><th>Labor Cost</th><th>Fuel</th><th>Tolls</th><th>Toll &amp; Labor</th></tr></thead><tbody id="geodisReportBody"><tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">Select a range and click Run</td></tr></tbody></table></div>
@@ -683,7 +684,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
           <div class="custom-range" id="meiborgCustomRange" style="display:none"><label>From</label><input type="date" id="meiborgDateFrom"><label>To</label><input type="date" id="meiborgDateTo"></div>
           <div><label>Driver</label><select id="meiborgDriverFilter"><option value="">All Drivers</option></select></div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runMeiborgReport()">&#9654; Run</button><button class="btn-print" onclick="window.print()">&#128438; Print / PDF</button></div>
+        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runMeiborgReport()">Run</button><button class="btn-print" onclick="window.print()">Print / PDF</button></div>
       </div>
       <div id="meiborgReportSummary" class="report-summary"></div>
       <div class="report-table-wrap"><table class="report-table meiborg-report-table" id="meiborgReportTable"><thead><tr><th>Rate Schedule / Driver</th><th>Truck</th><th>Week Ending</th><th>Fuel</th><th>Tolls</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Reg Hrs</th><th class="rate-col">Rate</th><th class="rate-col">Total Pay</th></tr></thead><tbody id="meiborgReportBody"><tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">Select a range and click Run</td></tr></tbody></table></div>
@@ -706,7 +707,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
           <div class="custom-range" id="geodisCustomRange" style="display:none"><label>From</label><input type="date" id="geodisDateFrom"><label>To</label><input type="date" id="geodisDateTo"></div>
           <div><label>Driver</label><select id="geodisDriverFilter"><option value="">All Drivers</option></select></div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runGeodisReport()">&#9654; Run</button><button class="btn-print" onclick="window.print()">&#128438; Print / PDF</button></div>
+        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runGeodisReport()">Run</button><button class="btn-print" onclick="window.print()">Print / PDF</button></div>
       </div>
       <div id="geodisReportSummary" class="report-summary"></div>
       <div class="report-table-wrap"><table class="report-table geodis-report-table" id="geodisReportTable"><thead><tr><th>Week Ending</th><th>Driver</th><th>Truck</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Total Hrs</th><th>Labor Cost</th><th>Fuel</th><th>Tolls</th><th>Toll &amp; Labor</th></tr></thead><tbody id="geodisReportBody"><tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">Select a range and click Run</td></tr></tbody></table></div>
@@ -728,7 +729,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
           <div class="custom-range" id="meiborgCustomRange" style="display:none"><label>From</label><input type="date" id="meiborgDateFrom"><label>To</label><input type="date" id="meiborgDateTo"></div>
           <div><label>Driver</label><select id="meiborgDriverFilter"><option value="">All Drivers</option></select></div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runMeiborgReport()">&#9654; Run</button><button class="btn-print" onclick="window.print()">&#128438; Print / PDF</button></div>
+        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runMeiborgReport()">Run</button><button class="btn-print" onclick="window.print()">Print / PDF</button></div>
       </div>
       <div id="meiborgReportSummary" class="report-summary"></div>
       <div class="report-table-wrap"><table class="report-table meiborg-report-table" id="meiborgReportTable"><thead><tr><th>Rate Schedule / Driver</th><th>Truck</th><th>Week Ending</th><th>Fuel</th><th>Tolls</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Reg Hrs</th><th class="rate-col">Rate</th><th class="rate-col">Total Pay</th></tr></thead><tbody id="meiborgReportBody"><tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">Select a range and click Run</td></tr></tbody></table></div>
@@ -751,7 +752,8 @@ const OFFICE_USERS = {
   'Mike Houston':  { org:'meiborg', role:'office' },
   'Melissa Kiely': { org:'meiborg', role:'office' },
   'Kim Rote':      { org:'geodis',  role:'office' },
-  'Dev':           { org:'meiborg', role:'office' }
+  'Dev':           { org:'meiborg', role:'office' },
+  'Mark Andrews':  { org:'meiborg', role:'office' }
 };
 
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
@@ -868,7 +870,7 @@ function launchDriverApp(name) {
   document.getElementById('headerTruck').textContent = state.truck ? 'Truck #' + state.truck : '';
   document.getElementById('loginScreen').classList.remove('active');
   document.getElementById('appScreen').classList.add('active');
-  switchTab('clock'); const _saved = localStorage.getItem('mlam_clockin_'+state.driver); if (_saved) { state.clockedIn = true; state.clockInTime = new Date(_saved); document.getElementById('clockInDisplay').textContent = fmtTime12(state.clockInTime); document.getElementById('clockOutDisplay').textContent = '--'; document.getElementById('clockTimes').style.display = 'grid'; document.getElementById('clockStatus').className = 'clock-status in'; document.getElementById('clockStatus').textContent = 'CLOCKED IN'; document.getElementById('clockBtn').className = 'btn-clock-out'; document.getElementById('clockBtn').innerHTML = '&#9646;&#9646; CLOCK OUT'; startGPS(); }
+  switchTab('clock'); const _saved = localStorage.getItem('mlam_clockin_'+state.driver); if (_saved) { state.clockedIn = true; state.clockInTime = new Date(_saved); document.getElementById('clockInDisplay').textContent = fmtTime12(state.clockInTime); document.getElementById('clockOutDisplay').textContent = '--'; document.getElementById('clockTimes').style.display = 'grid'; document.getElementById('clockStatus').className = 'clock-status in'; document.getElementById('clockStatus').textContent = 'ON ROUTE'; document.getElementById('clockBtn').className = 'btn-clock-out'; document.getElementById('clockBtn').innerHTML = '&#9646;&#9646; STOP ROUTE'; startGPS(); }
 }
 
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
@@ -908,9 +910,9 @@ function doLogout() {
   document.getElementById('loginDriver').value = '';
   document.getElementById('loginOffice').value = '';
   document.getElementById('clockBtn').className = 'btn-clock-in';
-  document.getElementById('clockBtn').innerHTML = '&#9654; CLOCK IN';
+  document.getElementById('clockBtn').innerHTML = '&#9654; START ROUTE';
   document.getElementById('clockStatus').className = 'clock-status out';
-  document.getElementById('clockStatus').textContent = 'NOT CLOCKED IN';
+  document.getElementById('clockStatus').textContent = 'NOT ON ROUTE';
   document.getElementById('clockTimes').style.display = 'none';
   document.getElementById('stopsList').innerHTML = '<p style="text-align:center;color:var(--text-muted);font-size:13px;padding:18px 0">No stops yet. Clock in to start GPS.</p>';
   document.getElementById('loginErr').classList.remove('show');
@@ -930,7 +932,7 @@ function switchTab(name) {
 }
 
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// CLOCK IN / OUT
+// START ROUTE / OUT
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function toggleClock() {
   if (!state.clockedIn) {
@@ -939,9 +941,9 @@ function toggleClock() {
     document.getElementById('clockOutDisplay').textContent = '--';
     document.getElementById('clockTimes').style.display = 'grid';
     document.getElementById('clockStatus').className = 'clock-status in';
-    document.getElementById('clockStatus').textContent = 'CLOCKED IN';
+    document.getElementById('clockStatus').textContent = 'ON ROUTE';
     document.getElementById('clockBtn').className = 'btn-clock-out';
-    document.getElementById('clockBtn').innerHTML = '&#9646;&#9646; CLOCK OUT';
+    document.getElementById('clockBtn').innerHTML = '&#9646;&#9646; STOP ROUTE';
     const dayIdx = new Date().getDay();
     const key = DAY_KEYS[dayIdx <= 4 ? dayIdx : 0];
     const sel = document.querySelector('[name="'+key+'Start"]');
@@ -956,9 +958,9 @@ function toggleClock() {
     state.clockedIn = false; state.clockOutTime = new Date(); localStorage.removeItem('mlam_clockin_'+state.driver);
     document.getElementById('clockOutDisplay').textContent = fmtTime12(state.clockOutTime);
     document.getElementById('clockStatus').className = 'clock-status out';
-    document.getElementById('clockStatus').textContent = 'CLOCKED OUT';
+    document.getElementById('clockStatus').textContent = 'ROUTE STOPPED';
     document.getElementById('clockBtn').className = 'btn-clock-in';
-    document.getElementById('clockBtn').innerHTML = '&#9654; CLOCK IN AGAIN';
+    document.getElementById('clockBtn').innerHTML = '&#9654; START ROUTE AGAIN';
     const dayIdx = new Date().getDay();
     const key = DAY_KEYS[dayIdx <= 4 ? dayIdx : 0];
     const sel = document.querySelector('[name="'+key+'End"]');
@@ -1191,12 +1193,12 @@ function renderDashboard(drivers) {
   } else {
     const cardsHtml = drivers.map(d => {
       const statusClass = d.clockedIn ? 'clocked-in' : 'clocked-out';
-      const statusText = d.clockedIn ? 'Clocked In' : 'Clocked Out';
+      const statusText = d.clockedIn ? 'Route Started' : 'Route Stopped';
       const lastStop = d.lastStop ? d.lastStop.address || (d.lastStop.lat ? d.lastStop.lat.toFixed(4)+', '+d.lastStop.lng.toFixed(4) : 'Unknown') : 'No stops yet';
       const lastStopTime = d.lastStop ? d.lastStop.time || '' : '';
       const hrs = parseFloat(d.weekHours||0).toFixed(1), pay = (parseFloat(d.weekHours||0)*RATE).toFixed(2);
       const fuel = parseFloat(d.fuel||0).toFixed(2), tolls = parseFloat(d.tolls||0).toFixed(2);
-      return `<div class="driver-card"><div class="driver-card-header"><div><div class="driver-name">${d.driverName||'Unknown'}</div><div class="driver-truck">Truck #${d.truckNumber||'--'}</div></div><span class="status-pill ${statusClass}">${statusText}</span></div><div class="driver-stats"><div class="ds-item"><div class="dsv">${hrs}</div><div class="dsl">Wk Hrs</div></div><div class="ds-item"><div class="dsv">$${fuel}</div><div class="dsl">Fuel</div></div><div class="ds-item"><div class="dsv">$${tolls}</div><div class="dsl">Tolls</div></div></div><div class="last-stop">&#128205; <strong>Last Stop${lastStopTime?' @ '+lastStopTime:''}</strong><br>${lastStop}</div></div>`;
+      return `<div class="driver-card"><div class="driver-card-header"><div><div class="driver-name">${d.driverName||'Unknown'}</div><div class="driver-truck">Truck #${d.truckNumber||'--'}</div></div><span class="status-pill ${statusClass}">${statusText}</span></div><div class="driver-stats"><div class="ds-item"><div class="dsv">${hrs}</div><div class="dsl">Wk Hrs</div></div><div class="ds-item"><div class="dsv">$${fuel}</div><div class="dsl">Fuel</div></div><div class="ds-item"><div class="dsv">$${tolls}</div><div class="dsl">Tolls</div></div></div><div class="last-stop"><strong>Last Stop${lastStopTime?' @ '+lastStopTime:''}</strong><br>${lastStop}</div></div>`;
     }).join('');
     container.innerHTML = cardsHtml; if(detail) detail.innerHTML = cardsHtml;
   }
@@ -1205,11 +1207,11 @@ function renderDashboard(drivers) {
 function renderMap(drivers) {
   const mapEl = document.getElementById('dashMap');
   const withLoc = drivers.filter(d=>d.lat&&d.lng);
-  if (!withLoc.length) { mapEl.innerHTML=`<div class="map-placeholder"><div class="mp-icon">&#128205;</div><p>Map will show live positions</p></div>`; return; }
+  if (!withLoc.length) { mapEl.innerHTML=`<div class="map-placeholder"><p>Map will show live positions</p></div>`; return; }
   if (window.L) {
     if (!dashMap) { mapEl.innerHTML=''; mapEl.style.height='280px'; dashMap = L.map('dashMap').setView([withLoc[0].lat, withLoc[0].lng], 11); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(dashMap); }
     dashMarkers.forEach(m=>dashMap.removeLayer(m)); dashMarkers=[];
-    withLoc.forEach(d=>{ const marker = L.marker([d.lat,d.lng]).addTo(dashMap).bindPopup(`<b>${d.driverName}</b><br>Truck #${d.truckNumber}<br>${d.clockedIn?'&#x1F7E2; Clocked In':'&#x1F534; Clocked Out'}<br>${d.weekHours||0} hrs this week`); dashMarkers.push(marker); });
+    withLoc.forEach(d=>{ const marker = L.marker([d.lat,d.lng]).addTo(dashMap).bindPopup(`<b>${d.driverName}</b><br>Truck #${d.truckNumber}<br>${d.clockedIn?'&#x1F7E2; Route Started':'&#x1F534; Route Stopped'}<br>${d.weekHours||0} hrs this week`); dashMarkers.push(marker); });
     const bounds = L.latLngBounds(withLoc.map(d=>[d.lat,d.lng])); dashMap.fitBounds(bounds,{padding:[20,20]});
   } else {
     mapEl.innerHTML=`<div class="map-placeholder" style="flex-direction:column;align-items:flex-start;padding:14px;height:auto;min-height:120px">${withLoc.map(d=>`<div style="margin-bottom:8px;font-size:13px"><strong style="color:var(--gold)">${d.driverName}</strong> â Truck #${d.truckNumber}<br><a href="https://maps.google.com/?q=${d.lat},${d.lng}" target="_blank" style="color:var(--gold-dark)">&#128205; View on Map</a></div>`).join('')}</div>`;
@@ -1456,12 +1458,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <div id="botWidget">
   <div id="botFab" onclick="toggleBot()" title="MLAM Assistant">
-    ð¤
+    ML
     <div class="bot-badge" id="botBadge">!</div>
   </div>
   <div id="botWindow">
     <div id="botHeader">
-      <div class="bot-avatar">ð¤</div>
+      <div class="bot-avatar">ML</div>
       <div class="bot-title">
         <strong>MLAM Assistant</strong>
         <span>Your shift guide & error checker</span>
@@ -1614,9 +1616,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(q.includes('clock in') || q.includes('clock out') || q.includes('how do i clock')){
       const clocked = state && state.clockedIn;
       if(clocked){
-        botMsg("â You're currently <strong>clocked in</strong>.<br>To clock out: go to the <strong>Clock</strong> tab and tap the red <strong>CLOCK OUT</strong> button.", 'bot');
+        botMsg("â You're currently <strong>clocked in</strong>.<br>To clock out: go to the <strong>Clock</strong> tab and tap the red <strong>STOP ROUTE</strong> button.", 'bot');
       } else {
-        botMsg("To clock in:<br>1ï¸â£ Tap the <strong>Clock</strong> tab at the top<br>2ï¸â£ Tap the green <strong>CLOCK IN</strong> button<br>3ï¸â£ Allow GPS if prompted â this starts stop tracking automatically!", 'bot');
+        botMsg("To clock in:<br>1ï¸â£ Tap the <strong>Clock</strong> tab at the top<br>2ï¸â£ Tap the green <strong>START ROUTE</strong> button<br>3ï¸â£ Allow GPS if prompted â this starts stop tracking automatically!", 'bot');
       }
       return;
     }
