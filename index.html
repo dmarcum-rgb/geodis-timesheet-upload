@@ -1641,6 +1641,29 @@ function setMeiborgRange(mode){window.meiborgRangeMode=mode;document.querySelect
 function runMeiborgReport(){populateCustomDriverFilter('meiborgDriverFilter');var fv=(document.getElementById('meiborgDateFrom')||{}).value||'',tv=(document.getElementById('meiborgDateTo')||{}).value||'',df=(document.getElementById('meiborgDriverFilter')||{}).value||'';var data=filterTimesheetByRange(fv,tv,df);var body=document.getElementById('meiborgReportBody'),summary=document.getElementById('meiborgReportSummary');if(!data.length){body.innerHTML='<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">No records found</td></tr>';summary.innerHTML='';return;}var R=76.5,gh=0,gp=0,gf=0,gt=0;data.sort(function(a,b){var w=(a.weekEnding||'').localeCompare(b.weekEnding||'');return w!==0?w:(a.driverName||'').localeCompare(b.driverName||'');});var rows='';data.forEach(function(r,i){var h=parseFloat(r.totalHours||0),gro=parseFloat(r.grossPay||0)||(h*R),er=h>0?gro/h:R,fu=parseFloat(r.fuel||0),to=parseFloat(r.tolls||0);gh+=h;gp+=gro;gf+=fu;gt+=to;var dc=['sun','mon','tue','wed','thu'].map(function(d){var sv=timeValToDecimal(r[d+'Start']),ev=timeValToDecimal(r[d+'End']);if(sv<0||ev<0)return'<td>-</td>';var hh=Math.max(0,ev-sv);return'<td>'+(hh>0?hh.toFixed(2):'-')+'</td>';}).join('');rows+='<tr><td>40 hr - Shuttle Driver '+(i+1)+'<br><small style="color:var(--text-dim)">'+(r.driverName||'')+'</small></td><td>'+(r.truckNumber||'')+'</td><td>'+(r.weekEnding||'')+'</td><td>'+fmtMoney(fu)+'</td><td>'+fmtMoney(to)+'</td>'+dc+'<td><strong>'+fmtHours(h)+'</strong></td><td class="rate-col">$'+er.toFixed(2)+'</td><td class="rate-col"><strong>'+fmtMoney(gro)+'</strong></td></tr>';});rows+='<tr class="report-grand-total"><td colspan="3"><strong>TOTALS ('+data.length+' drivers)</strong></td><td><strong>'+fmtMoney(gf)+'</strong></td><td><strong>'+fmtMoney(gt)+'</strong></td><td colspan="5"></td><td><strong>'+fmtHours(gh)+'</strong></td><td></td><td class="rate-col"><strong>'+fmtMoney(gp)+'</strong></td></tr>';body.innerHTML=rows;var rl=fv&&tv?fv+' – '+tv:'All dates';summary.innerHTML='<div class="report-summary-cards"><div class="rpt-stat"><div class="rs-val">'+data.length+'</div><div class="rs-lbl">Drivers</div></div><div class="rpt-stat"><div class="rs-val">'+fmtHours(gh)+'</div><div class="rs-lbl">Total Hours</div></div><div class="rpt-stat"><div class="rs-val">'+fmtMoney(gf)+'</div><div class="rs-lbl">Total Fuel</div></div><div class="rpt-stat"><div class="rs-val">'+fmtMoney(gt)+'</div><div class="rs-lbl">Total Tolls</div></div><div class="rpt-stat"><div class="rs-val">'+fmtMoney(gp)+'</div><div class="rs-lbl">Gross Pay</div></div></div>';var ph=document.getElementById('phMeiborg');if(ph)ph.textContent=rl+(df?' | '+df:'');}
 document.addEventListener('DOMContentLoaded',function(){setGeodisRange('week');setMeiborgRange('week');});
 if(document.readyState!=='loading'){setTimeout(function(){setGeodisRange('week');setMeiborgRange('week');},100);}
+
+// ---- Session restore on page load ----
+(function restoreSession() {
+  var raw = localStorage.getItem('mlam_session');
+  if (!raw) return;
+  var s;
+  try { s = JSON.parse(raw); } catch(e) { return; }
+  if (!s || !s.role || !s.name) return;
+  state.role = s.role;
+  state.org  = s.org  || 'meiborg';
+  state.weekEnding = s.weekEnding || '';
+  if (s.role === 'office') {
+    var pair = (s.officeValue || '').split('|');
+    state.driver = ''; state.truck = '';
+    launchDashboard(s.name);
+  } else {
+    var pair = (s.driverValue || '').split('|');
+    state.driver = pair[0] || s.name;
+    state.truck  = pair[1] || '';
+    launchDriverApp(s.name);
+  }
+})();
+
 </script>
 </body>
 </html>
