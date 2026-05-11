@@ -37,7 +37,7 @@
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--black);min-height:100vh;color:var(--text)}
 .screen{display:none;min-height:100vh;flex-direction:column}
 .screen.active{display:flex}
-
+h
 /* ââ LOGIN SCREEN ââ */
 #loginScreen{background:var(--black);align-items:center;justify-content:center;padding:30px 20px;min-height:100vh;
   background-image:radial-gradient(ellipse at 20% 50%, rgba(26,35,126,0.4) 0%, transparent 60%),
@@ -691,50 +691,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     </div>
 
     <!-- REPORT: GEODIS CUSTOM -->
-    <div class="dash-panel" id="panel-rpt-geodis">
-      <div class="print-header"><h2>Geodis Custom Report</h2><p id="phGeodis"></p></div>
-      <div class="report-toolbar">
-        <div class="report-range-selector">
-          <div><label>Date Range</label>
-            <div class="range-presets">
-              <button class="range-preset-btn active" onclick="setGeodisRange('week')" id="geodisBtn-week">Week</button>
-              <button class="range-preset-btn" onclick="setGeodisRange('month')" id="geodisBtn-month">Month</button>
-              <button class="range-preset-btn" onclick="setGeodisRange('quarter')" id="geodisBtn-quarter">Quarter</button>
-              <button class="range-preset-btn" onclick="setGeodisRange('year')" id="geodisBtn-year">Year</button>
-              <button class="range-preset-btn" onclick="setGeodisRange('custom')" id="geodisBtn-custom">Custom</button>
-            </div>
-          </div>
-          <div class="custom-range" id="geodisCustomRange" style="display:none"><label>From</label><input type="date" id="geodisDateFrom"><label>To</label><input type="date" id="geodisDateTo"></div>
-          <div><label>Driver</label><select id="geodisDriverFilter"><option value="">All Drivers</option></select></div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runGeodisReport()">Run</button><button class="btn-print" onclick="window.print()">Print / PDF</button></div>
-      </div>
-      <div id="geodisReportSummary" class="report-summary"></div>
-      <div class="report-table-wrap"><table class="report-table geodis-report-table" id="geodisReportTable"><thead><tr><th>Week Ending</th><th>Driver</th><th>Truck</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Total Hrs</th><th>Labor Cost</th><th>Fuel</th><th>Tolls</th><th>Toll &amp; Labor</th></tr></thead><tbody id="geodisReportBody"><tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">Select a range and click Run</td></tr></tbody></table></div>
-    </div>
-    <!-- REPORT: MEIBORG CUSTOM -->
-    <div class="dash-panel" id="panel-rpt-meiborg">
-      <div class="print-header"><h2>Meiborg Custom Report</h2><p id="phMeiborg"></p></div>
-      <div class="report-toolbar">
-        <div class="report-range-selector">
-          <div><label>Date Range</label>
-            <div class="range-presets">
-              <button class="range-preset-btn active" onclick="setMeiborgRange('week')" id="meiborgBtn-week">Week</button>
-              <button class="range-preset-btn" onclick="setMeiborgRange('month')" id="meiborgBtn-month">Month</button>
-              <button class="range-preset-btn" onclick="setMeiborgRange('quarter')" id="meiborgBtn-quarter">Quarter</button>
-              <button class="range-preset-btn" onclick="setMeiborgRange('year')" id="meiborgBtn-year">Year</button>
-              <button class="range-preset-btn" onclick="setMeiborgRange('custom')" id="meiborgBtn-custom">Custom</button>
-            </div>
-          </div>
-          <div class="custom-range" id="meiborgCustomRange" style="display:none"><label>From</label><input type="date" id="meiborgDateFrom"><label>To</label><input type="date" id="meiborgDateTo"></div>
-          <div><label>Driver</label><select id="meiborgDriverFilter"><option value="">All Drivers</option></select></div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-run-report" onclick="runMeiborgReport()">Run</button><button class="btn-print" onclick="window.print()">Print / PDF</button></div>
-      </div>
-      <div id="meiborgReportSummary" class="report-summary"></div>
-      <div class="report-table-wrap"><table class="report-table meiborg-report-table" id="meiborgReportTable"><thead><tr><th>Rate Schedule / Driver</th><th>Truck</th><th>Week Ending</th><th>Fuel</th><th>Tolls</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Reg Hrs</th><th class="rate-col">Rate</th><th class="rate-col">Total Pay</th></tr></thead><tbody id="meiborgReportBody"><tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-muted)">Select a range and click Run</td></tr></tbody></table></div>
-    </div>
-  </div><!-- end dash-main -->
+    </div><!-- end dash-main -->
 </div><!-- end dashScreen -->
 
 <script>
@@ -990,7 +947,7 @@ function pushStatusPing() {
   try { const _lk='mlam_live_'+state.driver.replace(/\\s+/g,'_').toLowerCase(); localStorage.setItem(_lk,JSON.stringify(payload)); const _ld=JSON.parse(localStorage.getItem('mlam_live_drivers')||'{}'); _ld[state.driver]=payload; localStorage.setItem('mlam_live_drivers',JSON.stringify(_ld)); } catch(_le){}
 fetch(STATUS_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).catch(()=>{});
 }
-function getLiveDriversFromStorage(){ try{ const _s=JSON.parse(localStorage.getItem('mlam_live_drivers')||'{}'), _n=Date.now(); return Object.values(_s).filter(function(d){ return (_n-new Date(d.ts).getTime())<600000; }); }catch(e2){ return []; } }
+function getLiveDriversFromStorage(){ try{ const _s=JSON.parse(localStorage.getItem('mlam_live_drivers')||'{}'), _n=Date.now(); return Object.values(_s).filter(function(d){ return (_n-new Date(d.ts).getTime())<43200000; }); }catch(e2){ return []; } }
 function mergeDriverData(a,b){ const m={}; (a||[]).forEach(function(d){if(d.driverName)m[d.driverName]=d;}); (b||[]).forEach(function(d){if(!d.driverName)return; if(!m[d.driverName]||new Date(d.ts)>=new Date((m[d.driverName].ts||0)))m[d.driverName]=d;}); return Object.values(m); }
 function calcWeekHours() {
   let total = 0;
@@ -1175,6 +1132,7 @@ async function submitTimesheet() {
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 // Helper functions for reports and data
+let allTimesheetData = [];
 async function loadTimesheetHistory() {
 try {
 const res = await fetch(POLL_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type:'timesheet_history', ts: new Date().toISOString()}) });
