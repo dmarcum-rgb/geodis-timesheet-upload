@@ -194,7 +194,7 @@ h
 .ds-item .dsl{font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-top:2px}
 .last-stop{background:var(--dark3);border-radius:8px;padding:9px;font-size:11px;color:var(--text-muted)}
 .last-stop strong{color:var(--text);font-size:12px}
-.geo-badge{display:inline-block;margin-top:6px;padding:3px 8px;background:rgba(0,200,100,0.15);border:1px solid rgba(0,200,100,0.4);border-radius:20px;font-size:10px;color:#00c864;font-weight:700;letter-spacing:0.3px}
+.office-card{background:linear-gradient(135deg,rgba(58,73,171,0.2),rgba(58,73,171,0.05));border-color:rgba(58,73,171,0.35)}.office-card .dc-name{color:var(--blue)}.geo-badge{display:inline-block;margin-top:6px;padding:3px 8px;background:rgba(0,200,100,0.15);border:1px solid rgba(0,200,100,0.4);border-radius:20px;font-size:10px;color:#00c864;font-weight:700;letter-spacing:0.3px}
 .map-container{background:var(--dark3);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px;position:relative}
 #dashMap{width:100%;height:280px}
 .map-placeholder{width:100%;height:280px;display:flex;align-items:center;justify-content:center;background:var(--dark3);flex-direction:column;gap:8px}
@@ -834,7 +834,16 @@ function launchDriverApp(name) {
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // LAUNCH DASHBOARD
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+function pushOfficePing() {
+  var s = JSON.parse(localStorage.getItem('mlam_session')||'null');
+  if(!s||s.role!=='office') return;
+  fetch(POLL_HOOK, {method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({type:'office_ping',name:s.name,org:s.org||'meiborg',loginTime:s.loginTime||new Date().toISOString()})}).catch(function(){});
+}
+
 function launchDashboard(name) {
+  pushOfficePing();
+  setTimeout(pushOfficePing, 5*60*1000);
   setTimeout(loadTimesheetHistory, 500);
   const sel = document.getElementById('loginOffice');
   const org = sel.value.split('|')[1] || 'meiborg';
@@ -1188,6 +1197,7 @@ if(container) container.innerHTML = emptyHtml;
 if(detail) detail.innerHTML = emptyHtml;
 } else {
 const cardsHtml = drivers.map(function(d){
+if(d.role==='office'){var since=d.clockInTime?new Date(d.clockInTime).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}):'';return '<div class="driver-card office-card"><div class="dc-header"><div class="dc-name">'+d.driverName+'</div><div class="dc-status clocked-in">Office Online</div></div><div class="dc-sub">'+d.truckNumber+' &bull; Online since '+since+'</div></div>';}
 const statusClass = d.clockedIn ? 'clocked-in' : 'clocked-out';
 const statusText = d.clockedIn ? 'Route Active' : 'Route Stopped';
 const lastStop = d.lastStop ? (d.lastStop.address&&d.lastStop.address!=='Fetching address...'?d.lastStop.address:(d.lastStop.lat?parseFloat(d.lastStop.lat).toFixed(4)+', '+parseFloat(d.lastStop.lng).toFixed(4):'Location pending')) : 'No stops yet';
