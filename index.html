@@ -11,10 +11,10 @@
   --gold:#F5C518;
   --gold-dark:#d4a800;h
   --gold-dim:rgba(245,197,24,0.15);
-  --gold-glow:rgba(245,197,24,0.3);hh
+  --gold-glow:rgba(245,197,24,0.3);hhh
   --navy:#1a237e;
   --navy-light:#283593;
-  --blue:#3949ab;
+  --blue:#3949ab;h
   --black:#0a0a0f;
   --dark:#111118;
   --dark2:#1a1a24;
@@ -957,7 +957,7 @@ function pushStatusPing() {
   try { const _lk='mlam_live_'+state.driver.replace(/\\s+/g,'_').toLowerCase(); localStorage.setItem(_lk,JSON.stringify(payload)); const _ld=JSON.parse(localStorage.getItem('mlam_live_drivers')||'{}'); _ld[state.driver]=payload; localStorage.setItem('mlam_live_drivers',JSON.stringify(_ld)); } catch(_le){}
 fetch(STATUS_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).catch(()=>{});
 }
-function getLiveDriversFromStorage(){ try{ const _s=JSON.parse(localStorage.getItem('mlam_live_drivers')||'{}'), _n=Date.now(); return Object.values(_s).filter(function(d){ return (_n-new Date(d.ts).getTime())<43200000; }); }catch(e2){ return []; } }
+function getLiveDriversFromStorage(){ try{ const _s=JSON.parse(localStorage.getItem('mlam_live_drivers')||'{}'), _n=Date.now(); return Object.values(_s).filter(function(d){ return (_n-new Date(d.ts).getTime())<7200000; }); }catch(e2){ return []; } }
 function mergeDriverData(a,b){ const m={}; (a||[]).forEach(function(d){if(d.driverName)m[d.driverName]=d;}); (b||[]).forEach(function(d){if(!d.driverName)return; if(!m[d.driverName]||new Date(d.ts)>=new Date((m[d.driverName].ts||0)))m[d.driverName]=d;}); return Object.values(m); }
 function calcWeekHours() {
   let total = 0;
