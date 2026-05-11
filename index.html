@@ -1173,6 +1173,18 @@ async function submitTimesheet() {
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // DASHBOARD
 // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+
+// Helper functions for reports and data
+async function loadTimesheetHistory() {
+try {
+const res = await fetch(POLL_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type:'timesheet_history', ts: new Date().toISOString()}) });
+if(res.ok){ const raw = await res.json(); if(Array.isArray(raw)) allTimesheetData=raw; else if(raw&&Array.isArray(raw.timesheets)) allTimesheetData=raw.timesheets; else if(raw&&Array.isArray(raw.data)) allTimesheetData=raw.data; else allTimesheetData=[]; } else { allTimesheetData=[]; }
+} catch(e) { allTimesheetData = []; }
+}
+function calcDayHours(start, end) { if (!start || !end) return 0; const [sh,sm] = start.split(':').map(Number), [eh,em] = end.split(':').map(Number); const h = ((eh*60+em)-(sh*60+sm))/60; return h > 0 ? h : 0; }
+function fmtHours(h) { return parseFloat(h||0).toFixed(2); }
+function fmtMoney(v) { return '$' + parseFloat(v||0).toFixed(2); }
+
 let dashMap=null, dashMarkers=[];
 async function refreshDashboard() {
 const updEl = document.getElementById('lastUpdated');
