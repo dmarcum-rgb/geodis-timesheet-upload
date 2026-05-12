@@ -7,10 +7,10 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
+:root{h
   --gold:#F5C518;
   --gold-dark:#d4a800;h
-  --gold-dim:rgba(245,197,24,0.15);
+  --gold-dim:rgba(245,197,24,0.15);h
   --gold-glow:rgba(245,197,24,0.3);hhh
   --navy:#1a237e;
   --navy-light:#283593;
@@ -856,7 +856,7 @@ function launchDriverApp(name) {
 function pushOfficePing() {
   var s = JSON.parse(localStorage.getItem('mlam_session')||'null');
   if(!s||s.role!=='office') return;
-  fetch(POLL_HOOK, {method:'POST',headers:{'Content-Type':'application/json'},
+  fetch(POLL_HOOK, {method:'POST',headers:{'Content-Type':'text/plain'},
     body:JSON.stringify({type:'office_ping',name:s.name,org:s.org||'meiborg',loginTime:s.loginTime||new Date().toISOString()})}).catch(function(){});
 }
 
@@ -974,7 +974,7 @@ function pushStatusPing() {
   const hours = calcWeekHours();
   const payload = { type:'status_ping', driverName:state.driver, truckNumber:state.truck, clockedIn:state.clockedIn, clockInTime:state.clockInTime?state.clockInTime.toISOString():null, clockOutTime:state.clockOutTime?state.clockOutTime.toISOString():null, weekHours:hours, fuel:state.fuelAmt, tolls:state.tollsAmt, stopCount:state.stops.length, lastStop:state.stops.length?state.stops[state.stops.length-1]:null, lat:state.currentLat, lng:state.currentLng, weekEnding:state.weekEnding, ts:new Date().toISOString() };
   try { const _lk='mlam_live_'+state.driver.replace(/\\s+/g,'_').toLowerCase(); localStorage.setItem(_lk,JSON.stringify(payload)); const _ld=JSON.parse(localStorage.getItem('mlam_live_drivers')||'{}'); _ld[state.driver]=payload; localStorage.setItem('mlam_live_drivers',JSON.stringify(_ld)); } catch(_le){}
-fetch(STATUS_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).catch(()=>{});
+fetch(STATUS_HOOK, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload) }).catch(()=>{});
 }
 function getLiveDriversFromStorage(){ try{ const _s=JSON.parse(localStorage.getItem('mlam_live_drivers')||'{}'), _n=Date.now(); return Object.values(_s).filter(function(d){ return (_n-new Date(d.ts).getTime())<7200000; }); }catch(e2){ return []; } }
 function mergeDriverData(a,b){ const m={}; (a||[]).forEach(function(d){if(d.driverName)m[d.driverName]=d;}); (b||[]).forEach(function(d){if(!d.driverName)return; if(!m[d.driverName]||new Date(d.ts)>=new Date((m[d.driverName].ts||0)))m[d.driverName]=d;}); return Object.values(m); }
@@ -1147,7 +1147,7 @@ async function submitTimesheet() {
   const canvas=document.getElementById('sigCanvas');
   const payload={ driverName:state.driver, truckNumber:state.truck, weekEnding:state.weekEnding, clockIn:state.clockInTime?state.clockInTime.toISOString():'', clockOut:state.clockOutTime?state.clockOutTime.toISOString():'', fuel:state.fuelAmt, tolls:state.tollsAmt, stops:state.stops.map(s=>({time:s.time,address:s.address,lat:s.lat,lng:s.lng,label:s.label})), stopCount:state.stops.length, notes:document.getElementById('notesField').value, signature:canvas?canvas.toDataURL('image/png'):'', receiptCount:state.receiptImages.length, submittedAt:new Date().toISOString(), rate:RATE, ...hours };
   try {
-    const res=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const res=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
     if(res.ok){ msg.className='msg success'; msg.textContent='â Submitted! Thank you, '+state.driver+'.'; btn.textContent='â Submitted'; }
     else throw new Error('Server error '+res.status);
   } catch(err) {
@@ -1164,7 +1164,7 @@ async function submitTimesheet() {
 let allTimesheetData = [];
 async function loadTimesheetHistory() {
 try {
-const res = await fetch(POLL_HOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({type:'timesheet_history', ts: new Date().toISOString()}) });
+const res = await fetch(POLL_HOOK, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({type:'timesheet_history', ts: new Date().toISOString()}) });
 if(res.ok){ const raw = await res.json(); if(Array.isArray(raw)) allTimesheetData=raw; else if(raw&&Array.isArray(raw.timesheets)) allTimesheetData=raw.timesheets; else if(raw&&Array.isArray(raw.data)) allTimesheetData=raw.data; else allTimesheetData=[]; } else { allTimesheetData=[]; }
 } catch(e) { allTimesheetData = []; }
 }
@@ -1179,7 +1179,7 @@ if(updEl) updEl.textContent='Refreshing...';
 const lsDrivers = getLiveDriversFromStorage();
 if(lsDrivers.length > 0) renderDashboard(lsDrivers);
 try {
-const res = await fetch(POLL_HOOK, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'dashboard_request',ts:new Date().toISOString()})});
+const res = await fetch(POLL_HOOK, {method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({type:'dashboard_request',ts:new Date().toISOString()})});
 const n8nRaw = res.ok ? await res.json() : [];
 const n8nArr = Array.isArray(n8nRaw) ? n8nRaw : (n8nRaw.drivers || []);
 const merged = mergeDriverData(n8nArr, lsDrivers);
